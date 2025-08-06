@@ -137,6 +137,11 @@ function WorkingBuilder() {
       
       formData.append(uploadField, file);
 
+      // Get API base URL
+      const API_BASE_URL = process.env.NODE_ENV === 'production' 
+        ? (process.env.REACT_APP_API_URL || window.location.origin)
+        : 'http://localhost:5000';
+
       // Determine the correct endpoint
       let endpoint = '/api/upload/';
       if (field === 'profileImage') {
@@ -149,7 +154,7 @@ function WorkingBuilder() {
         endpoint += 'certificate-image';
       }
 
-      const response = await authenticatedFetch(`http://localhost:5000${endpoint}`, {
+      const response = await authenticatedFetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
         body: formData
       });

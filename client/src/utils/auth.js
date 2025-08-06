@@ -1,6 +1,14 @@
 // Auth utility functions for token management
 
-const API_BASE_URL = 'http://localhost:5000';
+// API Configuration for different environments
+const getApiUrl = () => {
+  if (process.env.NODE_ENV === 'production') {
+    return process.env.REACT_APP_API_URL || window.location.origin;
+  }
+  return 'http://localhost:5000';
+};
+
+const API_BASE_URL = getApiUrl();
 
 // Check if token is expired or about to expire (within 5 minutes)
 export const isTokenExpired = (token) => {

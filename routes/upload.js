@@ -5,6 +5,10 @@ const path = require('path');
 
 // Upload profile image
 router.post("/profile-image", verifyAccessToken, (req, res) => {
+  console.log("=== PROFILE IMAGE UPLOAD REQUEST ===");
+  console.log("Headers:", req.headers);
+  console.log("User ID:", req.payload?.aud);
+  
   upload.single('profileImage')(req, res, (err) => {
     try {
       if (err) {
@@ -13,13 +17,18 @@ router.post("/profile-image", verifyAccessToken, (req, res) => {
       }
       
       if (!req.file) {
+        console.error("No file received in request");
         return res.status(400).json({ error: "No file uploaded" });
       }
 
+      console.log("File uploaded successfully:", req.file.filename);
+      
       const baseUrl = process.env.NODE_ENV === 'production' || process.env.PORT 
         ? 'https://portfolio-gen-i1bg.onrender.com' 
         : 'http://localhost:5000';
       const fileUrl = `${baseUrl}/uploads/${req.file.filename}`;
+      
+      console.log("Returning file URL:", fileUrl);
       
       res.json({
         message: "Profile image uploaded successfully",

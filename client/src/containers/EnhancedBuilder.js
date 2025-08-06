@@ -310,15 +310,20 @@ function EnhancedBuilder() {
       const formData = new FormData();
       let endpoint = '';
       
+      // Get API base URL
+      const API_BASE_URL = process.env.NODE_ENV === 'production' 
+        ? (process.env.REACT_APP_API_URL || window.location.origin)
+        : 'http://localhost:5000';
+      
       if (field === 'profileImage') {
         formData.append('profileImage', file);
-        endpoint = '/api/upload/profile-image';
+        endpoint = `${API_BASE_URL}/api/upload/profile-image`;
       } else if (field === 'resume') {
         formData.append('resume', file);
-        endpoint = '/api/upload/resume';
+        endpoint = `${API_BASE_URL}/api/upload/resume`;
       } else if (field.startsWith('projectImage')) {
         formData.append('projectImage', file);
-        endpoint = '/api/upload/project-image';
+        endpoint = `${API_BASE_URL}/api/upload/project-image`;
       }
 
       const response = await fetch(endpoint, {
