@@ -1,4 +1,5 @@
 const JWT = require("jsonwebtoken");
+require("dotenv").config();
 
 const creatError = require("http-errors");
 
@@ -6,7 +7,7 @@ module.exports = {
     signAccessToken: (userId) => {
         return new Promise((resolve, reject) => {
             const payload = {};
-            const secret = "39832173821";
+            const secret = process.env.ACCESS_TOKEN_SECRET || "39832173821";
             const options = {
                 expiresIn: "2h",
                 issuer: "portfolio_generator",
@@ -29,7 +30,7 @@ module.exports = {
         const authHeader = req.headers["authorization"];
         const bearerToken = authHeader.split(" ");
         const token = bearerToken[1];
-        JWT.verify(token, "39832173821", (err, payload) => {
+        JWT.verify(token, process.env.ACCESS_TOKEN_SECRET || "39832173821", (err, payload) => {
             if (err) {
                 const message =
                     err.name === "JsonWebTokenError" ? "Unauthorized" : err.message;
@@ -42,7 +43,7 @@ module.exports = {
     signRefreshToken: (userId) => {
         return new Promise((resolve, reject) => {
             const payload = {};
-            const secret = "2eiwioadpsaT";
+            const secret = process.env.REFRESH_TOKEN_SECRET || "2eiwioadpsaT";
             const options = {
                 expiresIn: "1y",
                 issuer: "portfolio",
@@ -52,7 +53,7 @@ module.exports = {
                 if (err) {
                     console.log(err.message);
                     // reject(err)
-                    reject(createError.InternalServerError());
+                    reject(creatError.InternalServerError());
                 }
                 resolve(token);
             });
@@ -60,8 +61,8 @@ module.exports = {
     },
     verifyRefreshToken: (refreshToken) => {
         return new Promise((resolve, reject) => {
-            JWT.verify(refreshToken, "2eiwioadpsaT", (err, payload) => {
-                if (err) return reject(createError.Unauthorized());
+            JWT.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET || "2eiwioadpsaT", (err, payload) => {
+                if (err) return reject(creatError.Unauthorized());
 
                 const userId = payload.aud;
 

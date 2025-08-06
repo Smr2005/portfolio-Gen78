@@ -1,8 +1,20 @@
 import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
 import Templates from "../containers/Templates";
 import Header from "./Header";
 
-export default class Home extends Component {
+class Home extends Component {
+  componentDidMount() {
+    // Check if a template was selected
+    const urlParams = new URLSearchParams(this.props.location.search);
+    const templateId = urlParams.get('template');
+    
+    if (templateId) {
+      // Redirect to builder with the selected template
+      this.props.history.push(`/builder?template=${templateId}`);
+    }
+  }
+
   render() {
     return (
       <div>
@@ -30,3 +42,5 @@ export default class Home extends Component {
     );
   }
 }
+
+export default withRouter(Home);

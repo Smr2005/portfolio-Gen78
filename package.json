@@ -5,22 +5,34 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "build": "npm install && cd client && npm install && NODE_OPTIONS=--openssl-legacy-provider npm run build",
+    "heroku-postbuild": "npm run build",
+    "postinstall": "echo 'Dependencies installed successfully'"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": "16.x",
+    "npm": "8.x"
+  },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
+    "axios": "^1.11.0",
     "bcrypt": "^5.0.0",
     "concurrently": "^5.3.0",
     "cookie-session": "^1.4.0",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "form-data": "^4.0.4",
     "http-errors": "^1.8.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.7",
-    "nodemailer": "^6.4.13",
+    "multer": "^2.0.2",
+    "nodemailer": "^6.10.1",
     "nodemailer-sendgrid-transport": "^0.2.0",
     "nodemon": "^2.0.4",
     "passport": "^0.4.1",

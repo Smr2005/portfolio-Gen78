@@ -1,98 +1,298 @@
-# Developer's Portfolio:heart:
+# 🚀 Portfolio Generator
 
-<p>An application where you can find beautiful and responsive portfoilo templates:heart_eyes:</p>
+A comprehensive, professional portfolio generator with email notifications, file uploads, and beautiful templates.
 
-# :heavy_plus_sign: Technologies used:
+## ✨ Features
 
-### For Frontend:
-:heavy_check_mark: CSS
+### 🎨 Portfolio Builder
+- **7 Comprehensive Sections**: Personal Info, Skills, Projects, Experience, Education, Certifications, Internships
+- **File Uploads**: Profile pictures, project images, certificates, resumes
+- **Real-time Preview**: See your portfolio as you build it
+- **Multiple Templates**: Choose from professional designs
+- **Responsive Design**: Looks great on all devices
 
-:heavy_check_mark: React
+### 📧 Email Notifications
+- **Welcome Emails**: Beautiful HTML emails on registration
+- **Publication Emails**: Detailed notifications when portfolio is published
+- **Social Sharing**: Pre-built sharing buttons for LinkedIn, Twitter, Facebook, WhatsApp
+- **Professional Tips**: Guidance on portfolio promotion
 
-### For Backend:
-:heavy_check_mark: Node
+### 🌐 Publishing & Sharing
+- **One-Click Publishing**: Instant portfolio deployment
+- **Custom URLs**: SEO-friendly portfolio URLs
+- **Public Access**: Share your portfolio with anyone
+- **Analytics**: View counts and engagement tracking
+- **SEO Optimized**: Meta tags and Open Graph support
 
-:heavy_check_mark: Express
+### 🔐 Security & Authentication
+- **JWT Authentication**: Secure user sessions
+- **Password Encryption**: Bcrypt password hashing
+- **Protected Routes**: Secure API endpoints
+- **File Validation**: Safe file upload handling
 
-### For Database:
-:heavy_check_mark: MongoDB
+## 🛠️ Tech Stack
 
-### For Deployment:
-:heavy_check_mark: Heroku
+### Backend
+- **Node.js** - Runtime environment
+- **Express.js** - Web framework
+- **MongoDB** - Database with Mongoose ODM
+- **JWT** - Authentication tokens
+- **Nodemailer** - Email notifications
+- **Multer** - File upload handling
+- **Bcrypt** - Password encryption
 
-## How to Contribute:
+### Frontend
+- **React.js** - User interface
+- **Bootstrap** - Responsive styling
+- **Axios** - HTTP client
+- **React Router** - Navigation
+
+### Deployment
+- **Render** - Cloud hosting platform
+- **MongoDB Atlas** - Cloud database
+- **Gmail SMTP** - Email service
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js (v14 or higher)
+- MongoDB Atlas account
+- Gmail account with App Password
+
+### Local Development
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/portfolio-generator.git
+   cd portfolio-generator
+   ```
+
+2. **Install dependencies**
+   ```bash
+   # Install backend dependencies
+   npm install
+   
+   # Install frontend dependencies
+   cd client
+   npm install
+   cd ..
+   ```
+
+3. **Configure environment variables**
+   Create `.env` file in root directory:
+   ```env
+   MONGO_URI=your_mongodb_connection_string
+   ACCESS_TOKEN_SECRET=your_access_token_secret
+   REFRESH_TOKEN_SECRET=your_refresh_token_secret
+   EMAIL_USER=your_email@gmail.com
+   EMAIL_PASSWORD=your_gmail_app_password
+   ```
+
+4. **Start development servers**
+   ```bash
+   # Start backend (port 5000)
+   npm run dev
+   
+   # In another terminal, start frontend (port 3000)
+   cd client
+   npm start
+   ```
+
+5. **Open your browser**
+   Navigate to `http://localhost:3000`
+
+## 📧 Email Configuration
+
+### Gmail Setup
+1. **Enable 2-Factor Authentication** on your Gmail account
+2. **Generate App Password**:
+   - Go to Google Account settings
+   - Security → 2-Step Verification → App passwords
+   - Select "Mail" and generate password
+   - Use this password in `EMAIL_PASSWORD`
+
+### Email Features
+- **Welcome Email**: Sent on user registration
+- **Publication Email**: Sent when portfolio is published
+- **Beautiful HTML Templates**: Professional design
+- **Social Sharing Buttons**: Easy portfolio promotion
+- **Portfolio Statistics**: Skills, projects, experience counts
+
+## 🌐 Deployment to Render
+
+### Step 1: Prepare for Deployment
+1. **Push to GitHub**:
+   ```bash
+   git add .
+   git commit -m "Ready for deployment"
+   git push origin main
+   ```
+
+### Step 2: Deploy on Render
+1. Go to [render.com](https://render.com)
+2. Create new Web Service
+3. Connect your GitHub repository
+4. Configure:
+   - **Build Command**: `npm install && cd client && npm install && npm run build`
+   - **Start Command**: `npm start`
+5. Add environment variables
+6. Deploy!
+
+### Step 3: Update URLs
+After deployment, update CORS settings with your Render URL.
+
+## 📁 Project Structure
+
+```
+portfolio-generator/
+├── client/                 # React frontend
+│   ├── public/
+│   ├── src/
+│   │   ├── components/     # Reusable components
+│   │   ├── containers/     # Page components
+│   │   ├── utils/          # Utility functions
+│   │   └── index.js
+│   └── package.json
+├── routes/                 # API routes
+│   ├── auth.js            # Authentication routes
+│   ├── portfolio.js       # Portfolio routes
+│   └── upload.js          # File upload routes
+├── model/                 # Database models
+│   ├── User.js
+│   └── Portfolio.js
+├── SERVICES/              # Service modules
+│   ├── emailService.js    # Email functionality
+│   └── fileUploadService.js # File handling
+├── webToken/              # JWT utilities
+├── config/                # Configuration files
+├── uploads/               # File storage (created automatically)
+├── .env                   # Environment variables
+├── index.js               # Main server file
+└── package.json
+```
+
+## 🎯 API Endpoints
+
+### Authentication
+- `POST /api/user/register` - User registration
+- `POST /api/user/login` - User login
+- `POST /api/user/reset-password` - Password reset
+
+### Portfolio
+- `POST /api/portfolio/save` - Save portfolio data
+- `POST /api/portfolio/publish` - Publish portfolio
+- `GET /api/portfolio/my-portfolio` - Get user's portfolio
+- `GET /portfolio/:slug` - Public portfolio view
+
+### File Upload
+- `POST /api/upload/profile-image` - Upload profile picture
+- `POST /api/upload/project-image` - Upload project image
+- `POST /api/upload/certificate-image` - Upload certificate image
+- `POST /api/upload/resume` - Upload resume file
+
+## 🎨 Portfolio Sections
+
+### 1. Personal Information
+- Name, title, email, phone
+- Location, social media links
+- Profile picture upload
+- About/bio section
+
+### 2. Skills
+- Skill name and proficiency level
+- Categorization (Technical, Soft Skills, etc.)
+- Visual progress bars
+
+### 3. Projects
+- Project title and description
+- Technologies used
+- GitHub and demo links
+- Project images
+- Featured project highlighting
+
+### 4. Experience
+- Company, position, duration
+- Location and description
+- Key achievements
+- Chronological ordering
+
+### 5. Education
+- Institution, degree, field of study
+- Duration, location, GPA
+- Descriptions and achievements
+
+### 6. Certifications
+- Certification name and issuer
+- Date and verification URL
+- Certificate images
+- Professional credentials
+
+### 7. Internships
+- Company, position, duration
+- Location and description
+- Key achievements and learnings
+
+## 📧 Email Templates
+
+### Welcome Email
+- Professional greeting
+- Platform introduction
+- Getting started guide
+- Feature highlights
+
+### Publication Email
+- Celebration message
+- Portfolio statistics
+- Direct portfolio link
+- Social sharing buttons
+- Professional promotion tips
+
+## 🔒 Security Features
+
+- **JWT Authentication**: Secure user sessions
+- **Password Hashing**: Bcrypt encryption
+- **File Validation**: Safe upload handling
+- **CORS Protection**: Cross-origin request security
+- **Input Validation**: Joi schema validation
+- **Error Handling**: Comprehensive error management
+
+## 🎯 Performance Features
+
+- **Responsive Design**: Mobile-first approach
+- **Image Optimization**: Efficient file handling
+- **SEO Optimization**: Meta tags and structured data
+- **Fast Loading**: Optimized build process
+- **Caching**: Static file caching
+
+## 🤝 Contributing
 
 1. Fork the repository
-2. Clone your forked repository using terminal or gitbash.
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
 
-```
-git clone <link-of-repos>
-```
+## 📄 License
 
-3. Make changes to the cloned repository(valid changes/ addition of new features/ solving issues).
-4. Run the following three commands:
+This project is licensed under the MIT License.
 
-```
-git add .
-git commit -m "Your-msg-here"
-git push origin master
-```
-5. Create a pull request.
+## 🆘 Support
 
-<b>You have created a PR successfully:clap:</b>
+For support and questions:
+- Create an issue on GitHub
+- Check the documentation
+- Review the deployment guide
 
-<i> Thanks for contributing:sparkles:</i>
+## 🎉 Acknowledgments
 
-# :question: How to get your own portfolio?
-## Here is the spoiler alert :astonished::collision:
+- React.js community
+- Node.js ecosystem
+- MongoDB Atlas
+- Render hosting platform
+- Bootstrap framework
 
-Just change `src/portfolio.js` to get your personal portfolio. Feel free to use it or customize it as much as you want.
-### Woahhhh!! You have made it within minutes.:fire:
+---
 
-### Fix new issues-
-Make this much better for other developers have a look at [Issues](https://github.com/technojam/portfolio_generator/issues).
+**Built with ❤️ for developers who want to showcase their work professionally.**
 
-### `View map of the frontend is given here`
-https://docs.google.com/document/d/1aQqnbFk0NB7o2_wXi0zgsV49hEfk08avl2IqJ_u7C0A/edit?usp=sharing
-
-### `View map of the backend is given here`
-https://docs.google.com/document/d/1tGkecoK42EahTXAybLyyqHMqMse4QMQ1b33k2QfCkIo/edit?usp=sharing
-
-
-## Learn More
-- React: Check out the [React documentation](https://reactjs.org/)
-- MongoDB: Check out the [MongoDB documentation](https://docs.mongodb.com/)
-- Node: Check out the [Node documentation](https://nodejs.org/en/docs/)
-- Express: Check out the [Express documentation](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Introduction)
-- Heroku:Check out the [Heroku documentation](https://devcenter.heroku.com/categories/deployment)
-## Learn more about packages:
-- [npm](https://www.npmjs.com/package/documentation)
-- [oauth](https://www.npmjs.com/package/oauth)
-
-## Contributors ✨
-
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tr>
-   <td align="center"><a href="https://github.com/lakshya-20"><img src="https://avatars.githubusercontent.com/lakshya-20" width="100px;" alt=""/><br /><sub><b>Lakshya Bansal</b></sub></a><br /><a href="https://github.com/lakshya-20/portfolio_generator/commits?author=harshcasper" title="Documentation">📖</a> <a href="https://github.com/lakshya-20/portfolio_generator/commits?author=harshcasper" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/Ritwik880"><img src="https://avatars.githubusercontent.com/Ritwik880" width="100px;" alt=""/><br /><sub><b>Ritwik Sinha</b></sub></a><br /><a href="https://github.com/Ritwik880/Helping-Hand/commits?author=agg-ritwik" title="Code">💻</a> <a href="#ideas-agg-ritwik" title="Ideas, Planning, & Feedback">🤔</a></td>
-    <td align="center"><a href="https://github.com/sidhearts"><img src="https://avatars.githubusercontent.com/sidhearts" width="100px;" alt=""/><br /><sub><b>Siddharth Raj</b></sub></a><br /><a href="https://github.com/sidhearts/Portfolio-Generator/commits?author=yashk2000" title="Code">💻</a> <a href="https://github.com/sidhearts/Portfolio-Generator/commits?author=yashk2000" title="Documentation">📖</a> <a href="#ideas-yashk2000" title="Ideas, Planning, & Feedback">🤔</a></td>
-    <td align="center"><a href="https://github.com/Shivansh2287"><img src="https://avatars.githubusercontent.com/Shivansh2287" width="100px;" alt=""/><br /><sub><b>Shivansh Srivastava</b></sub></a><br /><a href="https://github.com/Shivansh2287/portfolio_generator/commits?author=harshcasper" title="Documentation">📖</a> <a href="https://github.com/Shivansh2287/portfolio_generator/commits?author=harshcasper" title="Code">💻</a></td>
-     <td align="center"><a href="https://github.com/Isha2103"><img src="https://avatars.githubusercontent.com/Isha2103" width="100px;" alt=""/><br /><sub><b>Isha Gupta</b></sub></a><br /><a href="https://github.com/Isha2103/Portfolio-Generator/commits?author=harshcasper" title="Documentation">📖</a> <a href="https://github.com/Isha2103/Portfolio-Generator/commits?author=harshcasper" title="Code">💻</a></td>
-       <td align="center"><a href="https://github.com/tanishq-agarwal"><img src="https://avatars.githubusercontent.com/tanishq-agarwal" width="100px;" alt=""/><br /><sub><b>Tanishq Agarwal</b></sub></a><br /><a href="https://github.com/tanishq-agarwal/Helping-Hand/commits?author=harshcasper" title="Documentation">📖</a> <a href="https://github.com/tanishq-agarwal/commits?author=harshcasper" title="Code">💻</a></td>
-        <td align="center"><a href="https://github.com/sakshi172015"><img src="https://avatars.githubusercontent.com/sakshi172015" width="100px;" alt=""/><br /><sub><b>Sakshi Jain</b></sub></a><br /><a href="https://github.com/sakshi172015/portfolio_generator/commits?author=harshcasper" title="Documentation">📖</a> <a href="https://github.com/sakshi172015/portfolio_generator/commits?author=harshcasper" title="Code">💻</a></td>
-        <td align="center"><a href="https://github.com/Areeb786123"><img src="https://avatars.githubusercontent.com/Areeb786123" width="100px;" alt=""/><br /><sub><b>Areeb Ahmad</b></sub></a><br /><a href="https://github.com/Areeb786123/portfolio_generator/commits?author=harshcasper" title="Documentation">📖</a> <a href="https://github.com/Areeb786123/portfolio_generator/commits?author=harshcasper" title="Code">💻</a></td>
-     
-  </tr>
-</table>
-
-<!-- markdownlint-enable -->
-<!-- prettier-ignore-end -->
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
-
+## 🌟 Star this repository if you found it helpful!
