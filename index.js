@@ -343,7 +343,7 @@ function generatePortfolioHTML(portfolio) {
 }
 
 // Serve static files from React build in production
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production' || process.env.PORT) {
     // Serve static files from React build
     app.use(express.static(path.join(__dirname, 'client/build')));
     
