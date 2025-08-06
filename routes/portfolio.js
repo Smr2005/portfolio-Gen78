@@ -13,12 +13,13 @@ function getBaseUrl(req) {
            : `${req.protocol}://${req.get('host')}`);
 }
 
-// Helper function to convert localhost URLs to production URLs
-function convertUrlsToProduction(data) {
+// Helper function to ensure data URLs are properly formatted (files are now stored as base64 data URLs)
+function ensureDataUrls(data) {
+  // Files are now stored as data URLs (data:image/jpeg;base64,xxx), no conversion needed
+  // This function is kept for backward compatibility with any existing URL-based data
   const productionUrl = process.env.BACKEND_URL || 'https://portfolio-gen-i1bg.onrender.com';
   const localhostPattern = /http:\/\/localhost:\d+/g;
   
-  // Convert the entire data object to string, replace URLs, then parse back
   let dataString = JSON.stringify(data);
   dataString = dataString.replace(localhostPattern, productionUrl);
   
@@ -439,9 +440,9 @@ router.post("/publish", verifyAccessToken, async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
     
-    // Convert any localhost URLs to production URLs before publishing
+    // Ensure data URLs are properly formatted before publishing
     if (process.env.NODE_ENV === 'production' || process.env.PORT) {
-      portfolio.data = convertUrlsToProduction(portfolio.data);
+      portfolio.data = ensureDataUrls(portfolio.data);
     }
     
     portfolio.isPublished = true;
@@ -649,7 +650,7 @@ router.post("/migrate-urls", async (req, res) => {
     
     for (const portfolio of portfolios) {
       const originalData = JSON.stringify(portfolio.data);
-      portfolio.data = convertUrlsToProduction(portfolio.data);
+      portfolio.data = ensureDataUrls(portfolio.data);
       const newData = JSON.stringify(portfolio.data);
       
       if (originalData !== newData) {

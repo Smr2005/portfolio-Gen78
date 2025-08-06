@@ -34,8 +34,12 @@ const PortfolioSchema = new mongoose.Schema({
     linkedin: String,
     github: String,
     website: String,
-    profileImage: String,
-    resume: String,
+    profileImage: String, // Can be URL or base64 data
+    profileImageData: String, // Base64 encoded image data
+    profileImageType: String, // MIME type (image/jpeg, image/png, etc.)
+    resume: String, // Can be URL or base64 data
+    resumeData: String, // Base64 encoded PDF data
+    resumeType: String, // MIME type (application/pdf)
     about: String,
     
     // Experience
@@ -73,7 +77,9 @@ const PortfolioSchema = new mongoose.Schema({
       tech: [String],
       github: String,
       demo: String,
-      image: String,
+      image: String, // Can be URL or base64 data
+      imageData: String, // Base64 encoded image data
+      imageType: String, // MIME type
       featured: Boolean,
       metrics: {
         users: String,
@@ -88,7 +94,9 @@ const PortfolioSchema = new mongoose.Schema({
       issuer: String,
       date: String,
       url: String,
-      image: String
+      image: String, // Can be URL or base64 data
+      imageData: String, // Base64 encoded image data
+      imageType: String // MIME type
     }],
     
     // Internships

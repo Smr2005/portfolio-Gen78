@@ -430,7 +430,19 @@ function WorkingBuilder() {
         return;
       }
 
-      const response = await authenticatedFetch('http://localhost:5000/api/portfolio/save', {
+      // Get API base URL
+      const getApiUrl = () => {
+        if (process.env.REACT_APP_API_URL) {
+          return process.env.REACT_APP_API_URL;
+        }
+        if (process.env.NODE_ENV === 'production') {
+          return window.location.origin;
+        }
+        return 'http://localhost:5000';
+      };
+      const API_BASE_URL = getApiUrl();
+
+      const response = await authenticatedFetch(`${API_BASE_URL}/api/portfolio/save`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -473,7 +485,19 @@ function WorkingBuilder() {
         await handleSave();
       }
 
-      const response = await authenticatedFetch('http://localhost:5000/api/portfolio/publish', {
+      // Get API base URL (same logic as file upload)
+      const getApiUrl = () => {
+        if (process.env.REACT_APP_API_URL) {
+          return process.env.REACT_APP_API_URL;
+        }
+        if (process.env.NODE_ENV === 'production') {
+          return window.location.origin;
+        }
+        return 'http://localhost:5000';
+      };
+      const API_BASE_URL = getApiUrl();
+
+      const response = await authenticatedFetch(`${API_BASE_URL}/api/portfolio/publish`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

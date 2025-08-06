@@ -107,17 +107,7 @@ app.use("/api/portfolio", portfolioRoute);
 //Route Middleware For File Upload routes
 app.use("/api/upload", uploadRoute);
 
-// Serve uploaded files statically with proper path
-const uploadsPath = path.join(__dirname, 'uploads');
-app.use('/uploads', express.static(uploadsPath));
-
-// Add logging for file requests in development
-if (process.env.NODE_ENV !== 'production') {
-    app.use('/uploads', (req, res, next) => {
-        console.log('File request:', req.url);
-        next();
-    });
-}
+// Note: Files are now stored in MongoDB as base64 data, no longer serving static files from uploads directory
 
 // API health check route (moved after API routes)
 app.get("/api/health", async (req, res, next) => {
@@ -139,26 +129,31 @@ app.post("/api/test-upload", upload.single('testFile'), (req, res) => {
     });
 });
 
-// Test URL conversion endpoint
-app.get("/api/test-url-conversion", (req, res) => {
+// Test data storage endpoint
+app.get("/api/test-data-storage", (req, res) => {
     const testData = {
-        profileImage: "http://localhost:5000/uploads/profile-123.jpg",
-        resume: "http://localhost:5000/uploads/resume-456.pdf",
+        profileImage: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD...", // Sample base64 data
+        resume: "data:application/pdf;base64,JVBERi0xLjQKJcOkw7zDtsO8w6...", // Sample base64 data
         projects: [
             {
-                image: "http://localhost:5000/uploads/project-789.png",
+                image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...",
                 title: "Test Project"
             }
         ]
     };
     
-    const convertedData = convertUrlsToProduction(testData);
-    
     res.json({
-        original: testData,
-        converted: convertedData,
+        message: "Files are now stored as base64 data URLs in MongoDB",
+        storageType: "MongoDB Base64",
+        sampleData: testData,
         environment: process.env.NODE_ENV || 'development',
-        backendUrl: process.env.BACKEND_URL
+        backendUrl: process.env.BACKEND_URL,
+        advantages: [
+            "No file system dependencies",
+            "Works on any hosting platform",
+            "No file persistence issues",
+            "All data in one database"
+        ]
     });
 });
 
@@ -244,12 +239,13 @@ function getFrontendUrl() {
              : 'http://localhost:3000');
 }
 
-// Helper function to convert localhost URLs to production URLs
-function convertUrlsToProduction(data) {
+// Helper function to ensure data URLs are properly formatted (files are now stored as base64 data URLs)
+function ensureDataUrls(data) {
+    // Files are now stored as data URLs (data:image/jpeg;base64,xxx), no conversion needed
+    // This function is kept for backward compatibility with any existing URL-based data
     const productionUrl = process.env.BACKEND_URL || 'https://portfolio-gen-i1bg.onrender.com';
     const localhostPattern = /http:\/\/localhost:\d+/g;
     
-    // Convert the entire data object to string, replace URLs, then parse back
     let dataString = JSON.stringify(data);
     dataString = dataString.replace(localhostPattern, productionUrl);
     
@@ -260,9 +256,9 @@ function convertUrlsToProduction(data) {
 function generatePortfolioHTML(portfolio) {
     let { data, meta, templateId } = portfolio;
     
-    // Convert any localhost URLs to production URLs when serving
+    // Ensure data URLs are properly formatted (backward compatibility)
     if (process.env.NODE_ENV === 'production' || process.env.PORT) {
-        data = convertUrlsToProduction(data);
+        data = ensureDataUrls(data);
     }
     
     return `
