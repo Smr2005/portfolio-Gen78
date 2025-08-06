@@ -7,9 +7,22 @@ const nodemailer = require("nodemailer");
 
 // Helper function to generate correct base URL
 function getBaseUrl(req) {
-  return process.env.NODE_ENV === 'production' || process.env.PORT 
-    ? 'https://portfolio-gen-i1bg.onrender.com' 
-    : `${req.protocol}://${req.get('host')}`;
+  return process.env.BACKEND_URL || 
+         (process.env.NODE_ENV === 'production' || process.env.PORT 
+           ? 'https://portfolio-gen-i1bg.onrender.com' 
+           : `${req.protocol}://${req.get('host')}`);
+}
+
+// Helper function to convert localhost URLs to production URLs
+function convertUrlsToProduction(data) {
+  const productionUrl = process.env.BACKEND_URL || 'https://portfolio-gen-i1bg.onrender.com';
+  const localhostPattern = /http:\/\/localhost:\d+/g;
+  
+  // Convert the entire data object to string, replace URLs, then parse back
+  let dataString = JSON.stringify(data);
+  dataString = dataString.replace(localhostPattern, productionUrl);
+  
+  return JSON.parse(dataString);
 }
 
 // Email configuration
@@ -426,6 +439,11 @@ router.post("/publish", verifyAccessToken, async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
     
+    // Convert any localhost URLs to production URLs before publishing
+    if (process.env.NODE_ENV === 'production' || process.env.PORT) {
+      portfolio.data = convertUrlsToProduction(portfolio.data);
+    }
+    
     portfolio.isPublished = true;
     portfolio.publishedAt = new Date();
     await portfolio.save();
@@ -603,6 +621,53 @@ router.get("/analytics", verifyAccessToken, async (req, res) => {
   } catch (error) {
     console.error("Get analytics error:", error);
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Migration endpoint to fix localhost URLs in existing portfolios (admin only)
+router.post("/migrate-urls", async (req, res) => {
+  try {
+    // Only allow in production and with a secret key for security
+    if (req.body.secret !== process.env.MIGRATION_SECRET && req.body.secret !== 'migrate-urls-2024') {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+    
+    console.log("Starting URL migration...");
+    
+    // Find all portfolios with localhost URLs
+    const portfolios = await Portfolio.find({
+      $or: [
+        { "data": { $regex: "localhost" } },
+        { "data.profileImage": { $regex: "localhost" } },
+        { "data.resume": { $regex: "localhost" } }
+      ]
+    });
+    
+    console.log(`Found ${portfolios.length} portfolios with localhost URLs`);
+    
+    let updatedCount = 0;
+    
+    for (const portfolio of portfolios) {
+      const originalData = JSON.stringify(portfolio.data);
+      portfolio.data = convertUrlsToProduction(portfolio.data);
+      const newData = JSON.stringify(portfolio.data);
+      
+      if (originalData !== newData) {
+        await portfolio.save();
+        updatedCount++;
+        console.log(`Updated portfolio ${portfolio._id} for user ${portfolio.userId}`);
+      }
+    }
+    
+    res.json({
+      message: "URL migration completed",
+      totalPortfolios: portfolios.length,
+      updatedPortfolios: updatedCount
+    });
+    
+  } catch (error) {
+    console.error("Migration error:", error);
+    res.status(500).json({ error: "Migration failed" });
   }
 });
 

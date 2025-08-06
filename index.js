@@ -107,8 +107,17 @@ app.use("/api/portfolio", portfolioRoute);
 //Route Middleware For File Upload routes
 app.use("/api/upload", uploadRoute);
 
-// Serve uploaded files statically
-app.use('/uploads', express.static('uploads'));
+// Serve uploaded files statically with proper path
+const uploadsPath = path.join(__dirname, 'uploads');
+app.use('/uploads', express.static(uploadsPath));
+
+// Add logging for file requests in development
+if (process.env.NODE_ENV !== 'production') {
+    app.use('/uploads', (req, res, next) => {
+        console.log('File request:', req.url);
+        next();
+    });
+}
 
 // API health check route (moved after API routes)
 app.get("/api/health", async (req, res, next) => {
@@ -130,6 +139,29 @@ app.post("/api/test-upload", upload.single('testFile'), (req, res) => {
     });
 });
 
+// Test URL conversion endpoint
+app.get("/api/test-url-conversion", (req, res) => {
+    const testData = {
+        profileImage: "http://localhost:5000/uploads/profile-123.jpg",
+        resume: "http://localhost:5000/uploads/resume-456.pdf",
+        projects: [
+            {
+                image: "http://localhost:5000/uploads/project-789.png",
+                title: "Test Project"
+            }
+        ]
+    };
+    
+    const convertedData = convertUrlsToProduction(testData);
+    
+    res.json({
+        original: testData,
+        converted: convertedData,
+        environment: process.env.NODE_ENV || 'development',
+        backendUrl: process.env.BACKEND_URL
+    });
+});
+
 // Serve static files from React build in production
 if (process.env.NODE_ENV === 'production' || process.env.PORT) {
     // Serve static files from React build
@@ -145,6 +177,8 @@ app.get("/portfolio/:slug", async (req, res) => {
         const portfolio = await Portfolio.findOne({ slug, isPublished: true });
         
         if (!portfolio) {
+            const frontendUrl = getFrontendUrl();
+            
             return res.status(404).send(`
                 <!DOCTYPE html>
                 <html>
@@ -160,7 +194,7 @@ app.get("/portfolio/:slug", async (req, res) => {
                 <body>
                     <h1 class="error">Portfolio Not Found</h1>
                     <p>The portfolio you're looking for doesn't exist or is not published.</p>
-                    <a href="http://localhost:3000">Create Your Own Portfolio</a>
+                    <a href="${frontendUrl}">Create Your Own Portfolio</a>
                 </body>
                 </html>
             `);
@@ -194,9 +228,42 @@ app.get("/portfolio/:slug", async (req, res) => {
     }
 });
 
+// Utility function to get the correct base URL
+function getBaseUrl() {
+    return process.env.BACKEND_URL || 
+           (process.env.NODE_ENV === 'production' || process.env.PORT 
+             ? 'https://portfolio-gen-i1bg.onrender.com' 
+             : 'http://localhost:5000');
+}
+
+// Utility function to get the correct frontend URL
+function getFrontendUrl() {
+    return process.env.FRONTEND_URL || 
+           (process.env.NODE_ENV === 'production' || process.env.PORT 
+             ? 'https://portfolio-gen-i1bg.onrender.com' 
+             : 'http://localhost:3000');
+}
+
+// Helper function to convert localhost URLs to production URLs
+function convertUrlsToProduction(data) {
+    const productionUrl = process.env.BACKEND_URL || 'https://portfolio-gen-i1bg.onrender.com';
+    const localhostPattern = /http:\/\/localhost:\d+/g;
+    
+    // Convert the entire data object to string, replace URLs, then parse back
+    let dataString = JSON.stringify(data);
+    dataString = dataString.replace(localhostPattern, productionUrl);
+    
+    return JSON.parse(dataString);
+}
+
 // Function to generate HTML for portfolio
 function generatePortfolioHTML(portfolio) {
-    const { data, meta, templateId } = portfolio;
+    let { data, meta, templateId } = portfolio;
+    
+    // Convert any localhost URLs to production URLs when serving
+    if (process.env.NODE_ENV === 'production' || process.env.PORT) {
+        data = convertUrlsToProduction(data);
+    }
     
     return `
 <!DOCTYPE html>
@@ -373,7 +440,7 @@ function generatePortfolioHTML(portfolio) {
 
     <!-- Powered By -->
     <div class="powered-by">
-        <small>Powered by <a href="http://localhost:3000" target="_blank">Portfolio Generator</a></small>
+        <small>Powered by <a href="${getFrontendUrl()}" target="_blank">Portfolio Generator</a></small>
     </div>
 
     <!-- Bootstrap JS -->
