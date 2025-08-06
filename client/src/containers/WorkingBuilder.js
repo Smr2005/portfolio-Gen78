@@ -189,7 +189,8 @@ function WorkingBuilder() {
           }));
         }
       } else {
-        setError(data.error || 'Failed to upload file');
+        const errorMsg = typeof data.error === 'string' ? data.error : data.error?.message || data.message || 'Failed to upload file';
+        setError(errorMsg);
       }
     } catch (err) {
       setError('File upload failed. Please try again.');
@@ -445,7 +446,8 @@ function WorkingBuilder() {
         setSaved(true);
         setTimeout(() => setSaved(false), 3000);
       } else {
-        setError(data.error || 'Failed to save portfolio');
+        const errorMsg = typeof data.error === 'string' ? data.error : data.error?.message || data.message || 'Failed to save portfolio';
+        setError(errorMsg);
       }
     } catch (err) {
       setError('Network error. Please try again.');
@@ -486,7 +488,8 @@ function WorkingBuilder() {
         setPublishedUrl(data.publishedUrl);
         setTimeout(() => setPublished(false), 5000);
       } else {
-        setError(data.error || 'Failed to publish portfolio');
+        const errorMsg = typeof data.error === 'string' ? data.error : data.error?.message || data.message || 'Failed to publish portfolio';
+        setError(errorMsg);
       }
     } catch (err) {
       setError('Network error. Please try again.');
@@ -548,7 +551,7 @@ function WorkingBuilder() {
       </Navbar>
 
       <Container fluid>
-        {error && <Alert variant="danger">{error}</Alert>}
+        {error && <Alert variant="danger">{typeof error === 'string' ? error : error.message || JSON.stringify(error)}</Alert>}
         {saved && <Alert variant="success">Portfolio saved successfully!</Alert>}
         {published && (
           <Alert variant="success">
