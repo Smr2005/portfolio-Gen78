@@ -1,298 +1,240 @@
-# 🚀 Portfolio Generator
+# Portfolio Generator 🚀
 
-A comprehensive, professional portfolio generator with email notifications, file uploads, and beautiful templates.
+A full-stack web application that allows users to create professional portfolios with multiple templates, authentication, and deployment capabilities.
 
-## ✨ Features
+## 🌟 Features
 
-### 🎨 Portfolio Builder
-- **7 Comprehensive Sections**: Personal Info, Skills, Projects, Experience, Education, Certifications, Internships
-- **File Uploads**: Profile pictures, project images, certificates, resumes
-- **Real-time Preview**: See your portfolio as you build it
-- **Multiple Templates**: Choose from professional designs
-- **Responsive Design**: Looks great on all devices
+### Core Features
+- **User Authentication**: Register, login, password reset with JWT tokens
+- **Multiple Templates**: 6 different portfolio templates to choose from
+- **Enhanced Builder**: Advanced portfolio builder with rich customization options
+- **File Upload**: Support for profile images, project images, and resume uploads
+- **Email Integration**: Password reset and portfolio sharing via email
+- **Responsive Design**: Mobile-friendly interface
+- **Real-time Preview**: Live preview of portfolio changes
 
-### 📧 Email Notifications
-- **Welcome Emails**: Beautiful HTML emails on registration
-- **Publication Emails**: Detailed notifications when portfolio is published
-- **Social Sharing**: Pre-built sharing buttons for LinkedIn, Twitter, Facebook, WhatsApp
-- **Professional Tips**: Guidance on portfolio promotion
-
-### 🌐 Publishing & Sharing
-- **One-Click Publishing**: Instant portfolio deployment
-- **Custom URLs**: SEO-friendly portfolio URLs
-- **Public Access**: Share your portfolio with anyone
-- **Analytics**: View counts and engagement tracking
-- **SEO Optimized**: Meta tags and Open Graph support
-
-### 🔐 Security & Authentication
-- **JWT Authentication**: Secure user sessions
-- **Password Encryption**: Bcrypt password hashing
-- **Protected Routes**: Secure API endpoints
-- **File Validation**: Safe file upload handling
+### Templates Available
+1. **Template 1**: Clean and minimal design
+2. **Template 2**: Modern with project showcase
+3. **Template 3**: Creative layout with animations
+4. **Template 4**: Professional business style
+5. **Template 5**: Developer-focused with skills section
+6. **Template 6**: Portfolio with integrated blog
 
 ## 🛠️ Tech Stack
 
 ### Backend
-- **Node.js** - Runtime environment
-- **Express.js** - Web framework
-- **MongoDB** - Database with Mongoose ODM
-- **JWT** - Authentication tokens
-- **Nodemailer** - Email notifications
-- **Multer** - File upload handling
-- **Bcrypt** - Password encryption
+- **Node.js** with Express.js
+- **MongoDB** with Mongoose
+- **JWT** for authentication
+- **Multer** for file uploads
+- **Nodemailer** for email services
+- **Bcrypt** for password hashing
 
 ### Frontend
-- **React.js** - User interface
-- **Bootstrap** - Responsive styling
-- **Axios** - HTTP client
-- **React Router** - Navigation
+- **React.js** with Hooks
+- **Bootstrap** for styling
+- **Axios** for API calls
+- **React Router** for navigation
+- **Context API** for state management
 
-### Deployment
-- **Render** - Cloud hosting platform
-- **MongoDB Atlas** - Cloud database
-- **Gmail SMTP** - Email service
-
-## 🚀 Quick Start
+## 📦 Installation
 
 ### Prerequisites
-- Node.js (v14 or higher)
-- MongoDB Atlas account
-- Gmail account with App Password
+- Node.js (v16.x recommended)
+- MongoDB database
+- Gmail account for email services
 
-### Local Development
+### Local Development Setup
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/portfolio-generator.git
-   cd portfolio-generator
+   git clone https://github.com/Smr2005/portfolio-Gen.git
+   cd portfolio-Gen
    ```
 
-2. **Install dependencies**
+2. **Install backend dependencies**
    ```bash
-   # Install backend dependencies
    npm install
-   
-   # Install frontend dependencies
+   ```
+
+3. **Install frontend dependencies**
+   ```bash
    cd client
    npm install
    cd ..
    ```
 
-3. **Configure environment variables**
+4. **Environment Setup**
+   
    Create `.env` file in root directory:
    ```env
    MONGO_URI=your_mongodb_connection_string
    ACCESS_TOKEN_SECRET=your_access_token_secret
    REFRESH_TOKEN_SECRET=your_refresh_token_secret
-   EMAIL_USER=your_email@gmail.com
+   FLASK_SECRET_KEY=your_flask_secret_key
+   EMAIL_USER=your_gmail_address
    EMAIL_PASSWORD=your_gmail_app_password
+   FLASK_ENV=development
+   FLASK_DEBUG=True
    ```
 
-4. **Start development servers**
-   ```bash
-   # Start backend (port 5000)
-   npm run dev
+   Create `client/.env.production`:
+   ```env
+   REACT_APP_API_URL=https://your-render-app.onrender.com
+   ```
+
+5. **Start the application**
    
-   # In another terminal, start frontend (port 3000)
+   Development mode (runs both backend and frontend):
+   ```bash
+   npm run dev
+   ```
+   
+   Or run separately:
+   ```bash
+   # Backend only
+   npm start
+   
+   # Frontend only (in client directory)
    cd client
    npm start
    ```
 
-5. **Open your browser**
-   Navigate to `http://localhost:3000`
+## 🚀 Deployment
 
-## 📧 Email Configuration
+### Deploy to Render
 
-### Gmail Setup
-1. **Enable 2-Factor Authentication** on your Gmail account
-2. **Generate App Password**:
-   - Go to Google Account settings
-   - Security → 2-Step Verification → App passwords
-   - Select "Mail" and generate password
-   - Use this password in `EMAIL_PASSWORD`
-
-### Email Features
-- **Welcome Email**: Sent on user registration
-- **Publication Email**: Sent when portfolio is published
-- **Beautiful HTML Templates**: Professional design
-- **Social Sharing Buttons**: Easy portfolio promotion
-- **Portfolio Statistics**: Skills, projects, experience counts
-
-## 🌐 Deployment to Render
-
-### Step 1: Prepare for Deployment
-1. **Push to GitHub**:
-   ```bash
-   git add .
-   git commit -m "Ready for deployment"
-   git push origin main
-   ```
-
-### Step 2: Deploy on Render
-1. Go to [render.com](https://render.com)
-2. Create new Web Service
-3. Connect your GitHub repository
-4. Configure:
-   - **Build Command**: `npm install && cd client && npm install && npm run build`
+1. **Push code to GitHub**
+2. **Connect Render to your GitHub repository**
+3. **Configure Render settings**:
+   - **Build Command**: `npm install && cd client && npm install && NODE_OPTIONS=--openssl-legacy-provider npm run build`
    - **Start Command**: `npm start`
-5. Add environment variables
-6. Deploy!
+   - **Node Version**: 16.x (specified in .nvmrc)
 
-### Step 3: Update URLs
-After deployment, update CORS settings with your Render URL.
+4. **Set Environment Variables** in Render dashboard:
+   - `MONGO_URI`
+   - `ACCESS_TOKEN_SECRET`
+   - `REFRESH_TOKEN_SECRET`
+   - `FLASK_SECRET_KEY`
+   - `EMAIL_USER`
+   - `EMAIL_PASSWORD`
+   - `NODE_ENV=production`
 
 ## 📁 Project Structure
 
 ```
-portfolio-generator/
+Portfolio-Generator/
 ├── client/                 # React frontend
 │   ├── public/
 │   ├── src/
-│   │   ├── components/     # Reusable components
-│   │   ├── containers/     # Page components
-│   │   ├── utils/          # Utility functions
-│   │   └── index.js
+│   │   ├── components/     # React components
+│   │   ├── containers/     # Page containers
+│   │   ├── templates/      # Portfolio templates
+│   │   ├── context/        # React context
+│   │   └── utils/          # Utility functions
 │   └── package.json
-├── routes/                 # API routes
-│   ├── auth.js            # Authentication routes
-│   ├── portfolio.js       # Portfolio routes
-│   └── upload.js          # File upload routes
-├── model/                 # Database models
-│   ├── User.js
-│   └── Portfolio.js
+├── config/                 # Configuration files
+├── model/                  # MongoDB models
+├── routes/                 # Express routes
 ├── SERVICES/              # Service modules
-│   ├── emailService.js    # Email functionality
-│   └── fileUploadService.js # File handling
 ├── webToken/              # JWT utilities
-├── config/                # Configuration files
-├── uploads/               # File storage (created automatically)
-├── .env                   # Environment variables
+├── uploads/               # File uploads (gitignored)
 ├── index.js               # Main server file
-└── package.json
+├── package.json           # Backend dependencies
+└── README.md
 ```
 
-## 🎯 API Endpoints
+## 🔧 API Endpoints
 
 ### Authentication
-- `POST /api/user/register` - User registration
-- `POST /api/user/login` - User login
-- `POST /api/user/reset-password` - Password reset
+- `POST /auth/register` - User registration
+- `POST /auth/login` - User login
+- `POST /auth/logout` - User logout
+- `POST /auth/forgot-password` - Password reset request
+- `POST /auth/reset-password` - Password reset confirmation
 
 ### Portfolio
-- `POST /api/portfolio/save` - Save portfolio data
-- `POST /api/portfolio/publish` - Publish portfolio
-- `GET /api/portfolio/my-portfolio` - Get user's portfolio
-- `GET /portfolio/:slug` - Public portfolio view
+- `GET /portfolio/user/:userId` - Get user portfolio
+- `POST /portfolio/save` - Save portfolio data
+- `PUT /portfolio/update/:id` - Update portfolio
+- `DELETE /portfolio/delete/:id` - Delete portfolio
 
 ### File Upload
-- `POST /api/upload/profile-image` - Upload profile picture
-- `POST /api/upload/project-image` - Upload project image
-- `POST /api/upload/certificate-image` - Upload certificate image
-- `POST /api/upload/resume` - Upload resume file
+- `POST /upload/profile-image` - Upload profile image
+- `POST /upload/project-image` - Upload project image
+- `POST /upload/resume` - Upload resume
 
-## 🎨 Portfolio Sections
+## 🎨 Templates
 
-### 1. Personal Information
-- Name, title, email, phone
-- Location, social media links
-- Profile picture upload
-- About/bio section
+Each template includes:
+- **Responsive design**
+- **Customizable sections** (About, Skills, Projects, Contact)
+- **Color theme options**
+- **Typography choices**
+- **Layout variations**
 
-### 2. Skills
-- Skill name and proficiency level
-- Categorization (Technical, Soft Skills, etc.)
-- Visual progress bars
+## 🔐 Security Features
 
-### 3. Projects
-- Project title and description
-- Technologies used
-- GitHub and demo links
-- Project images
-- Featured project highlighting
+- **JWT Authentication** with access and refresh tokens
+- **Password hashing** with bcrypt
+- **Input validation** with Joi
+- **CORS protection**
+- **File upload restrictions**
+- **Environment variable protection**
 
-### 4. Experience
-- Company, position, duration
-- Location and description
-- Key achievements
-- Chronological ordering
+## 📧 Email Features
 
-### 5. Education
-- Institution, degree, field of study
-- Duration, location, GPA
-- Descriptions and achievements
+- **Password reset emails**
+- **Portfolio sharing**
+- **Contact form submissions**
+- **Welcome emails for new users**
 
-### 6. Certifications
-- Certification name and issuer
-- Date and verification URL
-- Certificate images
-- Professional credentials
+## 🐛 Troubleshooting
 
-### 7. Internships
-- Company, position, duration
-- Location and description
-- Key achievements and learnings
+### Common Issues
 
-## 📧 Email Templates
+1. **Node.js Version Error**
+   - Ensure you're using Node.js v16.x
+   - Check `.nvmrc` file for version specification
 
-### Welcome Email
-- Professional greeting
-- Platform introduction
-- Getting started guide
-- Feature highlights
+2. **MongoDB Connection**
+   - Verify MongoDB URI in `.env`
+   - Check network connectivity
 
-### Publication Email
-- Celebration message
-- Portfolio statistics
-- Direct portfolio link
-- Social sharing buttons
-- Professional promotion tips
+3. **Email Not Working**
+   - Use Gmail App Password, not regular password
+   - Enable 2-factor authentication on Gmail
 
-## 🔒 Security Features
-
-- **JWT Authentication**: Secure user sessions
-- **Password Hashing**: Bcrypt encryption
-- **File Validation**: Safe upload handling
-- **CORS Protection**: Cross-origin request security
-- **Input Validation**: Joi schema validation
-- **Error Handling**: Comprehensive error management
-
-## 🎯 Performance Features
-
-- **Responsive Design**: Mobile-first approach
-- **Image Optimization**: Efficient file handling
-- **SEO Optimization**: Meta tags and structured data
-- **Fast Loading**: Optimized build process
-- **Caching**: Static file caching
+4. **Build Errors**
+   - Clear node_modules and reinstall
+   - Check for missing dependencies
 
 ## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Add tests if applicable
+4. Test thoroughly
 5. Submit a pull request
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the ISC License.
 
-## 🆘 Support
+## 👨‍💻 Author
 
-For support and questions:
-- Create an issue on GitHub
-- Check the documentation
-- Review the deployment guide
+**Sameer Shaik**
+- GitHub: [@Smr2005](https://github.com/Smr2005)
+- Email: shaiksameershubhan71@gmail.com
 
-## 🎉 Acknowledgments
+## 🙏 Acknowledgments
 
-- React.js community
-- Node.js ecosystem
-- MongoDB Atlas
-- Render hosting platform
-- Bootstrap framework
+- React.js community for excellent documentation
+- Bootstrap for responsive design components
+- MongoDB for flexible database solutions
+- Render for deployment platform
 
 ---
 
-**Built with ❤️ for developers who want to showcase their work professionally.**
-
-## 🌟 Star this repository if you found it helpful!
+**Happy Portfolio Building! 🎉**
