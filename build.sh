@@ -8,8 +8,10 @@ echo "Installing frontend dependencies..."
 cd client
 npm install
 
-echo "Building frontend with legacy OpenSSL provider..."
-export NODE_OPTIONS=--openssl-legacy-provider
+echo "Updating browserslist database..."
+npx browserslist@latest --update-db
+
+echo "Building frontend..."
 npm run build
 
 echo "Build completed successfully!"

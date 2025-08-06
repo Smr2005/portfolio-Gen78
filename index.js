@@ -46,7 +46,7 @@ mongoose.connect(process.env.MONGO_URI, {
     // Don't exit, continue without database for now
 });
 
-mongoose.set("useCreateIndex", true);
+// useCreateIndex is deprecated in Mongoose 6+
 
 // Handle MongoDB connection events
 mongoose.connection.on('error', (error) => {
