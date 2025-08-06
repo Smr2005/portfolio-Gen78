@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Container, Row, Col, Card, Form, Button, Navbar, Nav, Alert, Tab, Tabs } from "react-bootstrap";
 import Template1 from "../templates/Template1";
+import { authenticatedFetch, isAuthenticated as checkAuth } from "../utils/auth";
 
 function WorkingBuilder() {
   const history = useHistory();
@@ -75,14 +76,7 @@ function WorkingBuilder() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    
-    if (token && user) {
-      setIsAuthenticated(true);
-    } else {
-      setIsAuthenticated(false);
-    }
+    setIsAuthenticated(checkAuth());
   }, []);
 
   const handleInputChange = (field, value) => {
@@ -121,8 +115,8 @@ function WorkingBuilder() {
 
     try {
       setError('');
-      const token = localStorage.getItem('token');
-      if (!token) {
+      
+      if (!checkAuth()) {
         setError('Please login to upload files');
         return;
       }
@@ -155,11 +149,8 @@ function WorkingBuilder() {
         endpoint += 'certificate-image';
       }
 
-      const response = await fetch(`http://localhost:5000${endpoint}`, {
+      const response = await authenticatedFetch(`http://localhost:5000${endpoint}`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
         body: formData
       });
 
@@ -417,8 +408,7 @@ function WorkingBuilder() {
       setSaving(true);
       setError('');
       
-      const token = localStorage.getItem('token');
-      if (!token) {
+      if (!checkAuth()) {
         setError('Please login to save your portfolio');
         return;
       }
@@ -428,10 +418,9 @@ function WorkingBuilder() {
         return;
       }
 
-      const response = await fetch('http://localhost:5000/api/portfolio/save', {
+      const response = await authenticatedFetch('http://localhost:5000/api/portfolio/save', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -462,8 +451,7 @@ function WorkingBuilder() {
       setPublishing(true);
       setError('');
       
-      const token = localStorage.getItem('token');
-      if (!token) {
+      if (!checkAuth()) {
         setError('Please login to publish your portfolio');
         return;
       }
@@ -473,10 +461,9 @@ function WorkingBuilder() {
         await handleSave();
       }
 
-      const response = await fetch('http://localhost:5000/api/portfolio/publish', {
+      const response = await authenticatedFetch('http://localhost:5000/api/portfolio/publish', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });

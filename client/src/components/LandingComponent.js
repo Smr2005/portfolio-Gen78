@@ -113,6 +113,7 @@ const PostData=()=>{
        }
        else if(data.accessToken){
            localStorage.setItem('token',data.accessToken)
+           localStorage.setItem('refreshToken',data.refreshToken)
            localStorage.setItem('jwt',data.accessToken)
            localStorage.setItem('user',JSON.stringify(data.user))
            dispatch({type:"USER",payload:data.user})
@@ -201,6 +202,7 @@ const PostRegisterData=()=>{
        }
        else if(data.accessToken){
            localStorage.setItem('token',data.accessToken)
+           localStorage.setItem('refreshToken',data.refreshToken)
            localStorage.setItem('jwt',data.accessToken)
            localStorage.setItem('user',JSON.stringify(data.user))
            dispatch({type:"USER",payload:data.user})
