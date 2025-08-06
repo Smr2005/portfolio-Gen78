@@ -23,12 +23,25 @@ dotenv.config();
 
 // Enable CORS for frontend communication
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production' || process.env.PORT
-        ? ["https://portfolio-gen-i1bg.onrender.com"] // Your actual Render URL
-        : ["http://localhost:3000", "http://localhost:3001"],
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        const allowedOrigins = process.env.NODE_ENV === 'production' || process.env.PORT
+            ? ["https://portfolio-gen-i1bg.onrender.com"]
+            : ["http://localhost:3000", "http://localhost:3001"];
+        
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            console.log('CORS blocked origin:', origin);
+            callback(null, true); // Allow all origins for now to debug
+        }
+    },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-access-token', 'multipart/form-data']
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-access-token', 'Accept', 'Origin', 'X-Requested-With'],
+    exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar']
 }));
 
 //mongo connect
@@ -77,6 +90,7 @@ mongoose.connection.on('disconnected', () => {
 const {
     verifyAccessToken
 } = require("./webToken/jwt");
+const { upload } = require("./SERVICES/fileUploadService");
 dotenv.config();
 
 // Body parser middleware
@@ -103,7 +117,18 @@ app.get("/api/health", async (req, res, next) => {
     res.json({ 
         status: "Portfolio Generator Backend is running!",
         timestamp: new Date().toISOString(),
-        environment: process.env.NODE_ENV || 'development'
+        environment: process.env.NODE_ENV || 'development',
+        port: process.env.PORT || 5000,
+        cors_origin: req.headers.origin
+    });
+});
+
+// Test upload endpoint without authentication
+app.post("/api/test-upload", upload.single('testFile'), (req, res) => {
+    res.json({
+        message: "Test upload endpoint working",
+        file: req.file ? "File received" : "No file",
+        headers: req.headers
     });
 });
 

@@ -4,42 +4,26 @@ const { verifyAccessToken } = require("../webToken/jwt");
 const path = require('path');
 
 // Upload profile image
-router.post("/profile-image", verifyAccessToken, (req, res) => {
-  console.log("=== PROFILE IMAGE UPLOAD REQUEST ===");
-  console.log("Headers:", req.headers);
-  console.log("User ID:", req.payload?.aud);
-  
-  upload.single('profileImage')(req, res, (err) => {
-    try {
-      if (err) {
-        console.error("Multer error:", err);
-        return res.status(400).json({ error: err.message || "File upload failed" });
-      }
-      
-      if (!req.file) {
-        console.error("No file received in request");
-        return res.status(400).json({ error: "No file uploaded" });
-      }
-
-      console.log("File uploaded successfully:", req.file.filename);
-      
-      const baseUrl = process.env.NODE_ENV === 'production' || process.env.PORT 
-        ? 'https://portfolio-gen-i1bg.onrender.com' 
-        : 'http://localhost:5000';
-      const fileUrl = `${baseUrl}/uploads/${req.file.filename}`;
-      
-      console.log("Returning file URL:", fileUrl);
-      
-      res.json({
-        message: "Profile image uploaded successfully",
-        fileUrl: fileUrl,
-        filename: req.file.filename
-      });
-    } catch (error) {
-      console.error("Profile image upload error:", error);
-      res.status(500).json({ error: "Failed to upload profile image" });
+router.post("/profile-image", verifyAccessToken, upload.single('profileImage'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
     }
-  });
+
+    const baseUrl = process.env.NODE_ENV === 'production' || process.env.PORT 
+      ? 'https://portfolio-gen-i1bg.onrender.com' 
+      : 'http://localhost:5000';
+    const fileUrl = `${baseUrl}/uploads/${req.file.filename}`;
+    
+    res.json({
+      message: "Profile image uploaded successfully",
+      fileUrl: fileUrl,
+      filename: req.file.filename
+    });
+  } catch (error) {
+    console.error("Profile image upload error:", error);
+    res.status(500).json({ error: "Failed to upload profile image" });
+  }
 });
 
 // Upload resume
