@@ -162,7 +162,7 @@ PortfolioSchema.pre('save', function(next) {
 
 // Index for better performance
 PortfolioSchema.index({ userId: 1 });
-PortfolioSchema.index({ slug: 1 });
+// slug index is automatically created by unique: true
 PortfolioSchema.index({ isPublished: 1 });
 
 module.exports = mongoose.model("Portfolio", PortfolioSchema);

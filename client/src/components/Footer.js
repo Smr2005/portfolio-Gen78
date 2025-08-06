@@ -9,18 +9,30 @@ export default function Footer() {
       <small style={{ color: "white" }}>&copy; 2024 Portfolio Generator - All rights reserved</small>
       <br />
       <small>
-        <a style={{ color: "white", cursor: "pointer" }} onClick={() => history.push('/')}>
+        <button 
+          style={{ color: "white", cursor: "pointer", background: "none", border: "none", textDecoration: "underline" }} 
+          onClick={() => history.push('/')}
+        >
           Back to Home |
-        </a>
-        <a style={{ color: "white", cursor: "pointer" }} onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
+        </button>
+        <button 
+          style={{ color: "white", cursor: "pointer", background: "none", border: "none", textDecoration: "underline" }} 
+          onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}
+        >
           Back to top |
-        </a>
-        <a style={{ color: "white", cursor: "pointer" }} onClick={() => alert('Privacy policy coming soon!')}>
+        </button>
+        <button 
+          style={{ color: "white", cursor: "pointer", background: "none", border: "none", textDecoration: "underline" }} 
+          onClick={() => alert('Privacy policy coming soon!')}
+        >
           Privacy |
-        </a>
-        <a style={{ color: "white", cursor: "pointer" }} onClick={() => alert('Terms of service coming soon!')}>
+        </button>
+        <button 
+          style={{ color: "white", cursor: "pointer", background: "none", border: "none", textDecoration: "underline" }} 
+          onClick={() => alert('Terms of service coming soon!')}
+        >
           Terms
-        </a>
+        </button>
       </small>
     </div>
   );
