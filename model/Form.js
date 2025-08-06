@@ -14,8 +14,7 @@ const Formschema = new mongoose.Schema({
   },
   projects: {
     text: [String],
-    photo: { type: String },
-    required: true,
+    photo: { type: String }
   },
 
   contact: {

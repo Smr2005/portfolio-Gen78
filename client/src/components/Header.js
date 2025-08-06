@@ -37,6 +37,9 @@ class Header extends Component {
               <Nav.Link onClick={() => this.props.history.push('/my-work')} className="links">
                 MY WORK
               </Nav.Link>
+              <Nav.Link onClick={() => this.props.history.push('/admin')} className="links" style={{color: '#ffc107'}}>
+                ADMIN
+              </Nav.Link>
               <Nav.Link onClick={this.handleLogout} className="links">
                 LOGOUT
               </Nav.Link>

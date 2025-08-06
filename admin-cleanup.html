@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Generator - Admin Panel</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .login-section {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+        .admin-panel {
+            display: none;
+        }
+        .section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .section h3 {
+            color: #555;
+            margin-top: 0;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+        .danger {
+            background: #dc3545;
+        }
+        .danger:hover {
+            background: #c82333;
+        }
+        .success {
+            background: #28a745;
+        }
+        .success:hover {
+            background: #218838;
+        }
+        .warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        .warning:hover {
+            background: #e0a800;
+        }
+        .login-btn {
+            background: #28a745;
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+        }
+        .logout-btn {
+            background: #6c757d;
+            float: right;
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+        #output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .input-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        .alert {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .alert-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+        .alert-danger {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .status-bar {
+            background: #e9ecef;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛠️ Portfolio Generator - Admin Panel</h1>
+        
+        <!-- Login Section -->
+        <div id="loginSection" class="login-section">
+            <h2 style="text-align: center; color: #333; margin-bottom: 30px;">🔐 Admin Login</h2>
+            
+            <div class="input-group">
+                <label for="loginUsername">Username:</label>
+                <input type="text" id="loginUsername" placeholder="Enter admin username">
+            </div>
+            
+            <div class="input-group">
+                <label for="loginPassword">Password:</label>
+                <input type="password" id="loginPassword" placeholder="Enter admin password">
+            </div>
+            
+            <button class="login-btn" onclick="adminLogin()">🚀 Login to Admin Panel</button>
+            
+            <div id="loginOutput" style="margin-top: 20px;"></div>
+        </div>
+
+        <!-- Admin Panel (Hidden until login) -->
+        <div id="adminPanel" class="admin-panel">
+            <div class="status-bar">
+                <div>
+                    <strong>👤 Logged in as:</strong> <span id="currentUser">whatlead</span>
+                    <strong style="margin-left: 20px;">🕒 Session:</strong> <span id="sessionTime">Active</span>
+                </div>
+                <button class="logout-btn" onclick="adminLogout()">🚪 Logout</button>
+            </div>
+            
+            <div class="alert alert-warning">
+                <strong>⚠️ Warning:</strong> This tool will permanently delete user data. Make sure you have backups if needed.
+            </div>
+
+            <div class="section">
+                <h3>📊 Database Statistics</h3>
+                <p>Check current database status before cleanup</p>
+                <button onclick="getStats()">📈 Get Database Stats</button>
+            </div>
+
+            <div class="section">
+                <h3>💾 Backup Data (Recommended)</h3>
+                <p>Create a backup of all data before deletion</p>
+                <button class="warning" onclick="backupData()">💾 Create Backup</button>
+            </div>
+
+            <div class="section">
+                <h3>🗑️ Delete Specific User</h3>
+                <div class="input-group">
+                    <label for="userEmail">User Email:</label>
+                    <input type="email" id="userEmail" placeholder="user@example.com">
+                </div>
+                <button class="danger" onclick="deleteSpecificUser()">🗑️ Delete This User</button>
+            </div>
+
+            <div class="section">
+                <h3>🧹 Delete ALL Test Users</h3>
+                <div class="alert alert-danger">
+                    <strong>⚠️ DANGER:</strong> This will delete ALL users and their portfolios from the database!
+                </div>
+                <button class="danger" onclick="deleteAllUsers()">🚨 DELETE ALL USERS</button>
+            </div>
+
+            <div id="output"></div>
+        </div>
+    </div>
+
+    <script>
+        // Use the current origin for API calls (works in both dev and production)
+        const API_BASE = window.location.origin;
+        let adminCredentials = null;
+        
+        function log(message, isLogin = false) {
+            const outputId = isLogin ? 'loginOutput' : 'output';
+            const output = document.getElementById(outputId);
+            const timestamp = new Date().toLocaleTimeString();
+            
+            if (isLogin) {
+                output.innerHTML = `<div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 10px; font-family: monospace;">[${timestamp}] ${message}</div>`;
+            } else {
+                output.textContent += `[${timestamp}] ${message}\n`;
+                output.scrollTop = output.scrollHeight;
+            }
+        }
+        
+        async function adminLogin() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!username || !password) {
+                log('❌ Please enter both username and password', true);
+                return;
+            }
+            
+            try {
+                log('🔐 Attempting admin login...', true);
+                
+                const response = await fetch(`${API_BASE}/api/admin/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    log('✅ Login successful! Redirecting to admin panel...', true);
+                    adminCredentials = data.credentials;
+                    
+                    // Hide login section and show admin panel
+                    document.getElementById('loginSection').style.display = 'none';
+                    document.getElementById('adminPanel').style.display = 'block';
+                    
+                    // Update status bar
+                    document.getElementById('currentUser').textContent = username;
+                    document.getElementById('sessionTime').textContent = new Date().toLocaleTimeString();
+                    
+                    // Initialize admin panel
+                    log('🛠️ Admin Panel Ready');
+                    log('📝 Use the buttons above to manage the database');
+                    log('⚠️ Always create a backup before deleting data!');
+                    
+                } else {
+                    log(`❌ Login failed: ${data.error}`, true);
+                }
+                
+            } catch (error) {
+                log(`❌ Login error: ${error.message}`, true);
+            }
+        }
+        
+        function adminLogout() {
+            adminCredentials = null;
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('output').textContent = '';
+            log('👋 Logged out successfully', true);
+        }
+        
+        async function makeRequest(endpoint, method = 'GET') {
+            if (!adminCredentials) {
+                log('❌ Not logged in. Please login first.');
+                return null;
+            }
+            
+            try {
+                log(`Making ${method} request to ${endpoint}...`);
+                log(`Using credentials: ${adminCredentials.username}`);
+                log(`Full URL: ${API_BASE}/api/admin${endpoint}`);
+                
+                const response = await fetch(`${API_BASE}/api/admin${endpoint}`, {
+                    method,
+                    headers: {
+                        'x-admin-username': adminCredentials.username,
+                        'x-admin-password': adminCredentials.password,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                log(`Response status: ${response.status} ${response.statusText}`);
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    log(`✅ Success: ${JSON.stringify(data, null, 2)}`);
+                } else {
+                    log(`❌ Error (${response.status}): ${data.error || 'Unknown error'}`);
+                    if (data.hint) {
+                        log(`💡 Hint: ${data.hint}`);
+                    }
+                }
+                
+                return data;
+            } catch (error) {
+                log(`❌ Network Error: ${error.message}`);
+                log(`❌ Full error: ${error.stack}`);
+                return null;
+            }
+        }
+        
+        async function getStats() {
+            await makeRequest('/stats');
+        }
+        
+        async function backupData() {
+            const data = await makeRequest('/backup-data');
+            if (data && data.backup) {
+                // Create downloadable backup file
+                const blob = new Blob([JSON.stringify(data.backup, null, 2)], {
+                    type: 'application/json'
+                });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `portfolio-backup-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                log('📁 Backup file downloaded!');
+            }
+        }
+        
+        async function deleteSpecificUser() {
+            const email = document.getElementById('userEmail').value;
+            if (!email) {
+                log('❌ Please enter a user email');
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to delete user: ${email}?`)) {
+                log('❌ Deletion cancelled by user');
+                return;
+            }
+            
+            await makeRequest(`/user/${encodeURIComponent(email)}`, 'DELETE');
+        }
+        
+        async function deleteAllUsers() {
+            if (!confirm('⚠️ Are you ABSOLUTELY sure you want to delete ALL users and portfolios?')) {
+                log('❌ Deletion cancelled by user');
+                return;
+            }
+            
+            if (!confirm('🚨 This action cannot be undone! This will delete ALL data!')) {
+                log('❌ Final confirmation cancelled');
+                return;
+            }
+            
+            const finalConfirm = prompt('Type "DELETE ALL" to proceed:');
+            if (finalConfirm !== 'DELETE ALL') {
+                log('❌ Confirmation text did not match. Deletion cancelled.');
+                return;
+            }
+            
+            log('🧹 Starting complete database cleanup...');
+            await makeRequest('/cleanup-test-users', 'DELETE');
+        }
+        
+        // Initialize
+        log('🔐 Please login to access the admin panel', true);
+    </script>
+</body>
+</html>

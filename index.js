@@ -40,7 +40,7 @@ app.use(cors({
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-access-token', 'Accept', 'Origin', 'X-Requested-With'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-access-token', 'x-admin-secret', 'x-admin-username', 'x-admin-password', 'Accept', 'Origin', 'X-Requested-With'],
     exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar']
 }));
 
@@ -107,7 +107,16 @@ app.use("/api/portfolio", portfolioRoute);
 //Route Middleware For File Upload routes
 app.use("/api/upload", uploadRoute);
 
+//Route Middleware For Admin routes
+const adminRoute = require("./routes/admin");
+app.use("/api/admin", adminRoute);
+
 // Note: Files are now stored in MongoDB as base64 data, no longer serving static files from uploads directory
+
+// Admin cleanup interface
+app.get("/admin-cleanup", (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin-cleanup.html'));
+});
 
 // API health check route (moved after API routes)
 app.get("/api/health", async (req, res, next) => {
@@ -445,6 +454,11 @@ function generatePortfolioHTML(portfolio) {
 </html>
     `;
 }
+
+// Serve admin cleanup interface
+app.get('/admin-cleanup', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin-cleanup.html'));
+});
 
 // Handle React routing for all non-API routes in production
 if (process.env.NODE_ENV === 'production' || process.env.PORT) {

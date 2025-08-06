@@ -258,6 +258,9 @@ const PostRegisterData=()=>{
               }} className="links">
                 ABOUT
               </Nav.Link>
+              <Nav.Link onClick={() => history.push('/admin')} className="links" style={{color: '#ffc107'}}>
+                ADMIN
+              </Nav.Link>
               <Nav.Link onClick={() => setShowRegister(true)} className="links">
                 REGISTER
               </Nav.Link>
