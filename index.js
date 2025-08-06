@@ -23,10 +23,12 @@ dotenv.config();
 
 // Enable CORS for frontend communication
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production' 
-        ? ["https://portfolio-generator-xxxx.onrender.com"] // Replace with your actual Render URL
+    origin: process.env.NODE_ENV === 'production' || process.env.PORT
+        ? ["https://portfolio-gen-i1bg.onrender.com"] // Your actual Render URL
         : ["http://localhost:3000", "http://localhost:3001"],
-    credentials: true
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-access-token', 'multipart/form-data']
 }));
 
 //mongo connect
@@ -76,7 +78,13 @@ const {
     verifyAccessToken
 } = require("./webToken/jwt");
 dotenv.config();
-app.use(express.json());
+
+// Body parser middleware
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Handle preflight requests
+app.options('*', cors());
 
 //Route Middleware For Login And Signup routes
 app.use("/api/user", authRoute);

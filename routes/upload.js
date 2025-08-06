@@ -4,23 +4,33 @@ const { verifyAccessToken } = require("../webToken/jwt");
 const path = require('path');
 
 // Upload profile image
-router.post("/profile-image", verifyAccessToken, upload.single('profileImage'), (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ error: "No file uploaded" });
-    }
+router.post("/profile-image", verifyAccessToken, (req, res) => {
+  upload.single('profileImage')(req, res, (err) => {
+    try {
+      if (err) {
+        console.error("Multer error:", err);
+        return res.status(400).json({ error: err.message || "File upload failed" });
+      }
+      
+      if (!req.file) {
+        return res.status(400).json({ error: "No file uploaded" });
+      }
 
-    const fileUrl = `/uploads/${req.file.filename}`;
-    
-    res.json({
-      message: "Profile image uploaded successfully",
-      fileUrl: fileUrl,
-      filename: req.file.filename
-    });
-  } catch (error) {
-    console.error("Profile image upload error:", error);
-    res.status(500).json({ error: "Failed to upload profile image" });
-  }
+      const baseUrl = process.env.NODE_ENV === 'production' || process.env.PORT 
+        ? 'https://portfolio-gen-i1bg.onrender.com' 
+        : 'http://localhost:5000';
+      const fileUrl = `${baseUrl}/uploads/${req.file.filename}`;
+      
+      res.json({
+        message: "Profile image uploaded successfully",
+        fileUrl: fileUrl,
+        filename: req.file.filename
+      });
+    } catch (error) {
+      console.error("Profile image upload error:", error);
+      res.status(500).json({ error: "Failed to upload profile image" });
+    }
+  });
 });
 
 // Upload resume
@@ -30,7 +40,10 @@ router.post("/resume", verifyAccessToken, upload.single('resume'), (req, res) =>
       return res.status(400).json({ error: "No file uploaded" });
     }
 
-    const fileUrl = `/uploads/${req.file.filename}`;
+    const baseUrl = process.env.NODE_ENV === 'production' || process.env.PORT 
+      ? 'https://portfolio-gen-i1bg.onrender.com' 
+      : 'http://localhost:5000';
+    const fileUrl = `${baseUrl}/uploads/${req.file.filename}`;
     
     res.json({
       message: "Resume uploaded successfully",
@@ -50,7 +63,10 @@ router.post("/project-image", verifyAccessToken, upload.single('projectImage'), 
       return res.status(400).json({ error: "No file uploaded" });
     }
 
-    const fileUrl = `/uploads/${req.file.filename}`;
+    const baseUrl = process.env.NODE_ENV === 'production' || process.env.PORT 
+      ? 'https://portfolio-gen-i1bg.onrender.com' 
+      : 'http://localhost:5000';
+    const fileUrl = `${baseUrl}/uploads/${req.file.filename}`;
     
     res.json({
       message: "Project image uploaded successfully",
@@ -70,7 +86,10 @@ router.post("/certificate-image", verifyAccessToken, upload.single('certImage'),
       return res.status(400).json({ error: "No file uploaded" });
     }
 
-    const fileUrl = `/uploads/${req.file.filename}`;
+    const baseUrl = process.env.NODE_ENV === 'production' || process.env.PORT 
+      ? 'https://portfolio-gen-i1bg.onrender.com' 
+      : 'http://localhost:5000';
+    const fileUrl = `${baseUrl}/uploads/${req.file.filename}`;
     
     res.json({
       message: "Certificate image uploaded successfully",

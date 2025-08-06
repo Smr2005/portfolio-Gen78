@@ -61,7 +61,7 @@ const sendWelcomeEmail = async (userEmail, userName) => {
             </div>
             
             <div style="text-align: center;">
-              <a href="http://localhost:3000/templates" class="button">Get Started</a>
+              <a href="${process.env.NODE_ENV === 'production' || process.env.PORT ? 'https://portfolio-gen-i1bg.onrender.com' : 'http://localhost:3000'}/templates" class="button">Get Started</a>
             </div>
             
             <p>If you have any questions, feel free to reach out to our support team.</p>
@@ -92,7 +92,10 @@ const sendWelcomeEmail = async (userEmail, userName) => {
 const sendPasswordResetEmail = async (userEmail, userName, resetToken) => {
   try {
     const transporter = createTransporter();
-    const resetUrl = `http://localhost:3000/reset/${resetToken}`;
+    const baseUrl = process.env.NODE_ENV === 'production' || process.env.PORT 
+      ? 'https://portfolio-gen-i1bg.onrender.com' 
+      : 'http://localhost:3000';
+    const resetUrl = `${baseUrl}/reset/${resetToken}`;
     
     const mailOptions = {
       from: process.env.EMAIL_USER,

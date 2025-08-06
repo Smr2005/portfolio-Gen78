@@ -26,14 +26,26 @@ module.exports = {
     //accessing private routes
 
     verifyAccessToken: (req, res, next) => {
-        if (!req.headers["authorization"]) return next(creatError.Unauthorized());
-        const authHeader = req.headers["authorization"];
-        const bearerToken = authHeader.split(" ");
-        const token = bearerToken[1];
+        // Check for token in Authorization header or x-access-token header
+        let token = null;
+        
+        if (req.headers["authorization"]) {
+            const authHeader = req.headers["authorization"];
+            const bearerToken = authHeader.split(" ");
+            token = bearerToken[1];
+        } else if (req.headers["x-access-token"]) {
+            token = req.headers["x-access-token"];
+        }
+        
+        if (!token) {
+            return next(creatError.Unauthorized("No token provided"));
+        }
+        
         JWT.verify(token, process.env.ACCESS_TOKEN_SECRET || "39832173821", (err, payload) => {
             if (err) {
+                console.error("JWT verification error:", err);
                 const message =
-                    err.name === "JsonWebTokenError" ? "Unauthorized" : err.message;
+                    err.name === "JsonWebTokenError" ? "Invalid token" : err.message;
                 return next(creatError.Unauthorized(message));
             }
             req.payload = payload;
