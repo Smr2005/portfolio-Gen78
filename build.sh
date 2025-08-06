@@ -6,7 +6,7 @@ npm install
 
 echo "Installing frontend dependencies..."
 cd client
-npm install
+npm install --legacy-peer-deps
 
 echo "Updating browserslist database..."
 npx browserslist@latest --update-db

@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "build": "npm install && cd client && npm install && npx browserslist@latest --update-db && npm run build",
+    "build": "npm install && cd client && npm install --legacy-peer-deps && npx browserslist@latest --update-db && npm run build",
     "heroku-postbuild": "npm run build",
     "postinstall": "echo 'Dependencies installed successfully'",
     "audit-fix": "npm audit fix && cd client && npm audit fix"
@@ -16,8 +16,8 @@
   "author": "",
   "license": "ISC",
   "engines": {
-    "node": "18.x",
-    "npm": "9.x"
+    "node": "20.x",
+    "npm": "10.x"
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
