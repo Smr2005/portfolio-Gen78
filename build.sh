@@ -14,6 +14,6 @@ echo "Updating browserslist database..."
 npx browserslist@latest --update-db
 
 echo "Building frontend..."
-npm run build
+npm run build:legacy
 
 echo "Build completed successfully!"
