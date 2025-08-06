@@ -13,7 +13,7 @@ npm install --legacy-peer-deps
 echo "Updating browserslist database..."
 npx browserslist@latest --update-db
 
-echo "Building frontend with legacy OpenSSL..."
-npm run build:legacy
+echo "Building frontend..."
+npm run build
 
 echo "Build completed successfully!"
