@@ -78,11 +78,6 @@ const {
 dotenv.config();
 app.use(express.json());
 
-//just a demo route - authentication temporarily disabled
-app.get("/", async (req, res, next) => {
-    res.send("Portfolio Generator Backend is running!");
-});
-
 //Route Middleware For Login And Signup routes
 app.use("/api/user", authRoute);
 
@@ -94,6 +89,21 @@ app.use("/api/upload", uploadRoute);
 
 // Serve uploaded files statically
 app.use('/uploads', express.static('uploads'));
+
+// API health check route (moved after API routes)
+app.get("/api/health", async (req, res, next) => {
+    res.json({ 
+        status: "Portfolio Generator Backend is running!",
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'development'
+    });
+});
+
+// Serve static files from React build in production
+if (process.env.NODE_ENV === 'production' || process.env.PORT) {
+    // Serve static files from React build
+    app.use(express.static(path.join(__dirname, 'client/build')));
+}
 
 // Public route to serve published portfolios as HTML
 app.get("/portfolio/:slug", async (req, res) => {
@@ -342,11 +352,8 @@ function generatePortfolioHTML(portfolio) {
     `;
 }
 
-// Serve static files from React build in production
+// Handle React routing for all non-API routes in production
 if (process.env.NODE_ENV === 'production' || process.env.PORT) {
-    // Serve static files from React build
-    app.use(express.static(path.join(__dirname, 'client/build')));
-    
     // Handle React routing, return all requests to React app
     app.get('*', (req, res) => {
         res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
