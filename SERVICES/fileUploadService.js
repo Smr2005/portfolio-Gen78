@@ -4,8 +4,22 @@ const fs = require('fs');
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, '../uploads');
+console.log('Uploads directory path:', uploadsDir);
+
 if (!fs.existsSync(uploadsDir)) {
+  console.log('Creating uploads directory...');
   fs.mkdirSync(uploadsDir, { recursive: true });
+  console.log('Uploads directory created successfully');
+} else {
+  console.log('Uploads directory already exists');
+}
+
+// Check directory permissions
+try {
+  fs.accessSync(uploadsDir, fs.constants.W_OK);
+  console.log('Uploads directory is writable');
+} catch (err) {
+  console.error('Uploads directory is not writable:', err);
 }
 
 // Configure multer for file uploads

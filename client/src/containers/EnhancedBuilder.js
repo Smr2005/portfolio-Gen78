@@ -311,9 +311,16 @@ function EnhancedBuilder() {
       let endpoint = '';
       
       // Get API base URL
-      const API_BASE_URL = process.env.NODE_ENV === 'production' 
-        ? (process.env.REACT_APP_API_URL || window.location.origin)
-        : 'http://localhost:5000';
+      const getApiUrl = () => {
+        if (process.env.REACT_APP_API_URL) {
+          return process.env.REACT_APP_API_URL;
+        }
+        if (process.env.NODE_ENV === 'production') {
+          return window.location.origin;
+        }
+        return 'http://localhost:5000';
+      };
+      const API_BASE_URL = getApiUrl();
       
       if (field === 'profileImage') {
         formData.append('profileImage', file);

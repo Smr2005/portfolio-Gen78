@@ -1,8 +1,16 @@
 // API Configuration for different environments
 const getApiUrl = () => {
-  if (process.env.NODE_ENV === 'production') {
-    return process.env.REACT_APP_API_URL || window.location.origin;
+  // Check if we have a specific API URL set
+  if (process.env.REACT_APP_API_URL) {
+    return process.env.REACT_APP_API_URL;
   }
+  
+  // In production, use the same origin (works for full-stack deployments)
+  if (process.env.NODE_ENV === 'production') {
+    return window.location.origin;
+  }
+  
+  // Development default
   return 'http://localhost:5000';
 };
 
