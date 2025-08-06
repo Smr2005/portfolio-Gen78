@@ -5,6 +5,13 @@ const User = require("../model/User");
 const { verifyAccessToken } = require("../webToken/jwt");
 const nodemailer = require("nodemailer");
 
+// Helper function to generate correct base URL
+function getBaseUrl(req) {
+  return process.env.NODE_ENV === 'production' || process.env.PORT 
+    ? 'https://portfolio-gen-i1bg.onrender.com' 
+    : `${req.protocol}://${req.get('host')}`;
+}
+
 // Email configuration
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -382,6 +389,8 @@ router.post("/save", verifyAccessToken, async (req, res) => {
       console.log("New portfolio created for user:", req.payload.aud);
     }
     
+    const baseUrl = getBaseUrl(req);
+    
     res.json({
       message: "Portfolio saved successfully",
       portfolio: {
@@ -389,7 +398,7 @@ router.post("/save", verifyAccessToken, async (req, res) => {
         slug: portfolio.slug,
         templateId: portfolio.templateId,
         isPublished: portfolio.isPublished,
-        publishedUrl: portfolio.isPublished ? `${req.protocol}://${req.get('host')}/portfolio/${portfolio.slug}` : null
+        publishedUrl: portfolio.isPublished ? `${baseUrl}/portfolio/${portfolio.slug}` : null
       }
     });
     
@@ -421,7 +430,8 @@ router.post("/publish", verifyAccessToken, async (req, res) => {
     portfolio.publishedAt = new Date();
     await portfolio.save();
     
-    const publishedUrl = `${req.protocol}://${req.get('host')}/portfolio/${portfolio.slug}`;
+    const baseUrl = getBaseUrl(req);
+    const publishedUrl = `${baseUrl}/portfolio/${portfolio.slug}`;
     
     // Send publication success email
     try {
@@ -482,6 +492,8 @@ router.get("/my-portfolio", verifyAccessToken, async (req, res) => {
       return res.status(404).json({ error: "Portfolio not found" });
     }
     
+    const baseUrl = getBaseUrl(req);
+    
     res.json({
       portfolio: {
         id: portfolio._id,
@@ -489,7 +501,7 @@ router.get("/my-portfolio", verifyAccessToken, async (req, res) => {
         templateId: portfolio.templateId,
         data: portfolio.data,
         isPublished: portfolio.isPublished,
-        publishedUrl: portfolio.isPublished ? `${req.protocol}://${req.get('host')}/portfolio/${portfolio.slug}` : null,
+        publishedUrl: portfolio.isPublished ? `${baseUrl}/portfolio/${portfolio.slug}` : null,
         publishedAt: portfolio.publishedAt,
         views: portfolio.views,
         createdAt: portfolio.createdAt,
