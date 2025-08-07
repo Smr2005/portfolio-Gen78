@@ -13,6 +13,8 @@ import WorkingBuilder from '../containers/WorkingBuilder';
 import ResetPasswordPage from './ResetPasswordPage';
 import PortfolioDashboard from './PortfolioDashboard';
 import AdminPanel from './AdminPanel';
+import UserProfileClean from './UserProfileClean';
+import AboutDevelopers from './AboutDevelopers';
 import {reducer,initialState} from '../reducer/useReducer'
 import { UserContext } from '../context/UserContext'
 
@@ -42,6 +44,8 @@ function Main (){
                 <Route exact path="/full-builder" component={WorkingBuilder} />
                 <Route exact path="/dashboard" component={PortfolioDashboard} />
                 <Route exact path="/admin" component={AdminPanel} />
+                <Route exact path="/profile" component={UserProfileClean} />
+                <Route exact path="/about-developers" component={AboutDevelopers} />
                 <Route exact path="/reset/:token" component={ResetPasswordPage} />
                 {showFooter && <Footer />}
                </UserContext.Provider>

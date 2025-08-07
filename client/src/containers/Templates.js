@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { Navbar, Nav, Button } from "react-bootstrap";
+import { UserContext } from "../context/UserContext";
 import { images } from "../components/images";
 import "aos/dist/aos.css";
 import Aos from "aos";
@@ -8,6 +9,7 @@ import "../stylesheets/templates.css";
 
 function Templates() {
   const history = useHistory();
+  const { state } = useContext(UserContext);
   
   useEffect(() => {
     Aos.init({ duration: 1000 });
@@ -41,6 +43,11 @@ function Templates() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ml-auto">
+            {state && (
+              <Nav.Link onClick={() => history.push('/profile')}>
+                My Profile
+              </Nav.Link>
+            )}
             <Nav.Link onClick={() => history.push('/')}>
               Back to Home
             </Nav.Link>

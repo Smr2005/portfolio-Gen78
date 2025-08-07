@@ -122,7 +122,7 @@ const PostData=()=>{
            // Clear form
            setEmail("")
            setPassword("")
-           history.push('/templates')
+           history.push('/profile')
        }
        else {
            M.toast({html:"Login failed. Please check your credentials.",classes:"#f44336 red"})
@@ -212,7 +212,7 @@ const PostRegisterData=()=>{
            setName("")
            setEmail("")
            setPassword("")
-           history.push('/templates')
+           history.push('/profile')
        }
        else {
            M.toast({html:"Registration failed. Please try again.",classes:"#f44336 red"})
@@ -257,6 +257,9 @@ const PostRegisterData=()=>{
                 if (aboutSection) aboutSection.scrollIntoView({ behavior: 'smooth' });
               }} className="links">
                 ABOUT
+              </Nav.Link>
+              <Nav.Link onClick={() => history.push('/about-developers')} className="links">
+                DEVELOPERS
               </Nav.Link>
               <Nav.Link onClick={() => history.push('/admin')} className="links" style={{color: '#ffc107'}}>
                 ADMIN

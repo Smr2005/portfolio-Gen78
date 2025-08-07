@@ -12,6 +12,7 @@ const uploadRoute = require("./routes/upload");
 //MODELS
 require("./model/User");
 require("./model/Portfolio");
+require("./model/Feedback");
 
 //CHORE
 const app = express();
@@ -110,6 +111,10 @@ app.use("/api/upload", uploadRoute);
 //Route Middleware For Admin routes
 const adminRoute = require("./routes/admin");
 app.use("/api/admin", adminRoute);
+
+//Route Middleware For User Profile routes
+const userProfileRoute = require("./routes/userProfile");
+app.use("/api/user-profile", userProfileRoute);
 
 // Note: Files are now stored in MongoDB as base64 data, no longer serving static files from uploads directory
 
