@@ -286,7 +286,7 @@ const PortfolioDashboard = () => {
               <div className="d-grid gap-2 d-md-flex">
                 <Button 
                   variant="outline-primary" 
-                  onClick={() => history.push('/builder')}
+                  onClick={() => history.push(`/full-builder?template=${portfolio.templateId}&edit=true`)}
                 >
                   Edit Portfolio
                 </Button>

@@ -3,7 +3,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import { Container, Row, Col, Card, Form, Button, Navbar, Nav, Alert, Tab, Tabs } from "react-bootstrap";
 import Template1 from "../templates/Template1";
 import Template2 from "../templates/Template2";
-import Template3 from "../templates/Template3";
+import Template3 from "../templates/Template3Simple";
 import Template4 from "../templates/Template4";
 import Template5 from "../templates/Template5";
 import Template6 from "../templates/Template6";
@@ -14,6 +14,7 @@ function WorkingBuilder() {
   const location = useLocation();
   const urlParams = new URLSearchParams(location.search);
   const templateId = urlParams.get('template') || 'template1';
+  const isEditMode = urlParams.get('edit') === 'true';
 
   const [userData, setUserData] = useState({
     name: "",
@@ -118,6 +119,38 @@ function WorkingBuilder() {
     
     checkAuthentication();
   }, []);
+
+  // Load existing portfolio data if in edit mode
+  useEffect(() => {
+    if (isEditMode && isAuthenticated) {
+      loadExistingPortfolio();
+    }
+  }, [isEditMode, isAuthenticated]);
+
+  const loadExistingPortfolio = async () => {
+    try {
+      const token = localStorage.getItem('token') || localStorage.getItem('jwt');
+      if (!token) return;
+
+      const response = await fetch('/api/portfolio/my-portfolio', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.portfolio && data.portfolio.data) {
+          setUserData(data.portfolio.data);
+          console.log('Loaded existing portfolio data:', data.portfolio.data);
+        }
+      } else {
+        console.log('No existing portfolio found or error loading portfolio');
+      }
+    } catch (err) {
+      console.error('Error loading existing portfolio:', err);
+    }
+  };
   
   // Show login message if not authenticated
   if (!isAuthenticated) {
@@ -604,10 +637,15 @@ function WorkingBuilder() {
     <div>
       <Navbar bg="dark" variant="dark" expand="lg" className="mb-4" style={{ zIndex: 1000 }}>
         <Navbar.Brand>
-          Portfolio Builder 
+          {isEditMode ? 'Edit Portfolio' : 'Portfolio Builder'}
           <span className="badge badge-secondary ml-2" style={{fontSize: '0.7em'}}>
             {templateId.charAt(0).toUpperCase() + templateId.slice(1)}
           </span>
+          {isEditMode && (
+            <span className="badge badge-warning ml-2" style={{fontSize: '0.7em'}}>
+              Edit Mode
+            </span>
+          )}
         </Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse>
@@ -627,7 +665,7 @@ function WorkingBuilder() {
               disabled={saving}
               style={{ zIndex: 1001 }}
             >
-              {saving ? 'Saving...' : 'Save'}
+              {saving ? 'Saving...' : (isEditMode ? 'Update' : 'Save')}
             </Button>
             <Button 
               variant="primary" 
@@ -636,7 +674,7 @@ function WorkingBuilder() {
               disabled={publishing || !userData.name || !userData.title || !userData.email}
               style={{ zIndex: 1001 }}
             >
-              {publishing ? 'Publishing...' : '🚀 Publish'}
+              {publishing ? 'Publishing...' : (isEditMode ? '🔄 Update & Publish' : '🚀 Publish')}
             </Button>
           </Nav>
         </Navbar.Collapse>
