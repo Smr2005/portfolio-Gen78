@@ -21,11 +21,33 @@ const history = useHistory()
   const [password,setPassword]= useState("")
   const [email,setEmail]= useState("")
   const [name,setName]= useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [loginError, setLoginError] = useState("")
+  const [registerError, setRegisterError] = useState("")
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-  const handleCloseRegister = () => setShowRegister(false);
-  const handleShowRegister = () => setShowRegister(true);
+  const handleClose = () => {
+    setShow(false);
+    setLoginError("");
+    setEmail("");
+    setPassword("");
+  };
+  const handleShow = () => {
+    setShow(true);
+    setLoginError("");
+  };
+  const handleCloseRegister = () => {
+    setShowRegister(false);
+    setRegisterError("");
+    setName("");
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+  };
+  const handleShowRegister = () => {
+    setShowRegister(true);
+    setRegisterError("");
+  };
 
   const handleSelect = (selectedIndex, e) => {
     setIndex(selectedIndex);
@@ -47,12 +69,17 @@ const history = useHistory()
 
 
 const PostData=()=>{
+    setLoginError("")
+    setIsLoading(true)
+    
     // Validation
     if(!/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email)){
-       return M.toast({html:"Please enter a valid email address",classes:"#f44336 red"}) 
+       setIsLoading(false)
+       return setLoginError("Please enter a valid email address")
     }
     if(!password || password.length < 5){
-        return M.toast({html:"Password must be at least 5 characters long",classes:"#f44336 red"}) 
+        setIsLoading(false)
+        return setLoginError("Password must be at least 5 characters long")
     }
 
     console.log("Sending login data:", {email, password: "***"});
@@ -74,25 +101,29 @@ const PostData=()=>{
         // Handle different response types
         if (res.status === 404) {
             // User not found
-            M.toast({html:"User not found. Please check your email or register first.",classes:"#f44336 red"})
+            setLoginError("User not found. Please check your email or register first.")
+            setIsLoading(false)
             return Promise.reject(new Error("User not found"));
         }
         
         if (res.status === 401) {
             // Invalid credentials
-            M.toast({html:"Invalid email or password. Please try again.",classes:"#f44336 red"})
+            setLoginError("Invalid email or password. Please try again.")
+            setIsLoading(false)
             return Promise.reject(new Error("Invalid credentials"));
         }
         
         if (res.status === 503) {
             // Database connection issue
-            M.toast({html:"Service temporarily unavailable. Please try again later.",classes:"#f44336 red"})
+            setLoginError("Service temporarily unavailable. Please try again later.")
+            setIsLoading(false)
             return Promise.reject(new Error("Service unavailable"));
         }
         
         if (!res.ok) {
             // Other HTTP errors
-            M.toast({html:`Login failed (${res.status}). Please try again.`,classes:"#f44336 red"})
+            setLoginError(`Login failed (${res.status}). Please try again.`)
+            setIsLoading(false)
             return Promise.reject(new Error(`HTTP ${res.status}`));
         }
         
@@ -108,8 +139,9 @@ const PostData=()=>{
     })
     .then(data=>{
         console.log("Login response:", data)
+        setIsLoading(false)
        if(data.error){
-            M.toast({html:data.error,classes:"#f44336 red"})
+            setLoginError(data.error)
        }
        else if(data.accessToken){
            localStorage.setItem('token',data.accessToken)
@@ -117,36 +149,47 @@ const PostData=()=>{
            localStorage.setItem('jwt',data.accessToken)
            localStorage.setItem('user',JSON.stringify(data.user))
            dispatch({type:"USER",payload:data.user})
-           M.toast({html:`Welcome back, ${data.user.name}!`,classes:"#4caf50 green"})
            handleClose()
            // Clear form
            setEmail("")
            setPassword("")
-           history.push('/profile')
+           setLoginError("")
+           history.push('/home')
        }
        else {
-           M.toast({html:"Login failed. Please check your credentials.",classes:"#f44336 red"})
+           setLoginError("Login failed. Please check your credentials.")
        }
     }).catch(err=>{
         console.error("Login error:", err)
+        setIsLoading(false)
         // Only show generic network error for actual network issues
         if (err.message === "Failed to fetch" || err.message.includes("NetworkError")) {
-            M.toast({html:"Network error. Please check your connection and try again.",classes:"#f44336 red"})
+            setLoginError("Network error. Please check your connection and try again.")
         }
         // For other errors, the specific message was already shown above
     })
 }
 
 const PostRegisterData=()=>{
+    setRegisterError("")
+    setIsLoading(true)
+    
     // Validation
     if(!name || name.length < 5){
-        return M.toast({html:"Name must be at least 5 characters long",classes:"#f44336 red"}) 
+        setIsLoading(false)
+        return setRegisterError("Name must be at least 5 characters long")
     }
     if(!/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email)){
-       return M.toast({html:"Please enter a valid email address",classes:"#f44336 red"}) 
+       setIsLoading(false)
+       return setRegisterError("Please enter a valid email address")
     }
     if(!password || password.length < 5){
-        return M.toast({html:"Password must be at least 5 characters long",classes:"#f44336 red"}) 
+        setIsLoading(false)
+        return setRegisterError("Password must be at least 5 characters long")
+    }
+    if(password !== confirmPassword){
+        setIsLoading(false)
+        return setRegisterError("Passwords do not match")
     }
 
     console.log("Sending registration data:", {name, email, password: "***"});
@@ -197,8 +240,9 @@ const PostRegisterData=()=>{
     })
     .then(data=>{
         console.log("Registration response:", data)
+        setIsLoading(false)
        if(data.error){
-            M.toast({html:data.error,classes:"#f44336 red"})
+            setRegisterError(data.error)
        }
        else if(data.accessToken){
            localStorage.setItem('token',data.accessToken)
@@ -206,22 +250,24 @@ const PostRegisterData=()=>{
            localStorage.setItem('jwt',data.accessToken)
            localStorage.setItem('user',JSON.stringify(data.user))
            dispatch({type:"USER",payload:data.user})
-           M.toast({html:`Welcome ${data.user.name}! Registration successful! Check your email for welcome message.`,classes:"#4caf50 green"})
            handleCloseRegister()
            // Clear form
            setName("")
            setEmail("")
            setPassword("")
-           history.push('/profile')
+           setConfirmPassword("")
+           setRegisterError("")
+           history.push('/home')
        }
        else {
-           M.toast({html:"Registration failed. Please try again.",classes:"#f44336 red"})
+           setRegisterError("Registration failed. Please try again.")
        }
     }).catch(err=>{
         console.error("Registration error:", err)
+        setIsLoading(false)
         // Only show generic network error for actual network issues
         if (err.message === "Failed to fetch" || err.message.includes("NetworkError")) {
-            M.toast({html:"Network error. Please check your connection and try again.",classes:"#f44336 red"})
+            setRegisterError("Network error. Please check your connection and try again.")
         }
         // For other errors, the specific message was already shown above
     })
@@ -284,37 +330,60 @@ const PostRegisterData=()=>{
             <Modal.Title>Login</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Form>
-              <Form.Group controlId="formBasicEmail">
+            {loginError && (
+              <div className="alert alert-danger" role="alert">
+                {loginError}
+              </div>
+            )}
+            <Form onSubmit={(e) => {e.preventDefault(); PostData();}}>
+              <Form.Group controlId="formBasicEmail" className="mb-3">
                 <Form.Label>Email address</Form.Label>
-                <Form.Control type="email" placeholder="Enter email"  value={email}
-                 onChange={(e)=>{
-             setEmail(e.target.value)
-         }} />
-                <Form.Text className="text-muted">
-                  We'll never share your email with anyone else.
-                </Form.Text>
+                <Form.Control 
+                  type="email" 
+                  placeholder="Enter email"  
+                  value={email}
+                  onChange={(e)=>{setEmail(e.target.value); setLoginError("")}}
+                  disabled={isLoading}
+                  required
+                />
               </Form.Group>
 
-              <Form.Group controlId="formBasicPassword">
+              <Form.Group controlId="formBasicPassword" className="mb-3">
                 <Form.Label>Password</Form.Label>
-                <Form.Control type="password" placeholder="Password" value={password}
-                    onChange={(e)=>{
-             setPassword(e.target.value)
-         }}
+                <Form.Control 
+                  type="password" 
+                  placeholder="Password" 
+                  value={password}
+                  onChange={(e)=>{setPassword(e.target.value); setLoginError("")}}
+                  disabled={isLoading}
+                  required
                 />
               </Form.Group>
             </Form>
-            <div className="text-center">
-              <a href="#" onClick={(e) => {e.preventDefault(); handleClose(); setShowRegister(true);}}>Don't have an account? Sign Up</a><br />
-              <a href="#" onClick={(e) => {e.preventDefault(); handleClose(); setShowPasswordReset(true);}}>Forgot Password?</a>
+            <div className="text-center mt-3">
+              <a href="#" onClick={(e) => {e.preventDefault(); handleClose(); setShowRegister(true); setLoginError("");}}>Don't have an account? Sign Up</a><br />
+              <a href="#" onClick={(e) => {e.preventDefault(); handleClose(); setShowPasswordReset(true); setLoginError("");}}>Forgot Password?</a>
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
+            <Button variant="secondary" onClick={handleClose} disabled={isLoading}>
               Close
             </Button>
-            <Button variant="primary" type="submit"  onClick={()=>PostData()}>Login</Button> 
+            <Button 
+              variant="primary" 
+              type="submit"  
+              onClick={()=>PostData()}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Logging in...
+                </>
+              ) : (
+                'Login'
+              )}
+            </Button> 
           </Modal.Footer>
         </Modal> 
 
@@ -328,43 +397,82 @@ const PostRegisterData=()=>{
             <Modal.Title>Register</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Form>
-              <Form.Group controlId="formBasicName">
+            {registerError && (
+              <div className="alert alert-danger" role="alert">
+                {registerError}
+              </div>
+            )}
+            <Form onSubmit={(e) => {e.preventDefault(); PostRegisterData();}}>
+              <Form.Group controlId="formBasicName" className="mb-3">
                 <Form.Label>Full Name</Form.Label>
-                <Form.Control type="text" placeholder="Enter your name"  value={name}
-                 onChange={(e)=>{
-             setName(e.target.value)
-         }} />
+                <Form.Control 
+                  type="text" 
+                  placeholder="Enter your name"  
+                  value={name}
+                  onChange={(e)=>{setName(e.target.value); setRegisterError("")}}
+                  disabled={isLoading}
+                  required
+                />
               </Form.Group>
-              <Form.Group controlId="formBasicEmail">
+              <Form.Group controlId="formBasicEmail" className="mb-3">
                 <Form.Label>Email address</Form.Label>
-                <Form.Control type="email" placeholder="Enter email"  value={email}
-                 onChange={(e)=>{
-             setEmail(e.target.value)
-         }} />
-                <Form.Text className="text-muted">
-                  We'll never share your email with anyone else.
-                </Form.Text>
+                <Form.Control 
+                  type="email" 
+                  placeholder="Enter email"  
+                  value={email}
+                  onChange={(e)=>{setEmail(e.target.value); setRegisterError("")}}
+                  disabled={isLoading}
+                  required
+                />
               </Form.Group>
 
-              <Form.Group controlId="formBasicPassword">
+              <Form.Group controlId="formBasicPassword" className="mb-3">
                 <Form.Label>Password</Form.Label>
-                <Form.Control type="password" placeholder="Password" value={password}
-                    onChange={(e)=>{
-             setPassword(e.target.value)
-         }}
+                <Form.Control 
+                  type="password" 
+                  placeholder="Password (min 5 characters)" 
+                  value={password}
+                  onChange={(e)=>{setPassword(e.target.value); setRegisterError("")}}
+                  disabled={isLoading}
+                  required
+                />
+              </Form.Group>
+
+              <Form.Group controlId="formBasicConfirmPassword" className="mb-3">
+                <Form.Label>Confirm Password</Form.Label>
+                <Form.Control 
+                  type="password" 
+                  placeholder="Confirm Password" 
+                  value={confirmPassword}
+                  onChange={(e)=>{setConfirmPassword(e.target.value); setRegisterError("")}}
+                  disabled={isLoading}
+                  required
                 />
               </Form.Group>
             </Form>
-            <div className="text-center">
-              <a href="#" onClick={() => {handleCloseRegister(); handleShow();}}>Already have an account? Sign In</a>
+            <div className="text-center mt-3">
+              <a href="#" onClick={() => {handleCloseRegister(); handleShow(); setRegisterError("");}}>Already have an account? Sign In</a>
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleCloseRegister}>
+            <Button variant="secondary" onClick={handleCloseRegister} disabled={isLoading}>
               Close
             </Button>
-            <Button variant="primary" type="submit"  onClick={()=>PostRegisterData()}>Register</Button> 
+            <Button 
+              variant="primary" 
+              type="submit"  
+              onClick={()=>PostRegisterData()}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Creating Account...
+                </>
+              ) : (
+                'Register'
+              )}
+            </Button> 
           </Modal.Footer>
         </Modal>
 

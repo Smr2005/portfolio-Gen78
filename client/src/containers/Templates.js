@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Navbar, Nav, Button } from "react-bootstrap";
 import { UserContext } from "../context/UserContext";
@@ -10,13 +10,42 @@ import "../stylesheets/templates.css";
 function Templates() {
   const history = useHistory();
   const { state } = useContext(UserContext);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
   
   useEffect(() => {
     Aos.init({ duration: 1000 });
-  }, []);
+    
+    // Check authentication from localStorage and context
+    const checkAuth = () => {
+      const token = localStorage.getItem('token') || localStorage.getItem('jwt');
+      const user = localStorage.getItem('user');
+      
+      if (token && user) {
+        setIsAuthenticated(true);
+      } else if (state && state.user) {
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+      }
+      setLoading(false);
+    };
+    
+    checkAuth();
+  }, [state]);
+  
+  if (loading) {
+    return (
+      <div className="container mt-5">
+        <div className="text-center">
+          <h3>Loading...</h3>
+        </div>
+      </div>
+    );
+  }
   
   // Show login message if not authenticated
-  if (!state || !state.user) {
+  if (!isAuthenticated) {
     return (
       <div className="container mt-5">
         <div className="row justify-content-center">
@@ -40,13 +69,8 @@ function Templates() {
   }
 
   const handleUseTemplate = (templateId) => {
-    // Check authentication before allowing template use
-    if (!state || !state.user) {
-      alert('Please log in to use templates');
-      history.push('/');
-      return;
-    }
     // Navigate to working builder page with template selection
+    // Authentication will be checked in WorkingBuilder component
     history.push(`/full-builder?template=${templateId}`);
   };
 

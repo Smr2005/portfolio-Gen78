@@ -2,6 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Container, Row, Col, Card, Form, Button, Navbar, Nav, Alert, Tab, Tabs } from "react-bootstrap";
 import Template1 from "../templates/Template1";
+import Template2 from "../templates/Template2";
+import Template3 from "../templates/Template3";
+import Template4 from "../templates/Template4";
+import Template5 from "../templates/Template5";
+import Template6 from "../templates/Template6";
 import { authenticatedFetch, isAuthenticated as checkAuth } from "../utils/auth";
 
 function WorkingBuilder() {
@@ -75,9 +80,43 @@ function WorkingBuilder() {
   const [error, setError] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // Template renderer function
+  const renderTemplate = (userData, isPreview = false) => {
+    const templateProps = { userData, isPreview };
+    
+    switch(templateId) {
+      case 'template1':
+        return <Template1 {...templateProps} />;
+      case 'template2':
+        return <Template2 {...templateProps} />;
+      case 'template3':
+        return <Template3 {...templateProps} />;
+      case 'template4':
+        return <Template4 {...templateProps} />;
+      case 'template5':
+        return <Template5 {...templateProps} />;
+      case 'template6':
+        return <Template6 {...templateProps} />;
+      default:
+        return <Template1 {...templateProps} />;
+    }
+  };
+
   useEffect(() => {
-    const authStatus = checkAuth();
-    setIsAuthenticated(authStatus);
+    // Check authentication from multiple sources
+    const checkAuthentication = () => {
+      const token = localStorage.getItem('token') || localStorage.getItem('jwt');
+      const user = localStorage.getItem('user');
+      
+      if (token && user) {
+        setIsAuthenticated(true);
+      } else {
+        const authStatus = checkAuth();
+        setIsAuthenticated(authStatus);
+      }
+    };
+    
+    checkAuthentication();
   }, []);
   
   // Show login message if not authenticated
@@ -564,7 +603,12 @@ function WorkingBuilder() {
   return (
     <div>
       <Navbar bg="dark" variant="dark" expand="lg" className="mb-4" style={{ zIndex: 1000 }}>
-        <Navbar.Brand>Portfolio Builder</Navbar.Brand>
+        <Navbar.Brand>
+          Portfolio Builder 
+          <span className="badge badge-secondary ml-2" style={{fontSize: '0.7em'}}>
+            {templateId.charAt(0).toUpperCase() + templateId.slice(1)}
+          </span>
+        </Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse>
           <Nav className="ml-auto">
@@ -1364,7 +1408,7 @@ function WorkingBuilder() {
               </Card.Header>
               <Card.Body style={{ maxHeight: '80vh', overflow: 'auto', position: 'relative', zIndex: 1 }}>
                 <div style={{ position: 'relative', zIndex: 1 }}>
-                  <Template1 userData={userData} isPreview={true} />
+                  {renderTemplate(userData, true)}
                 </div>
               </Card.Body>
             </Card>
