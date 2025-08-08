@@ -76,8 +76,33 @@ function WorkingBuilder() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    setIsAuthenticated(checkAuth());
+    const authStatus = checkAuth();
+    setIsAuthenticated(authStatus);
   }, []);
+  
+  // Show login message if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <div className="container mt-5">
+        <div className="row justify-content-center">
+          <div className="col-md-6 text-center">
+            <div className="card">
+              <div className="card-body">
+                <h3 className="card-title">🔒 Authentication Required</h3>
+                <p className="card-text">Please log in to access the portfolio builder.</p>
+                <button 
+                  className="btn btn-primary"
+                  onClick={() => history.push('/')}
+                >
+                  Go to Login
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleInputChange = (field, value) => {
     setUserData(prev => ({

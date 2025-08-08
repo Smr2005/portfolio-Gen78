@@ -14,8 +14,38 @@ function Templates() {
   useEffect(() => {
     Aos.init({ duration: 1000 });
   }, []);
+  
+  // Show login message if not authenticated
+  if (!state || !state.user) {
+    return (
+      <div className="container mt-5">
+        <div className="row justify-content-center">
+          <div className="col-md-6 text-center">
+            <div className="card">
+              <div className="card-body">
+                <h3 className="card-title">🔒 Authentication Required</h3>
+                <p className="card-text">Please log in to access portfolio templates and builder.</p>
+                <button 
+                  className="btn btn-primary"
+                  onClick={() => history.push('/')}
+                >
+                  Go to Login
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleUseTemplate = (templateId) => {
+    // Check authentication before allowing template use
+    if (!state || !state.user) {
+      alert('Please log in to use templates');
+      history.push('/');
+      return;
+    }
     // Navigate to working builder page with template selection
     history.push(`/full-builder?template=${templateId}`);
   };

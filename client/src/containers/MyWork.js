@@ -1,9 +1,35 @@
-import React from "react";
+import React, { useEffect, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { Navbar, Nav, Button, Card } from "react-bootstrap";
+import { UserContext } from "../context/UserContext";
 
 function MyWork() {
   const history = useHistory();
+  const { state } = useContext(UserContext);
+  
+  // Show login message if not authenticated
+  if (!state || !state.user) {
+    return (
+      <div className="container mt-5">
+        <div className="row justify-content-center">
+          <div className="col-md-6 text-center">
+            <div className="card">
+              <div className="card-body">
+                <h3 className="card-title">🔒 Authentication Required</h3>
+                <p className="card-text">Please log in to view your portfolio projects.</p>
+                <button 
+                  className="btn btn-primary"
+                  onClick={() => history.push('/')}
+                >
+                  Go to Login
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
