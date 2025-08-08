@@ -593,9 +593,16 @@ function WorkingBuilder() {
                   <h5>Portfolio Information</h5>
                 </Card.Header>
                 <Card.Body>
-                  <Tabs activeKey={activeTab} onSelect={setActiveTab}>
+                  <div style={{ overflowX: 'auto', marginBottom: '1rem' }}>
+                    <Tabs 
+                      activeKey={activeTab} 
+                      onSelect={setActiveTab} 
+                      className="mb-3" 
+                      variant="pills"
+                      style={{ flexWrap: 'nowrap', minWidth: 'max-content' }}
+                    >
                     
-                    <Tab eventKey="personal" title="Personal">
+                    <Tab eventKey="personal" title="👤 Personal">
                       <div className="mt-3">
                         <Form.Group className="mb-3">
                           <Form.Label>Full Name *</Form.Label>
@@ -729,7 +736,7 @@ function WorkingBuilder() {
                       </div>
                     </Tab>
 
-                    <Tab eventKey="skills" title="Skills">
+                    <Tab eventKey="skills" title="🛠️ Skills">
                       <div className="mt-3">
                         {userData.skills.map((skill, index) => (
                           <Card key={index} className="mb-3">
@@ -795,7 +802,7 @@ function WorkingBuilder() {
                       </div>
                     </Tab>
 
-                    <Tab eventKey="projects" title="Projects">
+                    <Tab eventKey="projects" title="💼 Projects">
                       <div className="mt-3">
                         {userData.projects.map((project, index) => (
                           <Card key={index} className="mb-3">
@@ -902,7 +909,7 @@ function WorkingBuilder() {
                       </div>
                     </Tab>
 
-                    <Tab eventKey="experience" title="Experience">
+                    <Tab eventKey="experience" title="💼 Experience">
                       <div className="mt-3">
                         {userData.experience.map((exp, index) => (
                           <Card key={index} className="mb-3">
@@ -1013,7 +1020,7 @@ function WorkingBuilder() {
                       </div>
                     </Tab>
 
-                    <Tab eventKey="certifications" title="Certifications">
+                    <Tab eventKey="certifications" title="🏆 Certs">
                       <div className="mt-3">
                         {userData.certifications.map((cert, index) => (
                           <Card key={index} className="mb-3">
@@ -1100,7 +1107,7 @@ function WorkingBuilder() {
                       </div>
                     </Tab>
 
-                    <Tab eventKey="internships" title="Internships">
+                    <Tab eventKey="internships" title="🚀 Internships">
                       <div className="mt-3">
                         {userData.internships.map((internship, index) => (
                           <Card key={index} className="mb-3">
@@ -1211,7 +1218,7 @@ function WorkingBuilder() {
                       </div>
                     </Tab>
 
-                    <Tab eventKey="education" title="Education">
+                    <Tab eventKey="education" title="🎓 Education">
                       <div className="mt-3">
                         {userData.education.map((edu, index) => (
                           <Card key={index} className="mb-3">
@@ -1318,7 +1325,8 @@ function WorkingBuilder() {
                       </div>
                     </Tab>
 
-                  </Tabs>
+                    </Tabs>
+                  </div>
                 </Card.Body>
               </Card>
             </Col>

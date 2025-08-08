@@ -123,6 +123,21 @@ app.get("/admin-cleanup", (req, res) => {
     res.sendFile(path.join(__dirname, 'admin-cleanup.html'));
 });
 
+// Admin simple interface (new simplified version)
+app.get("/admin-simple", (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin-simple.html'));
+});
+
+// Admin secure interface (completely secure - no content before login)
+app.get("/admin-secure", (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin-secure.html'));
+});
+
+// Admin test interface
+app.get("/admin-test", (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin-test.html'));
+});
+
 // API health check route (moved after API routes)
 app.get("/api/health", async (req, res, next) => {
     res.json({ 
@@ -425,6 +440,68 @@ function generatePortfolioHTML(portfolio) {
                                 ${edu.location ? `<p class="text-muted"><i class="fas fa-map-marker-alt"></i> ${edu.location}</p>` : ''}
                                 ${edu.gpa ? `<p class="text-muted">GPA: ${edu.gpa}</p>` : ''}
                                 ${edu.description ? `<p class="card-text">${edu.description}</p>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    </section>
+    ` : ''}
+
+    <!-- Certifications Section -->
+    ${data.certifications && data.certifications.length > 0 ? `
+    <section class="py-5">
+        <div class="container">
+            <h2 class="section-title text-center">Certifications</h2>
+            <div class="row">
+                ${data.certifications.map(cert => `
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <div class="mb-3">
+                                    <i class="fas fa-certificate fa-3x text-warning"></i>
+                                </div>
+                                <h5 class="card-title">${cert.name}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">${cert.issuer}</h6>
+                                ${cert.date ? `<p class="text-muted"><i class="fas fa-calendar"></i> ${cert.date}</p>` : ''}
+                                ${cert.url ? `<a href="${cert.url}" target="_blank" class="btn btn-outline-primary btn-sm">View Certificate</a>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    </section>
+    ` : ''}
+
+    <!-- Internships Section -->
+    ${data.internships && data.internships.length > 0 ? `
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="section-title text-center">Internships & Early Experience</h2>
+            ${data.internships.map(internship => `
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-rocket fa-2x text-primary me-3"></i>
+                                    <div>
+                                        <h5 class="card-title mb-1">${internship.position}</h5>
+                                        <h6 class="card-subtitle text-muted">${internship.company} • ${internship.duration}</h6>
+                                    </div>
+                                </div>
+                                ${internship.location ? `<p class="text-muted"><i class="fas fa-map-marker-alt"></i> ${internship.location}</p>` : ''}
+                                ${internship.description ? `<p class="card-text">${internship.description}</p>` : ''}
+                                ${internship.achievements && internship.achievements.length > 0 ? `
+                                    <div>
+                                        <h6 class="fw-bold">Key Achievements:</h6>
+                                        <ul>
+                                            ${internship.achievements.map(achievement => `<li>${achievement}</li>`).join('')}
+                                        </ul>
+                                    </div>
+                                ` : ''}
                             </div>
                         </div>
                     </div>

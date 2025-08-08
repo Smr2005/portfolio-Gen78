@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        button { padding: 10px 20px; margin: 10px; font-size: 16px; }
+        #output { background: #f0f0f0; padding: 20px; margin: 20px 0; min-height: 200px; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <h1>Admin Panel Test</h1>
+    
+    <button onclick="testBasic()">Test Basic Function</button>
+    <button onclick="testLogin()">Test Login</button>
+    <button onclick="testStats()">Test Stats</button>
+    
+    <div id="output">Waiting for test...</div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let adminCredentials = null;
+        
+        function log(message) {
+            console.log('LOG:', message);
+            const output = document.getElementById('output');
+            const timestamp = new Date().toLocaleTimeString();
+            output.innerHTML += `[${timestamp}] ${message}<br>`;
+        }
+        
+        function testBasic() {
+            alert('Basic test clicked!');
+            log('✅ Basic JavaScript is working!');
+        }
+        
+        async function testLogin() {
+            log('🔐 Testing admin login...');
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: 'whatlead', password: 'Lead@006789' })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    log('✅ Login successful!');
+                    adminCredentials = data.credentials;
+                    log(`👤 Credentials set: ${adminCredentials.username}`);
+                } else {
+                    log(`❌ Login failed: ${data.error}`);
+                }
+            } catch (error) {
+                log(`❌ Login error: ${error.message}`);
+            }
+        }
+        
+        async function testStats() {
+            if (!adminCredentials) {
+                log('❌ Please login first');
+                return;
+            }
+            
+            log('📊 Testing stats endpoint...');
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/stats`, {
+                    method: 'GET',
+                    headers: {
+                        'x-admin-username': adminCredentials.username,
+                        'x-admin-password': adminCredentials.password,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    log('✅ Stats retrieved successfully!');
+                    log(`👥 Users: ${data.counts.users}`);
+                    log(`📁 Portfolios: ${data.counts.portfolios}`);
+                    log(`📝 Forms: ${data.counts.forms}`);
+                } else {
+                    log(`❌ Stats failed: ${data.error}`);
+                }
+            } catch (error) {
+                log(`❌ Stats error: ${error.message}`);
+            }
+        }
+        
+        // Initialize
+        log('🚀 Test page loaded');
+    </script>
+</body>
+</html>

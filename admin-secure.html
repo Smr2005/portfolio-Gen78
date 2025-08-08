@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Generator - Admin Panel</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .login-section {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+        .section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .section h3 {
+            color: #555;
+            margin-top: 0;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+        .danger {
+            background: #dc3545;
+        }
+        .danger:hover {
+            background: #c82333;
+        }
+        .success {
+            background: #28a745;
+        }
+        .success:hover {
+            background: #218838;
+        }
+        .warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        .warning:hover {
+            background: #e0a800;
+        }
+        .login-btn {
+            background: #28a745;
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+        }
+        .logout-btn {
+            background: #6c757d;
+            float: right;
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+        #output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .input-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        .alert {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .alert-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+        .alert-danger {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .status-bar {
+            background: #e9ecef;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        /* Security: Hide any admin content by default */
+        .admin-content {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            height: 0 !important;
+            overflow: hidden !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛠️ Portfolio Generator - Admin Panel</h1>
+        
+        <!-- Login Section (Always Visible) -->
+        <div id="loginSection" class="login-section">
+            <h2 style="text-align: center; color: #333; margin-bottom: 30px;">🔐 Admin Login</h2>
+            
+            <div class="input-group">
+                <label for="loginUsername">Username:</label>
+                <input type="text" id="loginUsername" placeholder="Enter admin username">
+            </div>
+            
+            <div class="input-group">
+                <label for="loginPassword">Password:</label>
+                <input type="password" id="loginPassword" placeholder="Enter admin password">
+            </div>
+            
+            <button class="login-btn" onclick="adminLogin()">🚀 Login to Admin Panel</button>
+            
+            <div id="loginOutput" style="margin-top: 20px;"></div>
+        </div>
+
+        <!-- Admin Panel Container (Will be populated ONLY after successful login) -->
+        <div id="adminPanelContainer" class="admin-content">
+            <!-- Admin content will be dynamically inserted here after login -->
+        </div>
+    </div>
+
+    <script>
+        // Use the current origin for API calls (works in both dev and production)
+        const API_BASE = window.location.origin;
+        let adminCredentials = null;
+        
+        // Security: Ensure no admin content is visible on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Clear any potential admin content
+            document.getElementById('adminPanelContainer').innerHTML = '';
+            document.getElementById('loginSection').style.display = 'block';
+            console.log('Page loaded - admin panel secured');
+        });
+        
+        function log(message, isLoginOutput = false) {
+            const outputElement = isLoginOutput ? 
+                document.getElementById('loginOutput') : 
+                document.getElementById('output');
+            
+            if (outputElement) {
+                const timestamp = new Date().toLocaleTimeString();
+                outputElement.textContent += `[${timestamp}] ${message}\n`;
+                outputElement.scrollTop = outputElement.scrollHeight;
+            }
+        }
+        
+        async function adminLogin() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            
+            if (!username || !password) {
+                log('❌ Please enter both username and password', true);
+                return;
+            }
+            
+            try {
+                log('🔄 Attempting login...', true);
+                
+                const response = await fetch(`${API_BASE}/api/admin/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    adminCredentials = { username, password };
+                    
+                    // Hide login section
+                    document.getElementById('loginSection').style.display = 'none';
+                    
+                    // Create and show admin panel
+                    createAdminPanel(username);
+                    
+                    log('✅ Login successful! Welcome to the admin panel.', true);
+                } else {
+                    log(`❌ Login failed: ${data.error}`, true);
+                }
+            } catch (error) {
+                log(`❌ Login error: ${error.message}`, true);
+            }
+        }
+        
+        function createAdminPanel(username) {
+            const container = document.getElementById('adminPanelContainer');
+            
+            // Create admin panel HTML dynamically (only after successful login)
+            container.innerHTML = `
+                <div class="status-bar">
+                    <div>
+                        <strong>👤 Logged in as:</strong> <span>${username}</span>
+                        <strong style="margin-left: 20px;">🕒 Session:</strong> <span>Active</span>
+                    </div>
+                    <button class="logout-btn" onclick="adminLogout()">🚪 Logout</button>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <strong>⚠️ Warning:</strong> This tool will permanently delete user data. Make sure you have backups if needed.
+                </div>
+
+                <div class="section">
+                    <h3>📊 Database Statistics</h3>
+                    <p>Check current database status before cleanup</p>
+                    <button onclick="getStats()">📈 Get Database Stats</button>
+                </div>
+
+                <div class="section">
+                    <h3>💾 Backup Data (Recommended)</h3>
+                    <p>Create a backup of all data before deletion</p>
+                    <button class="warning" onclick="createBackup()">🔄 Create Backup</button>
+                </div>
+
+                <div class="section">
+                    <h3>🗑️ Delete Specific User</h3>
+                    <div class="input-group">
+                        <label for="userEmail">User Email:</label>
+                        <input type="email" id="userEmail" placeholder="user@example.com">
+                    </div>
+                    <button class="danger" onclick="deleteUser()">🗑️ Delete This User</button>
+                </div>
+
+                <div class="section">
+                    <h3>⚠️ Delete ALL Test Users</h3>
+                    <div class="alert alert-danger">
+                        <strong>⚠️ DANGER:</strong> This will delete ALL users and their portfolios from the database!
+                    </div>
+                    <button class="danger" onclick="deleteAllUsers()">💥 DELETE ALL USERS</button>
+                </div>
+
+                <div class="section">
+                    <h3>🔧 Debug Tools</h3>
+                    <button class="warning" onclick="clearOutput()">🧹 Clear Output</button>
+                    <button onclick="showDebugInfo()">🔍 Show Debug Info</button>
+                </div>
+
+                <div id="output"></div>
+            `;
+            
+            // Show the admin panel
+            container.className = '';
+            container.style.display = 'block';
+            container.style.visibility = 'visible';
+            container.style.opacity = '1';
+            container.style.height = 'auto';
+            container.style.overflow = 'visible';
+        }
+        
+        function adminLogout() {
+            adminCredentials = null;
+            
+            // Hide admin panel and clear content
+            const container = document.getElementById('adminPanelContainer');
+            container.innerHTML = '';
+            container.className = 'admin-content';
+            
+            // Show login section
+            document.getElementById('loginSection').style.display = 'block';
+            
+            log('👋 Logged out successfully', true);
+        }
+        
+        async function makeRequest(endpoint, method = 'GET') {
+            if (!adminCredentials) {
+                log('❌ Not logged in. Please login first.');
+                return null;
+            }
+            
+            try {
+                log(`🔄 Making ${method} request to ${endpoint}...`);
+                
+                const response = await fetch(`${API_BASE}/api/admin${endpoint}`, {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Basic ${btoa(adminCredentials.username + ':' + adminCredentials.password)}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                log(`✅ Request successful`);
+                return data;
+            } catch (error) {
+                log(`❌ Request failed: ${error.message}`);
+                return null;
+            }
+        }
+        
+        async function getStats() {
+            const data = await makeRequest('/stats');
+            if (data) {
+                log('📊 Database Statistics:');
+                log(`👥 Total Users: ${data.users || 0}`);
+                log(`📁 Total Portfolios: ${data.portfolios || 0}`);
+                log(`📝 Contact Forms: ${data.forms || 0}`);
+                log(`💾 Database Size: ${data.dbSize || 'Unknown'}`);
+            }
+        }
+        
+        async function createBackup() {
+            log('🔄 Creating backup...');
+            const data = await makeRequest('/backup', 'POST');
+            if (data) {
+                log('✅ Backup created successfully!');
+                log(`📁 Backup file: ${data.filename || 'backup.json'}`);
+            }
+        }
+        
+        async function deleteUser() {
+            const email = document.getElementById('userEmail').value.trim();
+            if (!email) {
+                log('❌ Please enter a user email');
+                return;
+            }
+            
+            if (!confirm(`⚠️ Are you sure you want to delete user: ${email}?`)) {
+                return;
+            }
+            
+            log(`🗑️ Deleting user: ${email}...`);
+            const data = await makeRequest(`/delete-user/${encodeURIComponent(email)}`, 'DELETE');
+            if (data) {
+                log(`✅ User deleted: ${email}`);
+                log(`📊 Deleted: ${data.deletedPortfolios || 0} portfolios, ${data.deletedForms || 0} forms`);
+            }
+        }
+        
+        async function deleteAllUsers() {
+            if (!confirm('⚠️ WARNING: This will delete ALL users and portfolios! Are you absolutely sure?')) {
+                return;
+            }
+            
+            if (!confirm('🚨 FINAL WARNING: This action cannot be undone! Continue?')) {
+                return;
+            }
+            
+            log('💥 Deleting ALL users...');
+            const data = await makeRequest('/delete-all-users', 'DELETE');
+            if (data) {
+                log('✅ All users deleted successfully!');
+                log(`📊 Deleted: ${data.deletedUsers || 0} users, ${data.deletedPortfolios || 0} portfolios, ${data.deletedForms || 0} forms`);
+            }
+        }
+        
+        function clearOutput() {
+            const output = document.getElementById('output');
+            if (output) {
+                output.textContent = '';
+                log('🧹 Output cleared');
+            }
+        }
+        
+        async function showDebugInfo() {
+            log('🔍 Debug Information:');
+            log(`🌐 API Base: ${API_BASE}`);
+            log(`👤 Logged in as: ${adminCredentials?.username || 'Not logged in'}`);
+            log(`🕒 Current time: ${new Date().toISOString()}`);
+            log(`🖥️ User agent: ${navigator.userAgent}`);
+        }
+    </script>
+</body>
+</html>

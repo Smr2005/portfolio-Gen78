@@ -649,10 +649,10 @@ function Template3({ isPreview = false, userData = null }) {
                     <Card.Body style={{ padding: '1.5rem' }}>
                       <h6 style={{ color: '#1e3c72', fontWeight: '700' }}>{edu.degree}</h6>
                       <div style={{ color: '#64748b', marginBottom: '0.5rem' }}>
-                        {edu.school} • {edu.duration}
+                        {edu.institution} • {edu.duration}
                       </div>
                       <div style={{ color: '#64748b', fontSize: '0.9rem' }}>
-                        GPA: {edu.gpa} • {edu.honors}
+                        {edu.gpa && `GPA: ${edu.gpa}`} {edu.field && `• ${edu.field}`}
                       </div>
                     </Card.Body>
                   </Card>
@@ -1128,6 +1128,166 @@ function Template3({ isPreview = false, userData = null }) {
                           >
                             📖 Read Article
                           </Button>
+                        </Col>
+                      </Row>
+                    </Card.Body>
+                  </Card>
+                ))}
+              </Col>
+            </Row>
+          </Container>
+        </section>
+      )}
+
+      {/* Certifications Section */}
+      {data.certifications && data.certifications.length > 0 && (
+        <section id="certifications" style={{ padding: '120px 0', backgroundColor: '#f8fafc' }}>
+          <Container>
+            <Row>
+              <Col lg={8} className="mx-auto">
+                <div className="text-center mb-5">
+                  <h2 style={{ 
+                    fontSize: '3rem', 
+                    fontWeight: '300', 
+                    color: '#1e3c72',
+                    marginBottom: '1rem'
+                  }}>
+                    Professional Certifications
+                  </h2>
+                  <div style={{ width: '60px', height: '3px', background: '#1e3c72', margin: '0 auto' }}></div>
+                </div>
+                <Row>
+                  {data.certifications.map((cert, index) => (
+                    <Col md={6} key={index} className="mb-4">
+                      <Card className="business-card" style={{
+                        border: 'none',
+                        boxShadow: '0 8px 20px rgba(0,0,0,0.08)',
+                        borderRadius: '15px',
+                        height: '100%'
+                      }}>
+                        <Card.Body style={{ padding: '2rem', textAlign: 'center' }}>
+                          <div style={{
+                            width: '80px',
+                            height: '80px',
+                            background: 'linear-gradient(135deg, #1e3c72, #2a5298)',
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            margin: '0 auto 1.5rem auto',
+                            fontSize: '2rem'
+                          }}>
+                            🏆
+                          </div>
+                          <h5 style={{ 
+                            color: '#1e3c72', 
+                            fontWeight: '700',
+                            marginBottom: '1rem'
+                          }}>
+                            {cert.name}
+                          </h5>
+                          <p style={{ color: '#64748b', marginBottom: '1rem' }}>
+                            {cert.issuer}
+                          </p>
+                          <div style={{ marginBottom: '1rem' }}>
+                            <Badge style={{ 
+                              background: '#1e3c72', 
+                              color: 'white',
+                              padding: '8px 16px',
+                              borderRadius: '6px'
+                            }}>
+                              {cert.date}
+                            </Badge>
+                          </div>
+                          {cert.url && (
+                            <Button 
+                              href={cert.url}
+                              target="_blank"
+                              variant="outline-primary"
+                              size="sm"
+                              style={{ borderRadius: '6px' }}
+                            >
+                              View Certificate
+                            </Button>
+                          )}
+                        </Card.Body>
+                      </Card>
+                    </Col>
+                  ))}
+                </Row>
+              </Col>
+            </Row>
+          </Container>
+        </section>
+      )}
+
+      {/* Internships Section */}
+      {data.internships && data.internships.length > 0 && (
+        <section id="internships" style={{ padding: '120px 0', backgroundColor: 'white' }}>
+          <Container>
+            <Row>
+              <Col lg={8} className="mx-auto">
+                <div className="text-center mb-5">
+                  <h2 style={{ 
+                    fontSize: '3rem', 
+                    fontWeight: '300', 
+                    color: '#1e3c72',
+                    marginBottom: '1rem'
+                  }}>
+                    Internships & Early Experience
+                  </h2>
+                  <div style={{ width: '60px', height: '3px', background: '#1e3c72', margin: '0 auto' }}></div>
+                </div>
+                {data.internships.map((internship, index) => (
+                  <Card key={index} className="business-card mb-4" style={{
+                    border: 'none',
+                    boxShadow: '0 8px 20px rgba(0,0,0,0.08)',
+                    borderRadius: '15px'
+                  }}>
+                    <Card.Body style={{ padding: '2rem' }}>
+                      <Row>
+                        <Col md={8}>
+                          <h5 style={{ color: '#1e3c72', fontWeight: '700', marginBottom: '0.5rem' }}>
+                            {internship.position}
+                          </h5>
+                          <h6 style={{ color: '#2a5298', fontWeight: '600', marginBottom: '1rem' }}>
+                            {internship.company}
+                          </h6>
+                          <div style={{ color: '#64748b', marginBottom: '1rem' }}>
+                            {internship.duration} • {internship.location}
+                          </div>
+                          <p style={{ color: '#64748b', marginBottom: '1rem' }}>
+                            {internship.description}
+                          </p>
+                          {internship.achievements && internship.achievements.length > 0 && (
+                            <div>
+                              <h6 style={{ color: '#1e3c72', fontWeight: '600', marginBottom: '0.5rem' }}>
+                                Key Achievements:
+                              </h6>
+                              <ul style={{ color: '#64748b', paddingLeft: '1.2rem' }}>
+                                {internship.achievements.map((achievement, achIndex) => (
+                                  <li key={achIndex} style={{ marginBottom: '0.3rem' }}>
+                                    {achievement}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </Col>
+                        <Col md={4} className="text-right">
+                          <div style={{
+                            width: '80px',
+                            height: '80px',
+                            background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            margin: '0 auto',
+                            fontSize: '2rem'
+                          }}>
+                            🚀
+                          </div>
                         </Col>
                       </Row>
                     </Card.Body>

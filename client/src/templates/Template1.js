@@ -58,11 +58,39 @@ function Template1({ isPreview = false, userData = null }) {
     education: [
       {
         degree: "Bachelor of Science in Computer Science",
-        school: "Stanford University",
+        institution: "Stanford University",
+        field: "Computer Science",
         duration: "2016 - 2020",
         location: "Stanford, CA",
         gpa: "3.8/4.0",
+        description: "Focused on software engineering, data structures, algorithms, and web development. Graduated Magna Cum Laude.",
         relevant: ["Data Structures", "Algorithms", "Web Development", "Database Systems"]
+      }
+    ],
+    internships: [
+      {
+        company: "Google",
+        position: "Software Engineering Intern",
+        duration: "Jun 2019 - Aug 2019",
+        location: "Mountain View, CA",
+        description: "Worked on Google Search infrastructure, implementing performance optimizations that improved query response time by 15%.",
+        achievements: [
+          "Optimized search algorithms reducing latency by 15%",
+          "Collaborated with senior engineers on core infrastructure",
+          "Presented findings to engineering leadership"
+        ]
+      },
+      {
+        company: "Microsoft",
+        position: "Product Management Intern",
+        duration: "Jun 2018 - Aug 2018",
+        location: "Redmond, WA",
+        description: "Assisted in product strategy for Microsoft Azure, conducting market research and user interviews.",
+        achievements: [
+          "Conducted 50+ user interviews for Azure features",
+          "Created product roadmap recommendations",
+          "Collaborated with cross-functional teams"
+        ]
       }
     ],
     certifications: [
@@ -749,16 +777,17 @@ function Template1({ isPreview = false, userData = null }) {
       </section>
 
       {/* Certifications Section */}
-      <section id="certifications" style={{ padding: '100px 0', backgroundColor: 'white' }}>
-        <Container>
-          <div className="text-center mb-5">
-            <h2 style={{ fontSize: '3rem', fontWeight: '700', color: '#1e293b', marginBottom: '1rem' }}>
-              Certifications & Credentials
-            </h2>
-            <div style={{ width: '60px', height: '4px', background: '#667eea', margin: '0 auto' }}></div>
-          </div>
-          <Row>
-            {data.certifications.map((cert, index) => (
+      {data.certifications && data.certifications.length > 0 && (
+        <section id="certifications" style={{ padding: '100px 0', backgroundColor: 'white' }}>
+          <Container>
+            <div className="text-center mb-5">
+              <h2 style={{ fontSize: '3rem', fontWeight: '700', color: '#1e293b', marginBottom: '1rem' }}>
+                Certifications & Credentials
+              </h2>
+              <div style={{ width: '60px', height: '4px', background: '#667eea', margin: '0 auto' }}></div>
+            </div>
+            <Row>
+              {data.certifications.map((cert, index) => (
               <Col md={6} lg={4} key={index} className="mb-4">
                 <Card className="card-3d" style={{ 
                   border: 'none', 
@@ -817,10 +846,193 @@ function Template1({ isPreview = false, userData = null }) {
                   </Card.Body>
                 </Card>
               </Col>
+              ))}
+            </Row>
+          </Container>
+        </section>
+      )}
+
+      {/* Education Section */}
+      <section id="education" style={{ padding: '100px 0', backgroundColor: '#f8fafc' }}>
+        <Container>
+          <div className="text-center mb-5">
+            <h2 style={{ fontSize: '3rem', fontWeight: '700', color: '#1e293b', marginBottom: '1rem' }}>
+              Education
+            </h2>
+            <div style={{ width: '60px', height: '4px', background: '#667eea', margin: '0 auto' }}></div>
+          </div>
+          <Row>
+            {data.education && data.education.map((edu, index) => (
+              <Col md={6} key={index} className="mb-4">
+                <Card className="card-3d" style={{ 
+                  border: 'none', 
+                  boxShadow: '0 15px 35px rgba(0,0,0,0.1)',
+                  borderRadius: '15px',
+                  height: '100%'
+                }}>
+                  <Card.Body style={{ padding: '2rem' }}>
+                    <div style={{
+                      width: '80px',
+                      height: '80px',
+                      background: 'linear-gradient(135deg, #10b981, #059669)',
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      margin: '0 auto 1.5rem auto',
+                      fontSize: '2rem',
+                      animation: 'float3d 5s ease-in-out infinite'
+                    }}>
+                      🎓
+                    </div>
+                    <h5 style={{ 
+                      color: '#1e293b', 
+                      fontWeight: '700',
+                      marginBottom: '0.5rem',
+                      fontSize: '1.2rem'
+                    }}>
+                      {edu.degree}
+                    </h5>
+                    <h6 style={{ 
+                      color: '#667eea', 
+                      fontWeight: '600',
+                      marginBottom: '1rem'
+                    }}>
+                      {edu.institution}
+                    </h6>
+                    <div style={{ marginBottom: '1rem' }}>
+                      <Badge style={{ 
+                        background: '#3b82f6', 
+                        color: 'white',
+                        padding: '5px 15px',
+                        borderRadius: '15px',
+                        marginRight: '10px'
+                      }}>
+                        {edu.duration}
+                      </Badge>
+                      {edu.gpa && (
+                        <Badge style={{ 
+                          background: '#10b981', 
+                          color: 'white',
+                          padding: '5px 15px',
+                          borderRadius: '15px'
+                        }}>
+                          GPA: {edu.gpa}
+                        </Badge>
+                      )}
+                    </div>
+                    {edu.location && (
+                      <p style={{ color: '#64748b', marginBottom: '1rem', fontSize: '0.9rem' }}>
+                        📍 {edu.location}
+                      </p>
+                    )}
+                    {edu.description && (
+                      <p style={{ color: '#64748b', marginBottom: '1rem' }}>
+                        {edu.description}
+                      </p>
+                    )}
+                    {edu.field && (
+                      <p style={{ color: '#64748b', fontSize: '0.9rem' }}>
+                        <strong>Field:</strong> {edu.field}
+                      </p>
+                    )}
+                  </Card.Body>
+                </Card>
+              </Col>
             ))}
           </Row>
         </Container>
       </section>
+
+      {/* Internships Section */}
+      {data.internships && data.internships.length > 0 && (
+        <section id="internships" style={{ padding: '100px 0', backgroundColor: 'white' }}>
+          <Container>
+            <div className="text-center mb-5">
+              <h2 style={{ fontSize: '3rem', fontWeight: '700', color: '#1e293b', marginBottom: '1rem' }}>
+                Internships & Early Experience
+              </h2>
+              <div style={{ width: '60px', height: '4px', background: '#667eea', margin: '0 auto' }}></div>
+            </div>
+            <Row>
+              {data.internships.map((internship, index) => (
+                <Col md={6} key={index} className="mb-4">
+                  <Card className="card-3d" style={{ 
+                    border: 'none', 
+                    boxShadow: '0 15px 35px rgba(0,0,0,0.1)',
+                    borderRadius: '15px',
+                    height: '100%'
+                  }}>
+                    <Card.Body style={{ padding: '2rem' }}>
+                      <div style={{
+                        width: '80px',
+                        height: '80px',
+                        background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        margin: '0 auto 1.5rem auto',
+                        fontSize: '2rem',
+                        animation: 'float3d 5s ease-in-out infinite'
+                      }}>
+                        🚀
+                      </div>
+                      <h5 style={{ 
+                        color: '#1e293b', 
+                        fontWeight: '700',
+                        marginBottom: '0.5rem',
+                        fontSize: '1.2rem'
+                      }}>
+                        {internship.position}
+                      </h5>
+                      <h6 style={{ 
+                        color: '#667eea', 
+                        fontWeight: '600',
+                        marginBottom: '1rem'
+                      }}>
+                        {internship.company}
+                      </h6>
+                      <div style={{ marginBottom: '1rem' }}>
+                        <Badge style={{ 
+                          background: '#8b5cf6', 
+                          color: 'white',
+                          padding: '5px 15px',
+                          borderRadius: '15px'
+                        }}>
+                          {internship.duration}
+                        </Badge>
+                      </div>
+                      {internship.location && (
+                        <p style={{ color: '#64748b', marginBottom: '1rem', fontSize: '0.9rem' }}>
+                          📍 {internship.location}
+                        </p>
+                      )}
+                      <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>
+                        {internship.description}
+                      </p>
+                      {internship.achievements && internship.achievements.length > 0 && (
+                        <div>
+                          <h6 style={{ color: '#1e293b', fontWeight: '600', marginBottom: '0.5rem' }}>
+                            Key Achievements:
+                          </h6>
+                          <ul style={{ color: '#64748b', paddingLeft: '1.2rem' }}>
+                            {internship.achievements.map((achievement, achIndex) => (
+                              <li key={achIndex} style={{ marginBottom: '0.3rem' }}>
+                                {achievement}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+          </Container>
+        </section>
+      )}
 
       {/* Contact Section */}
       <section id="contact" style={{

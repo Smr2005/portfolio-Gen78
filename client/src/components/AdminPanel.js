@@ -6,10 +6,10 @@ const AdminPanel = () => {
         const getAdminUrl = () => {
             // In production, use the same domain as the current page
             if (process.env.NODE_ENV === 'production' || window.location.hostname !== 'localhost') {
-                return `${window.location.origin}/admin-cleanup`;
+                return `${window.location.origin}/admin-secure`;
             }
             // In development, use the backend server
-            return 'http://localhost:5000/admin-cleanup';
+            return 'http://localhost:5000/admin-secure';
         };
         
         // Redirect to the admin cleanup interface after a short delay
@@ -48,8 +48,8 @@ const AdminPanel = () => {
                     <a 
                         href={
                             process.env.NODE_ENV === 'production' || window.location.hostname !== 'localhost'
-                                ? `${window.location.origin}/admin-cleanup`
-                                : 'http://localhost:5000/admin-cleanup'
+                                ? `${window.location.origin}/admin-secure`
+                                : 'http://localhost:5000/admin-secure'
                         } 
                         style={{color: 'white', marginLeft: '5px'}}
                     >
