@@ -312,6 +312,7 @@ function generatePortfolioHTML(portfolio) {
         case 'template2':
             return generateTemplate2HTML(data, meta);
         case 'template3':
+            console.log('Generating Template3 with data:', { name: data.name, templateId });
             return generateTemplate3HTML(data, meta);
         case 'template4':
             return generateTemplate4HTML(data, meta);
@@ -353,33 +354,417 @@ function generateTemplate1HTML(data, meta) {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .portfolio-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 80px 0; }
-        .profile-img { width: 150px; height: 150px; border-radius: 50%; border: 5px solid white; }
-        .section-title { color: #333; margin-bottom: 30px; font-weight: 700; }
-        .skill-item { background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
-        .project-card { border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.3s; }
-        .project-card:hover { transform: translateY(-5px); }
-        .footer { background: #333; color: white; padding: 40px 0; margin-top: 50px; }
-        .powered-by { text-align: center; padding: 20px; background: #f8f9fa; color: #666; }
+        body { 
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f8fafc;
+            overflow-x: hidden;
+        }
+        
+        /* ENHANCED 3D ANIMATIONS - EXACT MATCH TO REACT TEMPLATE */
+        @keyframes float3d {
+            0%, 100% { transform: translateY(0px) rotateX(0deg) rotateY(0deg); }
+            25% { transform: translateY(-10px) rotateX(5deg) rotateY(5deg); }
+            50% { transform: translateY(-20px) rotateX(0deg) rotateY(10deg); }
+            75% { transform: translateY(-10px) rotateX(-5deg) rotateY(5deg); }
+        }
+        
+        @keyframes rotate3d {
+            0% { transform: rotateY(0deg) rotateX(0deg); }
+            100% { transform: rotateY(360deg) rotateX(360deg); }
+        }
+        
+        @keyframes slideIn3d {
+            0% { transform: translateX(-100px) rotateY(-90deg); opacity: 0; }
+            100% { transform: translateX(0) rotateY(0deg); opacity: 1; }
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(102, 126, 234, 0.6); }
+        }
+        
+        .portfolio-header { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            padding: 80px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .navbar {
+            background: rgba(30, 41, 59, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .portfolio-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .profile-img { 
+            width: 150px; 
+            height: 150px; 
+            border-radius: 50%; 
+            border: 5px solid white;
+            animation: float3d 6s ease-in-out infinite;
+            transform-style: preserve-3d;
+            transition: all 0.3s ease;
+        }
+        
+        .profile-img:hover {
+            animation-play-state: paused;
+            transform: scale(1.1) rotateY(15deg);
+            border-color: #ffd700;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .profile-3d {
+            animation: float3d 6s ease-in-out infinite;
+            transform-style: preserve-3d;
+        }
+        
+        .section-title { 
+            color: #333; 
+            margin-bottom: 30px; 
+            font-weight: 700;
+            animation: slideIn3d 1s ease-out;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+        
+        .skill-item { 
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 15px; 
+            border-radius: 15px; 
+            margin-bottom: 15px;
+            transform-style: preserve-3d;
+            transition: all 0.3s ease;
+            border-left: 4px solid #667eea;
+        }
+        
+        .skill-item:hover {
+            transform: translateZ(10px) rotateX(5deg);
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            border-left-color: #764ba2;
+        }
+        
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            background: #e9ecef;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 2s ease-in-out;
+            animation: progressFill 2s ease-in-out;
+        }
+        
+        .skill-bar-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.3s ease;
+        }
+        
+        .skill-bar-3d:hover {
+            transform: translateZ(10px) rotateX(5deg);
+        }
+        
+        @keyframes progressFill {
+            0% { width: 0% !important; }
+        }
+        
+        .card-3d { 
+            border: none; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1); 
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .card-3d:hover { 
+            transform: rotateY(10deg) rotateX(5deg) translateZ(20px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        }
+        
+        .project-card {
+            border: none; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1); 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(102, 126, 234, 0.05), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .project-card:hover::before {
+            opacity: 1;
+        }
+        
+        .project-card:hover { 
+            transform: rotateY(8deg) rotateX(4deg) translateZ(15px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        .btn {
+            border-radius: 25px;
+            padding: 10px 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .btn:hover {
+            transform: translateZ(5px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        
+        .btn-outline-light:hover {
+            animation: glow 2s ease-in-out infinite;
+        }
+        
+        .footer { 
+            background: linear-gradient(135deg, #333 0%, #1a1a1a 100%);
+            color: white; 
+            padding: 40px 0; 
+            margin-top: 50px;
+            position: relative;
+        }
+        
+        .powered-by { 
+            text-align: center; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #666;
+        }
+        
+        /* MOBILE OPTIMIZATIONS */
+        @media (max-width: 768px) {
+            .card-3d:hover,
+            .project-card:hover,
+            .skill-item:hover {
+                transform: none !important;
+            }
+            
+            .profile-img {
+                animation: none;
+            }
+            
+            .profile-img:hover {
+                transform: scale(1.05);
+            }
+        }
+        
+        /* LOADING ANIMATIONS */
+        .fade-in {
+            animation: fadeIn 1s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes float3d {
+            0%, 100% { transform: translateY(0px) rotateX(0deg) rotateY(0deg); }
+            25% { transform: translateY(-10px) rotateX(5deg) rotateY(5deg); }
+            50% { transform: translateY(-20px) rotateX(0deg) rotateY(10deg); }
+            75% { transform: translateY(-10px) rotateX(-5deg) rotateY(5deg); }
+        }
+        
+        @keyframes slideIn3d {
+            0% { transform: translateX(-100px) rotateY(-90deg); opacity: 0; }
+            100% { transform: translateX(0) rotateY(0deg); opacity: 1; }
+        }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <div class="portfolio-header text-center">
+    <!-- Enhanced Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
-            ${data.profileImage ? `<img src="${data.profileImage}" alt="${data.name}" class="profile-img mb-4">` : ''}
-            <h1 class="display-4 mb-3">${data.name}</h1>
-            <h2 class="h4 mb-4">${data.title}</h2>
-            ${data.about ? `<p class="lead">${data.about}</p>` : ''}
-            <div class="mt-4">
-                ${data.email ? `<a href="mailto:${data.email}" class="btn btn-outline-light me-2"><i class="fas fa-envelope"></i> Email</a>` : ''}
-                ${data.linkedin ? `<a href="${data.linkedin}" target="_blank" class="btn btn-outline-light me-2"><i class="fab fa-linkedin"></i> LinkedIn</a>` : ''}
-                ${data.github ? `<a href="${data.github}" target="_blank" class="btn btn-outline-light me-2"><i class="fab fa-github"></i> GitHub</a>` : ''}
-                ${data.website ? `<a href="${data.website}" target="_blank" class="btn btn-outline-light"><i class="fas fa-globe"></i> Website</a>` : ''}
+            <a class="navbar-brand fw-bold" href="#" style="font-size: 1.5rem;">${data.name}</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#experience">Experience</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#skills">Skills</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                </ul>
             </div>
         </div>
-    </div>
+    </nav>
+
+    <!-- Enhanced Hero Section with Profile Picture -->
+    <section style="
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        color: white;
+        padding-top: 80px;
+        position: relative;
+        overflow: hidden;
+    ">
+        <!-- 3D Background Elements -->
+        <div style="
+            position: absolute;
+            top: 20%;
+            left: 10%;
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            animation: float3d 8s ease-in-out infinite;
+            transform-style: preserve-3d;
+        "></div>
+        <div style="
+            position: absolute;
+            bottom: 20%;
+            right: 15%;
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+            animation: float3d 6s ease-in-out infinite reverse;
+        "></div>
+
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div style="animation: slideIn3d 1s ease-out;">
+                        <h1 style="
+                            font-size: 3.5rem;
+                            font-weight: 700;
+                            margin-bottom: 1rem;
+                            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+                        ">
+                            Hi, I'm ${data.name}
+                        </h1>
+                        <h2 style="
+                            font-size: 1.8rem;
+                            margin-bottom: 2rem;
+                            opacity: 0.9;
+                            font-weight: 400;
+                        ">
+                            ${data.title}
+                        </h2>
+                        <p style="
+                            font-size: 1.2rem;
+                            margin-bottom: 2rem;
+                            opacity: 0.8;
+                            line-height: 1.6;
+                        ">
+                            ${data.about || ''}
+                        </p>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                            <a href="#projects" class="btn btn-light btn-lg" style="
+                                font-weight: 600;
+                                padding: 12px 30px;
+                                border-radius: 25px;
+                                text-decoration: none;
+                            ">
+                                VIEW MY WORK
+                            </a>
+                            <a href="#contact" class="btn btn-outline-light btn-lg" style="
+                                font-weight: 600;
+                                padding: 12px 30px;
+                                border-radius: 25px;
+                                text-decoration: none;
+                            ">
+                                GET IN TOUCH
+                            </a>
+                        </div>
+                        <!-- Social Links -->
+                        <div style="display: flex; gap: 1rem;">
+                            ${data.linkedin ? `<a href="${data.linkedin}" target="_blank" rel="noopener noreferrer" style="color: white; font-size: 1.5rem; opacity: 0.8; text-decoration: none;">💼</a>` : ''}
+                            ${data.github ? `<a href="${data.github}" target="_blank" rel="noopener noreferrer" style="color: white; font-size: 1.5rem; opacity: 0.8; text-decoration: none;">🔗</a>` : ''}
+                            ${data.website ? `<a href="${data.website}" target="_blank" rel="noopener noreferrer" style="color: white; font-size: 1.5rem; opacity: 0.8; text-decoration: none;">🌐</a>` : ''}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 text-center">
+                    <div class="profile-3d" style="
+                        width: 350px;
+                        height: 350px;
+                        margin: 0 auto;
+                        position: relative;
+                    ">
+                        ${data.profileImage ? `
+                        <img src="${data.profileImage}" alt="${data.name}" style="
+                            width: 100%;
+                            height: 100%;
+                            border-radius: 50%;
+                            object-fit: cover;
+                            border: 8px solid rgba(255,255,255,0.2);
+                            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+                            animation: float3d 6s ease-in-out infinite;
+                            transform-style: preserve-3d;
+                        ">
+                        <!-- Status Indicator -->
+                        <div style="
+                            position: absolute;
+                            bottom: 20px;
+                            right: 20px;
+                            width: 40px;
+                            height: 40px;
+                            background: #10b981;
+                            border-radius: 50%;
+                            border: 4px solid white;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-size: 1.2rem;
+                            animation: float3d 4s ease-in-out infinite;
+                        ">
+                            ✓
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Skills Section -->
     ${data.skills && data.skills.length > 0 ? `
@@ -389,7 +774,7 @@ function generateTemplate1HTML(data, meta) {
             <div class="row">
                 ${data.skills.map(skill => `
                     <div class="col-md-4 mb-3">
-                        <div class="skill-item">
+                        <div class="skill-item skill-bar-3d">
                             <h5>${skill.name}</h5>
                             <div class="progress">
                                 <div class="progress-bar" style="width: ${skill.level}%">${skill.level}%</div>
@@ -410,15 +795,15 @@ function generateTemplate1HTML(data, meta) {
             ${data.experience.map(exp => `
                 <div class="row mb-4">
                     <div class="col-12">
-                        <div class="card">
+                        <div class="card card-3d">
                             <div class="card-body">
-                                <h5 class="card-title">${exp.position}</h5>
+                                <h5 class="card-title" style="color: #667eea; font-weight: 700;">${exp.position}</h5>
                                 <h6 class="card-subtitle mb-2 text-muted">${exp.company} • ${exp.duration}</h6>
                                 ${exp.location ? `<p class="text-muted"><i class="fas fa-map-marker-alt"></i> ${exp.location}</p>` : ''}
                                 ${exp.description ? `<p class="card-text">${exp.description}</p>` : ''}
                                 ${exp.achievements && exp.achievements.length > 0 ? `
-                                    <ul>
-                                        ${exp.achievements.map(achievement => `<li>${achievement}</li>`).join('')}
+                                    <ul style="list-style-type: none; padding-left: 0;">
+                                        ${exp.achievements.map(achievement => `<li style="padding: 5px 0; color: #555;"><i class="fas fa-check-circle" style="color: #667eea; margin-right: 8px;"></i>${achievement}</li>`).join('')}
                                     </ul>
                                 ` : ''}
                             </div>
@@ -438,19 +823,19 @@ function generateTemplate1HTML(data, meta) {
             <div class="row">
                 ${data.projects.map(project => `
                     <div class="col-md-6 mb-4">
-                        <div class="card project-card h-100">
-                            ${project.image ? `<img src="${project.image}" class="card-img-top" alt="${project.title}">` : ''}
+                        <div class="card project-card h-100 fade-in">
+                            ${project.image ? `<img src="${project.image}" class="card-img-top" alt="${project.title}" style="height: 200px; object-fit: cover;">` : ''}
                             <div class="card-body">
-                                <h5 class="card-title">${project.title}</h5>
+                                <h5 class="card-title" style="color: #667eea; font-weight: 700;">${project.title}</h5>
                                 <p class="card-text">${project.description}</p>
                                 ${project.tech && project.tech.length > 0 ? `
                                     <div class="mb-3">
-                                        ${project.tech.map(tech => `<span class="badge bg-secondary me-1">${tech}</span>`).join('')}
+                                        ${project.tech.map(tech => `<span class="badge me-1" style="background: linear-gradient(90deg, #667eea, #764ba2); color: white; border-radius: 15px; padding: 5px 12px;">${tech}</span>`).join('')}
                                     </div>
                                 ` : ''}
                                 <div>
-                                    ${project.demo ? `<a href="${project.demo}" target="_blank" class="btn btn-primary btn-sm me-2">Live Demo</a>` : ''}
-                                    ${project.github ? `<a href="${project.github}" target="_blank" class="btn btn-outline-secondary btn-sm">GitHub</a>` : ''}
+                                    ${project.demo ? `<a href="${project.demo}" target="_blank" class="btn btn-primary btn-sm me-2" style="background: linear-gradient(90deg, #667eea, #764ba2); border: none; border-radius: 20px;">🚀 Live Demo</a>` : ''}
+                                    ${project.github ? `<a href="${project.github}" target="_blank" class="btn btn-outline-secondary btn-sm" style="border-radius: 20px;"><i class="fab fa-github"></i> Code</a>` : ''}
                                 </div>
                             </div>
                         </div>
@@ -588,42 +973,528 @@ function generateTemplate2HTML(data, meta) {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .creative-header { 
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
-            color: white; 
-            padding: 100px 0; 
+        body { 
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
         }
+        
+        /* ENHANCED CREATIVE ANIMATIONS - EXACT MATCH TO REACT TEMPLATE */
+        @keyframes creativeFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+            25% { transform: translateY(-15px) rotate(2deg) scale(1.05); }
+            50% { transform: translateY(-25px) rotate(-1deg) scale(1.1); }
+            75% { transform: translateY(-10px) rotate(1deg) scale(1.05); }
+        }
+        
+        @keyframes colorShift {
+            0% { filter: hue-rotate(0deg); }
+            25% { filter: hue-rotate(90deg); }
+            50% { filter: hue-rotate(180deg); }
+            75% { filter: hue-rotate(270deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+        
+        @keyframes morphShape {
+            0%, 100% { border-radius: 50% 30% 70% 40%; transform: rotate(0deg); }
+            25% { border-radius: 30% 70% 40% 50%; transform: rotate(90deg); }
+            50% { border-radius: 70% 40% 50% 30%; transform: rotate(180deg); }
+            75% { border-radius: 40% 50% 30% 70%; transform: rotate(270deg); }
+        }
+        
+        @keyframes slideInCreative {
+            0% { transform: translateX(-100px) rotateY(-45deg) scale(0.8); opacity: 0; }
+            100% { transform: translateX(0) rotateY(0deg) scale(1); opacity: 1; }
+        }
+        
+        @keyframes morphShape {
+            0%, 100% { border-radius: 50% 30% 70% 40%; transform: rotate(0deg); }
+            25% { border-radius: 30% 70% 40% 50%; transform: rotate(90deg); }
+            50% { border-radius: 70% 40% 50% 30%; transform: rotate(180deg); }
+            75% { border-radius: 40% 50% 30% 70%; transform: rotate(270deg); }
+        }
+        
+        @keyframes slideInCreative {
+            0% { transform: translateX(-100px) rotateY(-45deg) scale(0.8); opacity: 0; }
+            100% { transform: translateX(0) rotateY(0deg) scale(1); opacity: 1; }
+        }
+        
         @keyframes gradientShift {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-        .profile-img { width: 180px; height: 180px; border-radius: 50%; border: 6px solid white; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .creative-card { border: none; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: all 0.3s; overflow: hidden; }
-        .creative-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
-        .skill-badge { background: linear-gradient(45deg, #ff6b6b, #4ecdc4); color: white; border: none; }
-        .section-title { color: #2c3e50; font-weight: 800; margin-bottom: 40px; position: relative; }
-        .section-title::after { content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 60px; height: 4px; background: linear-gradient(45deg, #ff6b6b, #4ecdc4); border-radius: 2px; }
+        
+        .creative-header { 
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            color: white; 
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .creative-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%);
+            animation: colorShift 8s linear infinite;
+        }
+        
+        .profile-img { 
+            width: 180px; 
+            height: 180px;
+            border: 6px solid white; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: morphShape 15s ease-in-out infinite;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .profile-img:hover {
+            animation-play-state: paused;
+            transform: scale(1.2) rotateY(15deg);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+            border-color: #feca57;
+        }
+        
+        .creative-card { 
+            border: none; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            transform-style: preserve-3d;
+            animation: slideInCreative 1s ease-out;
+            position: relative;
+        }
+        
+        .creative-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 107, 107, 0.1), rgba(78, 205, 196, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .creative-card:hover::before {
+            opacity: 1;
+        }
+        
+        .creative-card:hover { 
+            transform: rotateY(15deg) rotateX(10deg) translateZ(30px) scale(1.05);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+        }
+        
+        .skill-orb {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4); 
+            color: white; 
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            margin: 8px;
+            display: inline-block;
+            font-weight: 600;
+            transform-style: preserve-3d;
+            transition: all 0.3s ease;
+            animation: creativeFloat 6s ease-in-out infinite;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+        }
+        
+        .skill-orb:hover {
+            transform: translateZ(20px) rotateY(180deg) scale(1.2);
+            animation-play-state: paused;
+            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.5);
+        }
+        
+        .project-showcase {
+            border: none; 
+            border-radius: 20px; 
+            overflow: hidden; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+            transform-style: preserve-3d;
+            transition: all 0.5s ease;
+            position: relative;
+        }
+        
+        .project-showcase::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 107, 107, 0.1), rgba(78, 205, 196, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .project-showcase:hover::after {
+            opacity: 1;
+        }
+        
+        .project-showcase:hover { 
+            transform: perspective(1000px) rotateX(10deg) rotateY(5deg) translateZ(20px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        }
+        
+        .section-title { 
+            color: #2c3e50; 
+            font-weight: 800; 
+            margin-bottom: 40px; 
+            position: relative;
+            animation: slideInCreative 1s ease-out;
+        }
+        
+        .section-title::after { 
+            content: ''; 
+            position: absolute; 
+            bottom: -10px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            width: 80px; 
+            height: 4px; 
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1); 
+            border-radius: 2px;
+            animation: gradientShift 3s ease infinite;
+            background-size: 200% 100%;
+        }
+        
+        .btn {
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            transition: all 0.5s ease;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn:hover {
+            transform: translateZ(10px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+        
+        /* MOBILE OPTIMIZATIONS */
+        @media (max-width: 768px) {
+            .creative-card:hover,
+            .skill-orb:hover,
+            .project-showcase:hover {
+                transform: none !important;
+            }
+            
+            .skill-orb,
+            .profile-img {
+                animation: none !important;
+            }
+            
+            .creative-card:hover {
+                transform: translateY(-5px) !important;
+            }
+            
+            .profile-img:hover {
+                transform: scale(1.1) !important;
+            }
+        }
+        
+        .fade-in-creative {
+            animation: slideInCreative 1s ease-out;
+        }
+        
+        /* Hero Section Styles - EXACT MATCH TO REACT */
+        .hero-section {
+            background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+            padding-top: 100px;
+        }
+        
+        .bg-shape {
+            position: absolute;
+            background: rgba(255,255,255,0.15);
+            border-radius: 50% 30% 70% 40%;
+        }
+        
+        .white-card {
+            background: rgba(255,255,255,0.95);
+            padding: 4rem;
+            border-radius: 30px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+            backdrop-filter: blur(20px);
+            animation: slideInCreative 1.2s ease-out;
+        }
+        
+        .creative-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .hero-name {
+            font-size: 4rem;
+            font-weight: 800;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            line-height: 1.1;
+        }
+        
+        .hero-title {
+            font-size: 1.8rem;
+            color: #e74c3c;
+            margin-bottom: 2rem;
+            font-style: italic;
+            font-weight: 400;
+        }
+        
+        .hero-description {
+            font-size: 1.2rem;
+            color: #34495e;
+            line-height: 1.8;
+            margin-bottom: 2.5rem;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #e74c3c, #f39c12);
+            border: none;
+            padding: 15px 35px;
+            font-size: 1.1rem;
+            border-radius: 30px;
+            box-shadow: 0 8px 25px rgba(231,76,60,0.3);
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(231,76,60,0.4);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid #e74c3c;
+            color: #e74c3c;
+            padding: 13px 33px;
+            font-size: 1.1rem;
+            border-radius: 30px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: #e74c3c;
+            color: white;
+            transform: translateY(-3px);
+            text-decoration: none;
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .social-icon {
+            color: #e74c3c;
+            font-size: 1.8rem;
+            transition: transform 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .social-icon:hover {
+            transform: scale(1.2) rotate(10deg);
+            color: #e74c3c;
+            text-decoration: none;
+        }
+        
+        .profile-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            margin: 0 auto;
+        }
+        
+        .profile-floating {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 350px;
+            height: 350px;
+            background: linear-gradient(45deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
+            border-radius: 50%;
+            animation: creativeFloat 8s ease-in-out infinite;
+        }
+        
+        .profile-img {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 8px solid rgba(255,255,255,0.3);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            z-index: 2;
+            animation: creativeFloat 6s ease-in-out infinite reverse;
+        }
+        
+        .status-badge {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(45deg, #10b981, #34d399);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: 0 8px 20px rgba(16,185,129,0.3);
+        }
+        
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .creative-card:hover,
+            .profile-floating:hover {
+                transform: none !important;
+                animation: none !important;
+            }
+            
+            .hero-section {
+                padding-top: 80px !important;
+                min-height: auto !important;
+            }
+            
+            .white-card {
+                margin: 1rem !important;
+                padding: 1.5rem !important;
+            }
+            
+            .profile-container {
+                width: 250px !important;
+                height: 250px !important;
+            }
+            
+            .profile-img {
+                width: 180px !important;
+                height: 180px !important;
+            }
+            
+            .hero-name {
+                font-size: 2rem !important;
+            }
+            
+            .hero-title {
+                font-size: 1.2rem !important;
+            }
+            
+            .hero-description {
+                font-size: 0.9rem !important;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+            }
+            
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                max-width: 300px;
+                font-size: 0.9rem !important;
+                padding: 12px 25px !important;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Creative Header -->
-    <div class="creative-header text-center">
-        <div class="container">
-            ${data.profileImage ? `<img src="${data.profileImage}" alt="${data.name}" class="profile-img mb-4">` : ''}
-            <h1 class="display-3 mb-3 fw-bold">${data.name}</h1>
-            <h2 class="h3 mb-4">${data.title}</h2>
-            ${data.about ? `<p class="lead fs-5">${data.about}</p>` : ''}
-            <div class="mt-5">
-                ${data.email ? `<a href="mailto:${data.email}" class="btn btn-light btn-lg me-3 mb-2"><i class="fas fa-envelope"></i> Contact</a>` : ''}
-                ${data.linkedin ? `<a href="${data.linkedin}" target="_blank" class="btn btn-outline-light btn-lg me-3 mb-2"><i class="fab fa-linkedin"></i> LinkedIn</a>` : ''}
-                ${data.github ? `<a href="${data.github}" target="_blank" class="btn btn-outline-light btn-lg me-3 mb-2"><i class="fab fa-github"></i> GitHub</a>` : ''}
+    <!-- Creative Hero Section - EXACT MATCH TO REACT -->
+    <section class="hero-section">
+        <!-- Animated Background Shapes -->
+        <div class="bg-shape" style="top: 10%; left: 5%; width: 150px; height: 150px; animation: morphShape 8s ease-in-out infinite, colorShift 12s linear infinite;"></div>
+        <div class="bg-shape" style="top: 60%; right: 10%; width: 120px; height: 120px; animation: morphShape 6s ease-in-out infinite reverse, colorShift 10s linear infinite reverse;"></div>
+        <div class="bg-shape" style="bottom: 20%; left: 15%; width: 100px; height: 100px; animation: morphShape 10s ease-in-out infinite, colorShift 8s linear infinite;"></div>
+        
+        <div class="container h-100 d-flex align-items-center">
+            <div class="row w-100 align-items-center">
+                <div class="col-lg-6">
+                    <div class="white-card">
+                        <div class="creative-badge">Creative Professional</div>
+                        <h1 class="hero-name">${data.name}</h1>
+                        <h2 class="hero-title">${data.title}</h2>
+                        <p class="hero-description">${data.about || 'Creative professional passionate about innovative design and user experience.'}</p>
+                        <div class="hero-buttons">
+                            <a href="#portfolio" class="btn-primary">🎨 View Portfolio</a>
+                            <a href="#contact" class="btn-secondary">💬 Let's Talk</a>
+                        </div>
+                        <div class="social-icons">
+                            <a href="#" class="social-icon">🎨</a>
+                            <a href="#" class="social-icon">🏀</a>
+                            <a href="#" class="social-icon">💼</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="profile-container">
+                        <div class="profile-floating"></div>
+                        ${data.profileImage ? `<img src="${data.profileImage}" alt="${data.name}" class="profile-img">` : ''}
+                        <div class="status-badge">✓</div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- Skills Section -->
     ${data.skills && data.skills.length > 0 ? `
@@ -634,11 +1505,11 @@ function generateTemplate2HTML(data, meta) {
                 ${data.skills.map(skill => `
                     <div class="col-md-4 mb-4">
                         <div class="creative-card p-4 text-center h-100">
-                            <h5 class="mb-3">${skill.name}</h5>
-                            <div class="progress mb-3" style="height: 10px;">
-                                <div class="progress-bar skill-badge" style="width: ${skill.level}%"></div>
+                            <h5 class="mb-3" style="color: #2c3e50; font-weight: 700;">${skill.name}</h5>
+                            <div class="progress mb-3" style="height: 12px; border-radius: 10px; background: #f8f9fa;">
+                                <div class="progress-bar" style="width: ${skill.level}%; background: linear-gradient(45deg, #ff6b6b, #4ecdc4); border-radius: 10px; transition: width 2s ease-in-out;"></div>
                             </div>
-                            <span class="badge skill-badge">${skill.level}%</span>
+                            <span class="skill-orb">${skill.level}%</span>
                         </div>
                     </div>
                 `).join('')}
@@ -655,19 +1526,19 @@ function generateTemplate2HTML(data, meta) {
             <div class="row">
                 ${data.projects.map(project => `
                     <div class="col-lg-6 mb-5">
-                        <div class="creative-card h-100">
+                        <div class="project-showcase h-100">
                             ${project.image ? `<img src="${project.image}" class="card-img-top" style="height: 250px; object-fit: cover;" alt="${project.title}">` : ''}
                             <div class="card-body p-4">
-                                <h5 class="card-title fw-bold">${project.title}</h5>
-                                <p class="card-text">${project.description}</p>
+                                <h5 class="card-title fw-bold" style="color: #2c3e50; font-size: 1.5rem;">${project.title}</h5>
+                                <p class="card-text" style="color: #555; line-height: 1.6;">${project.description}</p>
                                 ${project.tech && project.tech.length > 0 ? `
                                     <div class="mb-3">
-                                        ${project.tech.map(tech => `<span class="badge skill-badge me-2 mb-2">${tech}</span>`).join('')}
+                                        ${project.tech.map(tech => `<span class="skill-orb me-2 mb-2" style="font-size: 0.85rem; padding: 8px 16px;">${tech}</span>`).join('')}
                                     </div>
                                 ` : ''}
                                 <div class="d-flex gap-2">
-                                    ${project.demo ? `<a href="${project.demo}" target="_blank" class="btn btn-primary">View Live</a>` : ''}
-                                    ${project.github ? `<a href="${project.github}" target="_blank" class="btn btn-outline-primary">GitHub</a>` : ''}
+                                    ${project.demo ? `<a href="${project.demo}" target="_blank" class="btn" style="background: linear-gradient(45deg, #ff6b6b, #4ecdc4); color: white; border: none; border-radius: 25px; padding: 10px 25px; font-weight: 600;">🚀 View Live</a>` : ''}
+                                    ${project.github ? `<a href="${project.github}" target="_blank" class="btn btn-outline-secondary" style="border-radius: 25px; padding: 10px 25px; font-weight: 600;"><i class="fab fa-github"></i> Code</a>` : ''}
                                 </div>
                             </div>
                         </div>
@@ -691,6 +1562,53 @@ function generateTemplate2HTML(data, meta) {
                             <h5 class="text-primary">${exp.company}</h5>
                             <p class="text-muted">${exp.duration} • ${exp.location || ''}</p>
                             <p>${exp.description}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    </section>
+    ` : ''}
+
+    <!-- Internships Section -->
+    ${data.internships && data.internships.length > 0 ? `
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="section-title text-center">Internships</h2>
+            ${data.internships.map(internship => `
+                <div class="creative-card mb-4 p-4">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h4 class="fw-bold">${internship.position}</h4>
+                            <h5 class="text-primary">${internship.company}</h5>
+                            <p class="text-muted">${internship.duration} • ${internship.location || ''}</p>
+                            <p>${internship.description}</p>
+                            ${internship.achievements && internship.achievements.length > 0 ? `
+                                <ul class="mt-3">
+                                    ${internship.achievements.map(achievement => `<li>${achievement}</li>`).join('')}
+                                </ul>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    </section>
+    ` : ''}
+
+    <!-- Education Section -->
+    ${data.education && data.education.length > 0 ? `
+    <section class="py-5">
+        <div class="container">
+            <h2 class="section-title text-center">Education</h2>
+            ${data.education.map(edu => `
+                <div class="creative-card mb-4 p-4">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h4 class="fw-bold">${edu.degree}</h4>
+                            <h5 class="text-primary">${edu.institution}</h5>
+                            <p class="text-muted">${edu.duration} ${edu.gpa ? `• GPA: ${edu.gpa}` : ''}</p>
+                            ${edu.description ? `<p>${edu.description}</p>` : ''}
                         </div>
                     </div>
                 </div>
@@ -727,34 +1645,429 @@ function generateTemplate3HTML(data, meta) {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        body { font-family: 'Georgia', serif; line-height: 1.6; }
-        .business-header { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 80px 0; }
-        .profile-img { width: 160px; height: 160px; border-radius: 10px; border: 4px solid white; }
-        .business-card { border: 1px solid #e9ecef; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
-        .section-title { color: #1e3c72; font-weight: 700; border-bottom: 3px solid #2a5298; padding-bottom: 10px; }
-        .achievement-item { background: #f8f9fa; border-left: 4px solid #2a5298; padding: 15px; margin-bottom: 15px; }
+        body { 
+            font-family: 'Georgia', serif; 
+            line-height: 1.6; 
+            overflow-x: hidden;
+        }
+        
+        /* ENHANCED BUSINESS PROFESSIONAL ANIMATIONS - MATCHING REACT TEMPLATE */
+        @keyframes professionalSlide {
+            0% { transform: translateX(-50px) rotateY(-15deg); opacity: 0; }
+            100% { transform: translateX(0) rotateY(0deg); opacity: 1; }
+        }
+        
+        @keyframes businessFloat {
+            0%, 100% { transform: translateY(0px) rotateX(0deg); }
+            50% { transform: translateY(-10px) rotateX(2deg); }
+        }
+        
+        @keyframes dataVisualization {
+            0% { transform: scaleY(0.3); }
+            50% { transform: scaleY(1); }
+            100% { transform: scaleY(0.8); }
+        }
+        
+        @keyframes professionalGlow {
+            0%, 100% { box-shadow: 0 5px 15px rgba(30,60,114,0.2); }
+            50% { box-shadow: 0 10px 30px rgba(30,60,114,0.4); }
+        }
+        
+        @keyframes progressGrow {
+            0% { width: 0% !important; }
+        }
+        
+        .business-header { 
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); 
+            color: white; 
+            padding: 80px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .business-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.05) 50%, transparent 70%);
+            animation: shimmer 4s ease-in-out infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .profile-img { 
+            width: 160px; 
+            height: 160px; 
+            border-radius: 15px; 
+            border: 4px solid white;
+            transition: all 0.3s ease;
+            animation: subtleFloat 4s ease-in-out infinite;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .profile-img:hover {
+            transform: scale(1.1) rotateY(5deg);
+            border-color: #ffd700;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            animation-play-state: paused;
+        }
+        
+        .business-card { 
+            border: 1px solid #e9ecef; 
+            border-radius: 15px; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+            animation: professionalGlow 3s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .business-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(30, 60, 114, 0.02), rgba(42, 82, 152, 0.02));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .business-card:hover::before {
+            opacity: 1;
+        }
+        
+        .business-card:hover { 
+            transform: rotateY(8deg) rotateX(4deg) translateZ(15px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(30,60,114,0.3);
+            border-color: #2a5298;
+        }
+        
+        .section-title { 
+            color: #1e3c72; 
+            font-weight: 700; 
+            border-bottom: 3px solid #2a5298; 
+            padding-bottom: 10px;
+            animation: professionalSlide 1s ease-out;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #1e3c72, #2a5298);
+            animation: progressGrow 2s ease-out forwards;
+        }
+        
+        .achievement-item { 
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-left: 4px solid #2a5298; 
+            padding: 20px; 
+            margin-bottom: 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            animation: professionalSlide 1s ease-out;
+            position: relative;
+        }
+        
+        .achievement-item:hover {
+            transform: translateX(10px);
+            border-left-color: #1e3c72;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .achievement-item::before {
+            content: '✓';
+            position: absolute;
+            left: -2px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            background: #2a5298;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .btn {
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        .progress {
+            height: 10px;
+            border-radius: 5px;
+            background: #f8f9fa;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #1e3c72, #2a5298);
+            transition: width 2s ease-in-out;
+            animation: progressGrow 2s ease-out;
+        }
+        
+        /* MOBILE OPTIMIZATIONS */
+        @media (max-width: 768px) {
+            .business-card:hover,
+            .achievement-item:hover {
+                transform: none !important;
+            }
+            
+            .profile-img {
+                animation: none !important;
+            }
+            
+            .profile-img:hover {
+                transform: scale(1.05) !important;
+            }
+            
+            .business-card:hover {
+                transform: translateY(-3px) !important;
+            }
+        }
+        
+        .fade-in-minimal {
+            animation: professionalSlide 1s ease-out;
+        }
     </style>
 </head>
 <body>
-    <div class="business-header">
+    <!-- Professional Navigation -->
+    <nav style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: rgba(30, 60, 114, 0.95);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        z-index: 1000;
+        padding: 1rem 0;
+    ">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-4 text-center">
-                    ${data.profileImage ? `<img src="${data.profileImage}" alt="${data.name}" class="profile-img">` : ''}
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="
+                    font-size: 1.8rem;
+                    font-weight: 700;
+                    color: white;
+                ">
+                    ${data.name}
                 </div>
-                <div class="col-md-8">
-                    <h1 class="display-4 fw-bold">${data.name}</h1>
-                    <h2 class="h3 mb-3">${data.title}</h2>
-                    ${data.about ? `<p class="lead">${data.about}</p>` : ''}
-                    <div class="mt-4">
-                        ${data.email ? `<a href="mailto:${data.email}" class="btn btn-outline-light me-2"><i class="fas fa-envelope"></i> ${data.email}</a>` : ''}
-                        ${data.phone ? `<a href="tel:${data.phone}" class="btn btn-outline-light me-2"><i class="fas fa-phone"></i> ${data.phone}</a>` : ''}
-                        ${data.linkedin ? `<a href="${data.linkedin}" target="_blank" class="btn btn-outline-light"><i class="fab fa-linkedin"></i> LinkedIn</a>` : ''}
+                <div style="display: flex; gap: 2rem; align-items: center;">
+                    <a href="#about" style="color: rgba(255,255,255,0.9); text-decoration: none; font-weight: 500;">About</a>
+                    <a href="#experience" style="color: rgba(255,255,255,0.9); text-decoration: none; font-weight: 500;">Experience</a>
+                    <a href="#projects" style="color: rgba(255,255,255,0.9); text-decoration: none; font-weight: 500;">Projects</a>
+                    <a href="#skills" style="color: rgba(255,255,255,0.9); text-decoration: none; font-weight: 500;">Expertise</a>
+                    <a href="#contact" style="color: rgba(255,255,255,0.9); text-decoration: none; font-weight: 500;">Contact</a>
+                    <button class="btn" style="
+                        background: linear-gradient(135deg, #64b5f6, #42a5f5);
+                        border: none;
+                        border-radius: 6px;
+                        padding: 8px 20px;
+                        font-weight: 600;
+                        color: white;
+                    ">
+                        Resume
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Professional Hero Section -->
+    <section style="
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: white;
+        min-height: 100vh;
+        position: relative;
+        padding-top: 100px;
+    ">
+        <!-- Professional Background Pattern -->
+        <div style="
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(45deg, rgba(255,255,255,0.03) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(255,255,255,0.03) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.03) 75%),
+                linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.03) 75%);
+            background-size: 60px 60px;
+            background-position: 0 0, 0 30px, 30px -30px, -30px 0px;
+        "></div>
+        
+        <div class="container h-100 d-flex align-items-center position-relative">
+            <div class="row w-100 align-items-center">
+                <div class="col-lg-7">
+                    <div style="
+                        background: rgba(255,255,255,0.1);
+                        padding: 4rem;
+                        border-radius: 15px;
+                        backdrop-filter: blur(20px);
+                        border: 1px solid rgba(255,255,255,0.2);
+                        animation: professionalSlide 1s ease-out;
+                    ">
+                        <div style="
+                            display: inline-block;
+                            background: rgba(100,181,246,0.2);
+                            color: #64b5f6;
+                            padding: 8px 20px;
+                            border-radius: 6px;
+                            font-size: 0.9rem;
+                            font-weight: 600;
+                            margin-bottom: 1.5rem;
+                            text-transform: uppercase;
+                            letter-spacing: 1px;
+                            border: 1px solid rgba(100,181,246,0.3);
+                        ">
+                            Senior Business Consultant
+                        </div>
+                        <h1 style="
+                            font-size: 4rem;
+                            font-weight: 300;
+                            margin-bottom: 1rem;
+                            letter-spacing: -1px;
+                            line-height: 1.1;
+                        ">
+                            ${data.name}
+                        </h1>
+                        <h2 style="
+                            font-size: 1.6rem;
+                            font-weight: 400;
+                            margin-bottom: 2rem;
+                            color: #64b5f6;
+                            text-transform: uppercase;
+                            letter-spacing: 1px;
+                        ">
+                            ${data.title}
+                        </h2>
+                        <p style="
+                            font-size: 1.2rem;
+                            line-height: 1.8;
+                            margin-bottom: 3rem;
+                            opacity: 0.9;
+                            max-width: 600px;
+                        ">
+                            ${data.about || ''}
+                        </p>
+                        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                            <a href="#projects" class="btn" style="
+                                background: transparent;
+                                border: 2px solid #64b5f6;
+                                color: #64b5f6;
+                                padding: 12px 30px;
+                                font-weight: 600;
+                                text-transform: uppercase;
+                                letter-spacing: 1px;
+                                border-radius: 6px;
+                                text-decoration: none;
+                            ">
+                                View Case Studies
+                            </a>
+                            <a href="#contact" class="btn" style="
+                                background: #64b5f6;
+                                border: 2px solid #64b5f6;
+                                color: white;
+                                padding: 12px 30px;
+                                font-weight: 600;
+                                text-transform: uppercase;
+                                letter-spacing: 1px;
+                                border-radius: 6px;
+                                text-decoration: none;
+                            ">
+                                Schedule Consultation
+                            </a>
+                        </div>
+                        <!-- Professional Links -->
+                        <div style="display: flex; gap: 1.5rem;">
+                            ${data.linkedin ? `<a href="${data.linkedin}" target="_blank" rel="noopener noreferrer" style="color: #64b5f6; font-size: 1.5rem; opacity: 0.8; text-decoration: none;">💼</a>` : ''}
+                            ${data.website ? `<a href="${data.website}" target="_blank" rel="noopener noreferrer" style="color: #64b5f6; font-size: 1.5rem; opacity: 0.8; text-decoration: none;">🌐</a>` : ''}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5 text-center">
+                    <div style="
+                        position: relative;
+                        width: 350px;
+                        height: 350px;
+                        margin: 0 auto;
+                    ">
+                        <div style="
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            width: 300px;
+                            height: 300px;
+                            background: rgba(255,255,255,0.1);
+                            border-radius: 15px;
+                            animation: businessFloat 6s ease-in-out infinite;
+                        "></div>
+                        ${data.profileImage ? `
+                        <img src="${data.profileImage}" alt="${data.name}" style="
+                            position: relative;
+                            width: 280px;
+                            height: 280px;
+                            border-radius: 15px;
+                            object-fit: cover;
+                            border: 4px solid rgba(255,255,255,0.2);
+                            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+                            z-index: 2;
+                        ">
+                        <div style="
+                            position: absolute;
+                            bottom: 20px;
+                            right: 20px;
+                            background: linear-gradient(135deg, #10b981, #34d399);
+                            width: 50px;
+                            height: 50px;
+                            border-radius: 8px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            color: white;
+                            font-size: 1.5rem;
+                            border: 3px solid white;
+                            animation: businessFloat 4s ease-in-out infinite reverse;
+                            z-index: 3;
+                        ">
+                            ✓
+                        </div>
+                        ` : ''}
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     ${data.experience && data.experience.length > 0 ? `
     <section class="py-5">
@@ -780,6 +2093,206 @@ function generateTemplate3HTML(data, meta) {
                     </div>
                 </div>
             `).join('')}
+        </div>
+    </section>
+    ` : ''}
+
+    ${data.internships && data.internships.length > 0 ? `
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="section-title mb-4">Internship Experience</h2>
+            ${data.internships.map(internship => `
+                <div class="business-card p-4 mb-4">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <h4 class="fw-bold text-primary">${internship.position}</h4>
+                            <h5>${internship.company}</h5>
+                            <p class="text-muted">${internship.duration} • ${internship.location || ''}</p>
+                            <p>${internship.description}</p>
+                            ${internship.achievements && internship.achievements.length > 0 ? `
+                                <div class="mt-3">
+                                    <h6>Key Achievements:</h6>
+                                    ${internship.achievements.map(achievement => `
+                                        <div class="achievement-item">${achievement}</div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div style="
+                                width: 80px;
+                                height: 80px;
+                                background: linear-gradient(135deg, #64b5f6, #42a5f5);
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                margin: 0 auto;
+                                font-size: 2rem;
+                                animation: businessFloat 6s ease-in-out infinite;
+                            ">
+                                🚀
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    </section>
+    ` : ''}
+
+    ${data.education && data.education.length > 0 ? `
+    <section class="py-5">
+        <div class="container">
+            <h2 class="section-title mb-4">Education</h2>
+            ${data.education.map(edu => `
+                <div class="business-card p-4 mb-4">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <h4 class="fw-bold text-primary">${edu.degree}</h4>
+                            <h5>${edu.institution || edu.school}</h5>
+                            <p class="text-muted">${edu.duration} ${edu.location ? `• ${edu.location}` : ''}</p>
+                            ${edu.gpa ? `<p><strong>GPA:</strong> ${edu.gpa}</p>` : ''}
+                            ${edu.description ? `<p>${edu.description}</p>` : ''}
+                            ${edu.honors ? `<p><strong>Honors:</strong> ${edu.honors}</p>` : ''}
+                            ${edu.relevant && edu.relevant.length > 0 ? `
+                                <div class="mt-3">
+                                    <h6>Relevant Coursework:</h6>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        ${edu.relevant.map(course => `
+                                            <span class="badge bg-secondary">${course}</span>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div style="
+                                width: 80px;
+                                height: 80px;
+                                background: linear-gradient(135deg, #10b981, #34d399);
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                margin: 0 auto;
+                                font-size: 2rem;
+                                animation: businessFloat 6s ease-in-out infinite;
+                            ">
+                                🎓
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    </section>
+    ` : ''}
+
+    ${data.certifications && data.certifications.length > 0 ? `
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="section-title mb-4">Professional Certifications</h2>
+            <div class="row">
+                ${data.certifications.map(cert => `
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="business-card p-4 h-100 text-center">
+                            <div style="
+                                width: 60px;
+                                height: 60px;
+                                background: linear-gradient(135deg, #64b5f6, #42a5f5);
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                margin: 0 auto 1rem auto;
+                                font-size: 1.5rem;
+                                animation: businessFloat 6s ease-in-out infinite;
+                            ">
+                                🏆
+                            </div>
+                            <h5 class="fw-bold">${cert.name}</h5>
+                            <p class="text-muted">${cert.issuer}</p>
+                            <p class="small">${cert.date}</p>
+                            ${cert.validUntil ? `<p class="small text-success">Valid until: ${cert.validUntil}</p>` : ''}
+                            ${cert.verifyLink ? `<a href="${cert.verifyLink}" target="_blank" class="btn btn-outline-primary btn-sm">Verify</a>` : ''}
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    </section>
+    ` : ''}
+
+    ${data.projects && data.projects.length > 0 ? `
+    <section class="py-5">
+        <div class="container">
+            <h2 class="section-title mb-4">Case Studies & Projects</h2>
+            <div class="row">
+                ${data.projects.map(project => `
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="business-card p-4 h-100">
+                            ${project.image ? `
+                                <div style="
+                                    width: 100%;
+                                    height: 200px;
+                                    background-image: url('${project.image}');
+                                    background-size: cover;
+                                    background-position: center;
+                                    border-radius: 10px;
+                                    margin-bottom: 1rem;
+                                    position: relative;
+                                    overflow: hidden;
+                                ">
+                                    <div style="
+                                        position: absolute;
+                                        top: 0;
+                                        left: 0;
+                                        right: 0;
+                                        bottom: 0;
+                                        background: linear-gradient(135deg, rgba(30,60,114,0.8), rgba(42,82,152,0.8));
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        opacity: 0;
+                                        transition: opacity 0.3s ease;
+                                    " onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'">
+                                        <span style="color: white; font-size: 1.2rem; font-weight: 600;">View Project</span>
+                                    </div>
+                                </div>
+                            ` : `
+                                <div style="
+                                    width: 100%;
+                                    height: 200px;
+                                    background: linear-gradient(135deg, #64b5f6, #42a5f5);
+                                    border-radius: 10px;
+                                    margin-bottom: 1rem;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    font-size: 3rem;
+                                    animation: businessFloat 6s ease-in-out infinite;
+                                ">
+                                    💼
+                                </div>
+                            `}
+                            <h5 class="fw-bold">${project.title}</h5>
+                            <p class="text-muted small">${project.description}</p>
+                            ${project.tech && project.tech.length > 0 ? `
+                                <div class="mb-3">
+                                    ${project.tech.map(tech => `
+                                        <span class="badge bg-primary me-1 mb-1">${tech}</span>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                            <div class="d-flex gap-2">
+                                ${project.liveUrl ? `<a href="${project.liveUrl}" target="_blank" class="btn btn-outline-primary btn-sm">Live Demo</a>` : ''}
+                                ${project.githubUrl ? `<a href="${project.githubUrl}" target="_blank" class="btn btn-outline-secondary btn-sm">GitHub</a>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
         </div>
     </section>
     ` : ''}
@@ -832,19 +2345,206 @@ function generateTemplate4HTML(data, meta) {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #333; line-height: 1.8; }
-        .minimal-header { background: #fff; color: #333; padding: 100px 0; border-bottom: 1px solid #eee; }
-        .profile-img { width: 120px; height: 120px; border-radius: 50%; filter: grayscale(100%); }
-        .minimal-section { padding: 60px 0; }
-        .section-title { font-weight: 300; font-size: 2rem; margin-bottom: 40px; color: #333; }
-        .minimal-card { border: none; border-bottom: 1px solid #eee; padding: 30px 0; }
-        .skill-bar { height: 2px; background: #333; margin: 10px 0; }
+        body { 
+            font-family: 'Helvetica Neue', Arial, sans-serif; 
+            color: #333; 
+            line-height: 1.8; 
+            overflow-x: hidden;
+        }
+        
+        /* ENHANCED MINIMAL ANIMATIONS - MATCHING REACT TEMPLATE */
+        @keyframes minimalFadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes minimalSlideIn {
+            0% { transform: translateX(-30px); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes gentleFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes lineGrow {
+            0% { width: 0%; }
+            100% { width: var(--target-width); }
+        }
+        
+        .minimal-header { 
+            background: #fff; 
+            color: #333; 
+            padding: 100px 0; 
+            border-bottom: 1px solid #eee;
+            position: relative;
+        }
+        
+        .minimal-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.02) 0%, transparent 70%);
+        }
+        
+        .profile-img { 
+            width: 120px; 
+            height: 120px; 
+            border-radius: 50%; 
+            filter: grayscale(100%);
+            transition: all 0.3s ease;
+            animation: gentleFloat 4s ease-in-out infinite;
+        }
+        
+        .profile-img:hover {
+            filter: grayscale(0%);
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            animation-play-state: paused;
+        }
+        
+        .minimal-section { 
+            padding: 60px 0;
+            animation: minimalFadeIn 1s ease-out;
+        }
+        
+        .section-title { 
+            font-weight: 300; 
+            font-size: 2rem; 
+            margin-bottom: 40px; 
+            color: #333;
+            animation: minimalSlideIn 1s ease-out;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 1px;
+            background: #333;
+            animation: lineGrow 2s ease-out forwards;
+            --target-width: 60px;
+        }
+        
+        .minimal-card { 
+            border: none; 
+            border-bottom: 1px solid #eee; 
+            padding: 30px 0;
+            transition: all 0.3s ease;
+            animation: minimalFadeIn 1s ease-out;
+            position: relative;
+        }
+        
+        .minimal-card:hover {
+            transform: translateX(10px);
+            background: rgba(0,0,0,0.01);
+            border-bottom-color: #333;
+        }
+        
+        .minimal-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            background: #333;
+            transition: width 0.3s ease;
+        }
+        
+        .minimal-card:hover::before {
+            width: 3px;
+        }
+        
+        .skill-bar { 
+            height: 2px; 
+            background: #333; 
+            margin: 10px 0;
+            transform-origin: left;
+            animation: lineGrow 2s ease-out;
+            --target-width: var(--skill-width);
+        }
+        
+        .skill-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .skill-container:hover .skill-bar {
+            height: 4px;
+            background: linear-gradient(90deg, #333, #666);
+        }
+        
+        .btn-minimal {
+            color: #333;
+            text-decoration: none;
+            padding: 8px 0;
+            border-bottom: 1px solid transparent;
+            transition: all 0.3s ease;
+            display: inline-block;
+            position: relative;
+        }
+        
+        .btn-minimal:hover {
+            color: #000;
+            border-bottom-color: #333;
+            transform: translateY(-2px);
+        }
+        
+        .btn-minimal::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: #333;
+            transition: width 0.3s ease;
+        }
+        
+        .btn-minimal:hover::after {
+            width: 100%;
+        }
+        
+        /* MOBILE OPTIMIZATIONS */
+        @media (max-width: 768px) {
+            .minimal-card:hover,
+            .skill-container:hover .skill-bar {
+                transform: none !important;
+                height: 2px !important;
+                background: #333 !important;
+            }
+            
+            .profile-img {
+                animation: none !important;
+            }
+            
+            .profile-img:hover {
+                transform: scale(1.05) !important;
+            }
+            
+            .minimal-card:hover {
+                transform: translateX(5px) !important;
+            }
+        }
+        
+        .fade-in-minimal {
+            animation: minimalFadeIn 1s ease-out;
+        }
     </style>
 </head>
 <body>
     <div class="minimal-header text-center">
         <div class="container">
-            ${data.profileImage ? `<img src="${data.profileImage}" alt="${data.name}" class="profile-img mb-4">` : ''}
+            ${data.profileImage ? `<img src="${data.profileImage}" alt="${data.name}" class="profile-img profile-3d mb-4">` : ''}
             <h1 class="display-5 fw-light mb-3">${data.name}</h1>
             <h2 class="h4 fw-light text-muted mb-4">${data.title}</h2>
             ${data.about ? `<p class="lead fw-light" style="max-width: 600px; margin: 0 auto;">${data.about}</p>` : ''}
@@ -931,32 +2631,261 @@ function generateTemplate5HTML(data, meta) {
             background: #0d1117; 
             color: #c9d1d9; 
             line-height: 1.6; 
+            overflow-x: hidden;
         }
+        
+        /* ENHANCED TERMINAL ANIMATIONS - MATCHING REACT TEMPLATE */
+        @keyframes terminalBoot {
+            0% { opacity: 0; transform: scale(0.95); }
+            50% { opacity: 0.5; transform: scale(0.98); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes typewriter {
+            0% { width: 0; }
+            100% { width: 100%; }
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        @keyframes terminalGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(88, 166, 255, 0.1); }
+            50% { box-shadow: 0 0 30px rgba(88, 166, 255, 0.2); }
+        }
+        
+        @keyframes codeScroll {
+            0% { transform: translateY(10px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes matrixRain {
+            0% { transform: translateY(-100%); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+        
         .terminal-header { 
             background: #161b22; 
             border: 1px solid #30363d; 
             border-radius: 6px; 
             padding: 40px; 
-            margin: 20px 0; 
+            margin: 20px 0;
+            animation: terminalBoot 2s ease-out, terminalGlow 3s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
         }
-        .terminal-prompt { color: #58a6ff; }
-        .terminal-text { color: #7ee787; }
+        
+        .terminal-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: linear-gradient(90deg, #ff5f56, #ffbd2e, #27ca3f);
+            border-radius: 6px 6px 0 0;
+        }
+        
+        .terminal-header::after {
+            content: '● ● ●';
+            position: absolute;
+            top: 8px;
+            left: 15px;
+            color: #000;
+            font-size: 12px;
+            letter-spacing: 3px;
+        }
+        
+        .terminal-prompt { 
+            color: #58a6ff;
+            position: relative;
+        }
+        
+        .terminal-prompt::after {
+            content: '█';
+            color: #7ee787;
+            animation: blink 1s infinite;
+            margin-left: 2px;
+        }
+        
+        .terminal-text { 
+            color: #7ee787;
+            animation: typewriter 2s steps(40) 1s both;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid #7ee787;
+        }
+        
         .terminal-card { 
             background: #161b22; 
             border: 1px solid #30363d; 
             border-radius: 6px; 
             padding: 20px; 
-            margin: 20px 0; 
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            animation: codeScroll 1s ease-out;
+            position: relative;
         }
+        
+        .terminal-card:hover {
+            border-color: #58a6ff;
+            box-shadow: 0 0 20px rgba(88, 166, 255, 0.1);
+            transform: translateY(-5px);
+        }
+        
+        .terminal-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #58a6ff, #7ee787);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .terminal-card:hover::before {
+            opacity: 1;
+        }
+        
         .code-block { 
             background: #0d1117; 
             border: 1px solid #30363d; 
             border-radius: 6px; 
             padding: 15px; 
-            font-family: 'Courier New', monospace; 
+            font-family: 'Courier New', monospace;
+            position: relative;
+            overflow: hidden;
+            animation: codeScroll 1s ease-out;
         }
-        a { color: #58a6ff; text-decoration: none; }
-        a:hover { color: #79c0ff; }
+        
+        .code-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 30%, rgba(126, 231, 135, 0.05) 50%, transparent 70%);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+        
+        .code-block:hover::before {
+            transform: translateX(100%);
+        }
+        
+        .skill-progress {
+            background: #30363d;
+            height: 4px;
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+        
+        .skill-progress-bar {
+            background: linear-gradient(90deg, #58a6ff, #7ee787);
+            height: 100%;
+            border-radius: 2px;
+            transition: width 2s ease-in-out;
+            animation: typewriter 2s ease-out;
+        }
+        
+        .project-terminal {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 15px 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .project-terminal:hover {
+            border-color: #7ee787;
+            box-shadow: 0 0 15px rgba(126, 231, 135, 0.1);
+        }
+        
+        .project-terminal::before {
+            content: '> ';
+            color: #58a6ff;
+            font-weight: bold;
+        }
+        
+        a { 
+            color: #58a6ff; 
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        a:hover { 
+            color: #79c0ff;
+            text-shadow: 0 0 8px rgba(121, 192, 255, 0.5);
+        }
+        
+        a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: #79c0ff;
+            transition: width 0.3s ease;
+        }
+        
+        a:hover::after {
+            width: 100%;
+        }
+        
+        /* MATRIX RAIN EFFECT */
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.1;
+        }
+        
+        .matrix-char {
+            position: absolute;
+            color: #7ee787;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            animation: matrixRain 10s linear infinite;
+        }
+        
+        /* MOBILE OPTIMIZATIONS */
+        @media (max-width: 768px) {
+            .terminal-card:hover,
+            .project-terminal:hover {
+                transform: none !important;
+                box-shadow: none !important;
+            }
+            
+            .terminal-text {
+                animation: none !important;
+                border-right: none !important;
+                white-space: normal !important;
+            }
+            
+            .matrix-bg {
+                display: none;
+            }
+        }
+        
+        .fade-in-terminal {
+            animation: terminalBoot 1s ease-out;
+        }
     </style>
 </head>
 <body>
@@ -1068,14 +2997,50 @@ function generateTemplate6HTML(data, meta) {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        body { font-family: 'Arial', sans-serif; }
+        body { 
+            font-family: 'Arial', sans-serif; 
+            overflow-x: hidden;
+        }
+        
+        /* ENHANCED MARKETING ANIMATIONS - MATCHING REACT TEMPLATE */
+        @keyframes marketingSlide {
+            0% { transform: translateX(-100px) rotateY(-30deg); opacity: 0; }
+            100% { transform: translateX(0) rotateY(0deg); opacity: 1; }
+        }
+        
+        @keyframes marketingBounce {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            25% { transform: translateY(-10px) scale(1.05); }
+            50% { transform: translateY(-15px) scale(1.1); }
+            75% { transform: translateY(-5px) scale(1.05); }
+        }
+        
+        @keyframes marketingPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+            50% { transform: scale(1.05); box-shadow: 0 15px 40px rgba(0,0,0,0.2); }
+        }
+        
+        @keyframes gradientWave {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+            50% { opacity: 1; transform: scale(1) rotate(180deg); }
+        }
+        
         .marketing-header { 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%); 
+            background-size: 400% 400%;
+            animation: gradientWave 8s ease infinite;
             color: white; 
             padding: 100px 0; 
             position: relative;
             overflow: hidden;
         }
+        
         .marketing-header::before {
             content: '';
             position: absolute;
@@ -1083,23 +3048,219 @@ function generateTemplate6HTML(data, meta) {
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            background: radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(255,255,255,0.05) 0%, transparent 50%);
+            animation: sparkle 4s ease-in-out infinite;
         }
-        .profile-img { width: 150px; height: 150px; border-radius: 50%; border: 5px solid white; }
+        
+        .marketing-header::after {
+            content: '✨';
+            position: absolute;
+            top: 20%;
+            right: 10%;
+            font-size: 2rem;
+            animation: marketingBounce 3s ease-in-out infinite;
+        }
+        
+        .profile-img { 
+            width: 150px; 
+            height: 150px; 
+            border-radius: 50%; 
+            border: 5px solid white;
+            animation: marketingBounce 4s ease-in-out infinite;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .profile-img:hover {
+            transform: scale(1.2) rotateY(15deg);
+            border-color: #ffd700;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            animation-play-state: paused;
+        }
+        
         .marketing-card { 
             border: none; 
-            border-radius: 15px; 
+            border-radius: 20px; 
             box-shadow: 0 8px 25px rgba(0,0,0,0.1); 
-            transition: all 0.3s; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            transform-style: preserve-3d;
+            animation: marketingSlide 1s ease-out;
+            position: relative;
+        }
+        
+        .marketing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .marketing-card:hover::before {
+            opacity: 1;
+        }
+        
+        .marketing-card:hover { 
+            transform: rotateY(10deg) rotateX(5deg) translateZ(20px) scale(1.03);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        }
+        
+        .marketing-badge {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 8px 20px;
+            font-weight: 600;
+            display: inline-block;
+            margin: 5px;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+            animation: marketingSlide 1s ease-out;
+        }
+        
+        .marketing-badge:hover {
+            transform: translateZ(10px) scale(1.1);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            background: linear-gradient(45deg, #764ba2, #667eea);
+        }
+        
+        .section-title {
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 40px;
+            animation: marketingSlide 1s ease-out;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+            animation: lineGrow 2s ease-out forwards;
+        }
+        
+        @keyframes lineGrow {
+            0% { width: 0%; }
+            100% { width: 80px; }
+        }
+        
+        .btn {
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+            position: relative;
             overflow: hidden;
         }
-        .marketing-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.15); }
-        .section-title { 
-            color: #333; 
-            font-weight: 700; 
-            margin-bottom: 40px; 
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            transition: all 0.5s ease;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+        
+        .progress {
+            height: 12px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 10px;
+            transition: width 2s ease-in-out;
+            animation: lineGrow 2s ease-out;
+        }
+        
+        .achievement-highlight {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            animation: marketingSlide 1s ease-out;
             position: relative;
-            text-align: center;
+        }
+        
+        .achievement-highlight:hover {
+            transform: translateX(10px);
+            border-left-color: #764ba2;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .achievement-highlight::before {
+            content: '🏆';
+            position: absolute;
+            left: -2px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 25px;
+            height: 25px;
+            background: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        
+        /* MOBILE OPTIMIZATIONS */
+        @media (max-width: 768px) {
+            .marketing-card:hover,
+            .achievement-highlight:hover {
+                transform: none !important;
+            }
+            
+            .profile-img {
+                animation: none !important;
+            }
+            
+            .profile-img:hover {
+                transform: scale(1.1) !important;
+            }
+            
+            .marketing-card:hover {
+                transform: translateY(-5px) !important;
+            }
+        }
+        
+        .fade-in-marketing {
+            animation: marketingSlide 1s ease-out;
         }
         .metric-card { 
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
@@ -1120,7 +3281,7 @@ function generateTemplate6HTML(data, meta) {
 <body>
     <div class="marketing-header text-center position-relative">
         <div class="container">
-            ${data.profileImage ? `<img src="${data.profileImage}" alt="${data.name}" class="profile-img mb-4">` : ''}
+            ${data.profileImage ? `<img src="${data.profileImage}" alt="${data.name}" class="profile-img profile-3d mb-4">` : ''}
             <h1 class="display-4 mb-3 fw-bold">${data.name}</h1>
             <h2 class="h3 mb-4">${data.title}</h2>
             ${data.about ? `<p class="lead fs-5" style="max-width: 700px; margin: 0 auto;">${data.about}</p>` : ''}

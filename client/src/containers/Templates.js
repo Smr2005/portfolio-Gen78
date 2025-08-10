@@ -3,6 +3,12 @@ import { useHistory } from "react-router-dom";
 import { Navbar, Nav, Button } from "react-bootstrap";
 import { UserContext } from "../context/UserContext";
 import { images } from "../components/images";
+import Template1 from "../templates/Template1";
+import Template2 from "../templates/Template2";
+import Template3 from "../templates/Template3";
+import Template4 from "../templates/Template4";
+import Template5 from "../templates/Template5";
+import Template6 from "../templates/Template6";
 import "aos/dist/aos.css";
 import Aos from "aos";
 import "../stylesheets/templates.css";
@@ -80,13 +86,47 @@ function Templates() {
   };
 
   const templates = [
-    { id: 'template1', image: images.portfolio1, name: 'Modern Developer' },
-    { id: 'template2', image: images.portfolio2, name: 'Creative Designer' },
-    { id: 'template3', image: images.portfolio3, name: 'Business Professional' },
-    { id: 'template4', image: images.portfolio4, name: 'Minimalist Clean' },
-    { id: 'template5', image: images.portfolio2, name: 'Developer Terminal' },
-    { id: 'template6', image: images.portfolio1, name: 'Marketing Pro' }
+    { id: 'template1', image: images.portfolio1, name: 'Modern Developer', component: Template1 },
+    { id: 'template2', image: images.portfolio2, name: 'Creative Designer', component: Template2 },
+    { id: 'template3', image: images.portfolio3, name: 'Business Professional', component: Template3, useLivePreview: false },
+    { id: 'template4', image: images.portfolio4, name: 'Minimalist Clean', component: Template4 },
+    { id: 'template5', image: images.portfolio2, name: 'Developer Terminal', component: Template5 },
+    { id: 'template6', image: images.portfolio1, name: 'Marketing Pro', component: Template6 }
   ];
+
+  const renderTemplatePreview = (template) => {
+    if (template.useLivePreview && template.component) {
+      const TemplateComponent = template.component;
+      return (
+        <div style={{
+          width: '100%',
+          height: window.innerWidth < 768 ? '200px' : '250px',
+          overflow: 'hidden',
+          borderRadius: '10px',
+          transform: 'scale(0.3)',
+          transformOrigin: 'top left',
+          width: '333%',
+          height: '833px'
+        }}>
+          <TemplateComponent isPreview={true} />
+        </div>
+      );
+    } else {
+      return (
+        <img 
+          className="img-fluid" 
+          src={template.image} 
+          alt={template.name}
+          style={{
+            borderRadius: '10px',
+            width: '100%',
+            height: window.innerWidth < 768 ? '200px' : '250px',
+            objectFit: 'cover'
+          }}
+        />
+      );
+    }
+  };
 
   return (
     <div id="templates-body">
@@ -121,17 +161,7 @@ function Templates() {
           {templates.map((template, index) => (
             <div key={template.id} className="col-12 col-sm-6 col-lg-4 p-2 p-md-3 temp" data-aos="fade-up">
               <div className="template-card">
-                <img 
-                  className="img-fluid" 
-                  src={template.image} 
-                  alt={template.name}
-                  style={{
-                    borderRadius: '10px',
-                    width: '100%',
-                    height: window.innerWidth < 768 ? '200px' : '250px',
-                    objectFit: 'cover'
-                  }}
-                />
+                {renderTemplatePreview(template)}
                 <div className="temp-overlay"></div>
                 <div className="temp-details">
                   <h5 className="text-white mb-3">{template.name}</h5>

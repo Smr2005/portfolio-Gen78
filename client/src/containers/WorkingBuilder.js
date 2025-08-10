@@ -152,8 +152,8 @@ function WorkingBuilder() {
     }
   };
   
-  // Show login message if not authenticated
-  if (!isAuthenticated) {
+  // Show login message if not authenticated (disabled for demo)
+  if (false && !isAuthenticated) {
     return (
       <div className="container mt-5">
         <div className="row justify-content-center">
@@ -619,7 +619,7 @@ function WorkingBuilder() {
     }
   };
 
-  if (!isAuthenticated) {
+  if (false && !isAuthenticated) {
     return (
       <Container className="mt-5">
         <Alert variant="warning">

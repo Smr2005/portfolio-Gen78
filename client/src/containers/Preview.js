@@ -125,7 +125,7 @@ function Preview() {
               <Button 
                 variant="success" 
                 size={isSmallMobile ? "sm" : "sm"}
-                onClick={() => history.push(`/builder?template=${templateId}`)}
+                onClick={() => history.push(`/full-builder?template=${templateId}`)}
                 style={{
                   fontSize: isSmallMobile ? '0.8rem' : '0.9rem',
                   padding: isSmallMobile ? '0.4rem 0.8rem' : '0.5rem 1rem',

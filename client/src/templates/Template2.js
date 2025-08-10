@@ -57,6 +57,33 @@ function Template2({ isPreview = false, userData = null }) {
         ]
       }
     ],
+    internships: [
+      {
+        company: "Google",
+        position: "UX Design Intern",
+        duration: "Jun 2018 - Aug 2018",
+        location: "Mountain View, CA",
+        description: "Worked on user experience design for Google's mobile applications, focusing on accessibility and user interface improvements.",
+        achievements: [
+          "Designed UI components used by 10M+ users",
+          "Improved app accessibility score by 25%",
+          "Collaborated with senior designers on major product features",
+          "Presented design solutions to executive team"
+        ]
+      },
+      {
+        company: "Adobe",
+        position: "Creative Design Intern",
+        duration: "Jan 2018 - May 2018",
+        location: "San Francisco, CA",
+        description: "Assisted in creating marketing materials and brand assets for Adobe Creative Cloud products.",
+        achievements: [
+          "Created 50+ marketing graphics and illustrations",
+          "Contributed to Adobe MAX conference materials",
+          "Learned advanced Creative Suite workflows"
+        ]
+      }
+    ],
     education: [
       {
         degree: "Master of Fine Arts in Graphic Design",
@@ -939,6 +966,264 @@ function Template2({ isPreview = false, userData = null }) {
           </Row>
         </Container>
       </section>
+
+      {/* Internships Section */}
+      {data.internships && data.internships.length > 0 && (
+        <section style={{ padding: '120px 0', backgroundColor: 'white' }}>
+          <Container>
+            <div className="text-center mb-5">
+              <h2 style={{ 
+                fontSize: '3.5rem', 
+                fontWeight: '800', 
+                color: '#2c3e50',
+                marginBottom: '1rem'
+              }}>
+                Internships
+              </h2>
+              <div style={{
+                width: '80px',
+                height: '6px',
+                background: 'linear-gradient(45deg, #ff6b6b, #feca57)',
+                margin: '0 auto',
+                borderRadius: '3px'
+              }}></div>
+            </div>
+            <Row>
+              <Col lg={10} className="mx-auto">
+                {data.internships.map((internship, index) => (
+                  <Card key={index} className="creative-card mb-5" style={{
+                    border: 'none',
+                    borderRadius: '25px',
+                    boxShadow: '0 15px 35px rgba(0,0,0,0.1)',
+                    overflow: 'hidden'
+                  }}>
+                    <Card.Body style={{ padding: '3rem' }}>
+                      <Row>
+                        <Col md={8}>
+                          <div style={{
+                            display: 'inline-block',
+                            background: `linear-gradient(45deg, ${index % 2 === 0 ? '#48dbfb, #ff9ff3' : '#feca57, #ff6b6b'})`,
+                            color: 'white',
+                            padding: '6px 15px',
+                            borderRadius: '15px',
+                            fontSize: '0.8rem',
+                            fontWeight: '600',
+                            marginBottom: '1rem',
+                            textTransform: 'uppercase'
+                          }}>
+                            {internship.duration}
+                          </div>
+                          <h4 style={{ 
+                            color: '#2c3e50', 
+                            fontWeight: '800', 
+                            marginBottom: '0.5rem',
+                            fontSize: '1.5rem'
+                          }}>
+                            {internship.position}
+                          </h4>
+                          <h5 style={{ 
+                            color: '#e74c3c', 
+                            fontWeight: '600', 
+                            marginBottom: '1.5rem',
+                            fontSize: '1.2rem'
+                          }}>
+                            {internship.company} • {internship.location}
+                          </h5>
+                          <p style={{ 
+                            color: '#64748b', 
+                            lineHeight: '1.7', 
+                            marginBottom: '2rem',
+                            fontSize: '1.1rem'
+                          }}>
+                            {internship.description}
+                          </p>
+                          {internship.achievements && internship.achievements.length > 0 && (
+                            <div>
+                              <h6 style={{ 
+                                color: '#2c3e50', 
+                                fontWeight: '700', 
+                                marginBottom: '1rem',
+                                fontSize: '1rem'
+                              }}>
+                                Key Achievements:
+                              </h6>
+                              <ul style={{ 
+                                color: '#64748b', 
+                                lineHeight: '1.8',
+                                paddingLeft: '1.5rem'
+                              }}>
+                                {internship.achievements.map((achievement, achIndex) => (
+                                  <li key={achIndex} style={{ marginBottom: '0.5rem' }}>
+                                    {achievement}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </Col>
+                        <Col md={4} className="text-center">
+                          <div style={{
+                            width: '120px',
+                            height: '120px',
+                            background: `linear-gradient(45deg, ${index % 2 === 0 ? '#48dbfb, #ff9ff3' : '#feca57, #ff6b6b'})`,
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            margin: '0 auto',
+                            fontSize: '3rem',
+                            animation: 'creativeFloat 8s ease-in-out infinite'
+                          }}>
+                            🚀
+                          </div>
+                        </Col>
+                      </Row>
+                    </Card.Body>
+                  </Card>
+                ))}
+              </Col>
+            </Row>
+          </Container>
+        </section>
+      )}
+
+      {/* Education Section */}
+      {data.education && data.education.length > 0 && (
+        <section style={{ padding: '120px 0', backgroundColor: '#f8fafc' }}>
+          <Container>
+            <div className="text-center mb-5">
+              <h2 style={{ 
+                fontSize: '3.5rem', 
+                fontWeight: '800', 
+                color: '#2c3e50',
+                marginBottom: '1rem'
+              }}>
+                Education
+              </h2>
+              <div style={{
+                width: '80px',
+                height: '6px',
+                background: 'linear-gradient(45deg, #ff6b6b, #feca57)',
+                margin: '0 auto',
+                borderRadius: '3px'
+              }}></div>
+            </div>
+            <Row>
+              <Col lg={10} className="mx-auto">
+                {data.education.map((edu, index) => (
+                  <Card key={index} className="creative-card mb-5" style={{
+                    border: 'none',
+                    borderRadius: '25px',
+                    boxShadow: '0 15px 35px rgba(0,0,0,0.1)',
+                    overflow: 'hidden'
+                  }}>
+                    <Card.Body style={{ padding: '3rem' }}>
+                      <Row>
+                        <Col md={8}>
+                          <div style={{
+                            display: 'inline-block',
+                            background: `linear-gradient(45deg, ${index % 2 === 0 ? '#10b981, #34d399' : '#8b5cf6, #a78bfa'})`,
+                            color: 'white',
+                            padding: '6px 15px',
+                            borderRadius: '15px',
+                            fontSize: '0.8rem',
+                            fontWeight: '600',
+                            marginBottom: '1rem',
+                            textTransform: 'uppercase'
+                          }}>
+                            {edu.duration}
+                          </div>
+                          <h4 style={{ 
+                            color: '#2c3e50', 
+                            fontWeight: '800', 
+                            marginBottom: '0.5rem',
+                            fontSize: '1.5rem'
+                          }}>
+                            {edu.degree}
+                          </h4>
+                          <h5 style={{ 
+                            color: '#e74c3c', 
+                            fontWeight: '600', 
+                            marginBottom: '1.5rem',
+                            fontSize: '1.2rem'
+                          }}>
+                            {edu.institution || edu.school} {edu.location && `• ${edu.location}`}
+                          </h5>
+                          {edu.gpa && (
+                            <div style={{
+                              display: 'inline-block',
+                              background: '#f1f5f9',
+                              color: '#475569',
+                              padding: '8px 15px',
+                              borderRadius: '15px',
+                              fontSize: '0.9rem',
+                              fontWeight: '600',
+                              marginBottom: '1.5rem'
+                            }}>
+                              GPA: {edu.gpa}
+                            </div>
+                          )}
+                          {edu.description && (
+                            <p style={{ 
+                              color: '#64748b', 
+                              lineHeight: '1.7', 
+                              marginBottom: '2rem',
+                              fontSize: '1.1rem'
+                            }}>
+                              {edu.description}
+                            </p>
+                          )}
+                          {edu.relevant && edu.relevant.length > 0 && (
+                            <div>
+                              <h6 style={{ 
+                                color: '#2c3e50', 
+                                fontWeight: '700', 
+                                marginBottom: '1rem',
+                                fontSize: '1rem'
+                              }}>
+                                Relevant Coursework:
+                              </h6>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                {edu.relevant.map((course, courseIndex) => (
+                                  <Badge key={courseIndex} style={{
+                                    background: '#e2e8f0',
+                                    color: '#475569',
+                                    fontSize: '0.8rem',
+                                    padding: '5px 12px',
+                                    borderRadius: '15px'
+                                  }}>
+                                    {course}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </Col>
+                        <Col md={4} className="text-center">
+                          <div style={{
+                            width: '120px',
+                            height: '120px',
+                            background: `linear-gradient(45deg, ${index % 2 === 0 ? '#10b981, #34d399' : '#8b5cf6, #a78bfa'})`,
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            margin: '0 auto',
+                            fontSize: '3rem',
+                            animation: 'creativeFloat 8s ease-in-out infinite'
+                          }}>
+                            🎓
+                          </div>
+                        </Col>
+                      </Row>
+                    </Card.Body>
+                  </Card>
+                ))}
+              </Col>
+            </Row>
+          </Container>
+        </section>
+      )}
 
       {/* Skills Section */}
       <section id="skills" style={{ padding: '120px 0', backgroundColor: 'white' }}>

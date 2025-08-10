@@ -66,6 +66,33 @@ function Template3({ isPreview = false, userData = null }) {
         ]
       }
     ],
+    internships: [
+      {
+        company: "McKinsey & Company",
+        position: "Business Analyst Intern",
+        duration: "Jun 2016 - Aug 2016",
+        location: "Chicago, IL",
+        description: "Summer internship program focusing on strategic consulting methodologies and client engagement best practices.",
+        achievements: [
+          "Contributed to $10M cost reduction analysis for Fortune 100 client",
+          "Developed data visualization dashboards for executive presentations",
+          "Completed intensive training in consulting frameworks and methodologies",
+          "Received offer for full-time position upon graduation"
+        ]
+      },
+      {
+        company: "Bain & Company",
+        position: "Associate Consultant Intern",
+        duration: "Jun 2015 - Aug 2015",
+        location: "Boston, MA",
+        description: "Undergraduate internship focusing on market research and competitive analysis for private equity clients.",
+        achievements: [
+          "Conducted due diligence analysis for $500M acquisition",
+          "Built financial models for investment decision-making",
+          "Presented findings to partner-level stakeholders"
+        ]
+      }
+    ],
     education: [
       {
         degree: "Master of Business Administration (MBA)",

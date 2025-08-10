@@ -83,6 +83,55 @@ function Template3Simple({ isPreview = false, userData = null }) {
         location: "Evanston, IL",
         gpa: "3.8/4.0"
       }
+    ],
+    internships: [
+      {
+        company: "Boston Consulting Group",
+        position: "Strategy Intern",
+        duration: "Summer 2018",
+        location: "Boston, MA",
+        description: "Supported senior consultants on client engagements across multiple industries, focusing on strategic analysis and market research.",
+        achievements: [
+          "Conducted market research for $2B acquisition",
+          "Developed financial models for client presentations",
+          "Presented findings to C-level executives"
+        ]
+      },
+      {
+        company: "Bain & Company",
+        position: "Business Analyst Intern",
+        duration: "Summer 2017",
+        location: "Chicago, IL",
+        description: "Assisted consulting teams with data analysis, client research, and presentation development.",
+        achievements: [
+          "Analyzed competitive landscape for Fortune 100 client",
+          "Created executive dashboards using advanced Excel",
+          "Supported due diligence for private equity investment"
+        ]
+      }
+    ],
+    certifications: [
+      {
+        name: "Project Management Professional (PMP)",
+        issuer: "Project Management Institute",
+        date: "2021",
+        url: "https://www.pmi.org/certifications/project-management-pmp",
+        image: "https://images.credly.com/size/340x340/images/260e36dc-d100-45c3-852f-9d8063fa71e8/pmp-600px.png"
+      },
+      {
+        name: "Certified Management Consultant (CMC)",
+        issuer: "Institute of Management Consultants",
+        date: "2020",
+        url: "https://www.imcusa.org/",
+        image: "https://www.imcusa.org/images/cmc-logo.png"
+      },
+      {
+        name: "Lean Six Sigma Black Belt",
+        issuer: "American Society for Quality",
+        date: "2019",
+        url: "https://asq.org/cert/six-sigma-black-belt",
+        image: "https://www.asq.org/-/media/Images/Cert/cssbb-digital-badge.ashx"
+      }
     ]
   };
 
@@ -437,6 +486,120 @@ function Template3Simple({ isPreview = false, userData = null }) {
                         <p style={{ color: '#6c757d', marginBottom: '0' }}>
                           GPA: {edu.gpa}
                         </p>
+                      )}
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+          </Container>
+        </section>
+      )}
+
+      {/* Internships Section */}
+      {data.internships && data.internships.length > 0 && (
+        <section style={{ padding: '4rem 0', backgroundColor: '#f8f9fa' }}>
+          <Container>
+            <h2 style={{ 
+              fontSize: '2.5rem', 
+              fontWeight: '700', 
+              color: '#1e3c72', 
+              marginBottom: '3rem',
+              textAlign: 'center',
+              borderBottom: '3px solid #2a5298',
+              paddingBottom: '1rem'
+            }}>
+              Internships
+            </h2>
+            <Row>
+              {data.internships.map((internship, index) => (
+                <Col key={index} md={6} className="mb-4">
+                  <Card className="business-card h-100">
+                    <Card.Body style={{ padding: '2rem' }}>
+                      <h4 style={{ color: '#1e3c72', fontWeight: '700', marginBottom: '0.5rem' }}>
+                        {internship.position}
+                      </h4>
+                      <h5 style={{ color: '#2a5298', marginBottom: '1rem' }}>
+                        {internship.company}
+                      </h5>
+                      <p style={{ color: '#6c757d', marginBottom: '1rem' }}>
+                        {internship.duration} • {internship.location}
+                      </p>
+                      <p style={{ fontSize: '1.1rem', lineHeight: '1.6', marginBottom: '1.5rem' }}>
+                        {internship.description}
+                      </p>
+                      {internship.achievements && internship.achievements.length > 0 && (
+                        <div>
+                          <h6 style={{ color: '#1e3c72', marginBottom: '0.5rem' }}>Key Achievements:</h6>
+                          {internship.achievements.map((achievement, achIndex) => (
+                            <div key={achIndex} className="achievement-item">
+                              <strong>•</strong> {achievement}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+          </Container>
+        </section>
+      )}
+
+      {/* Certifications Section */}
+      {data.certifications && data.certifications.length > 0 && (
+        <section style={{ padding: '4rem 0', backgroundColor: 'white' }}>
+          <Container>
+            <h2 style={{ 
+              fontSize: '2.5rem', 
+              fontWeight: '700', 
+              color: '#1e3c72', 
+              marginBottom: '3rem',
+              textAlign: 'center',
+              borderBottom: '3px solid #2a5298',
+              paddingBottom: '1rem'
+            }}>
+              Certifications
+            </h2>
+            <Row>
+              {data.certifications.map((cert, index) => (
+                <Col key={index} md={4} className="mb-4">
+                  <Card className="business-card h-100 text-center">
+                    <Card.Body style={{ padding: '2rem' }}>
+                      {cert.image && (
+                        <div style={{ marginBottom: '1.5rem' }}>
+                          <img 
+                            src={cert.image} 
+                            alt={cert.name}
+                            style={{ 
+                              width: '80px', 
+                              height: '80px', 
+                              objectFit: 'contain',
+                              marginBottom: '1rem'
+                            }}
+                          />
+                        </div>
+                      )}
+                      <h4 style={{ color: '#1e3c72', fontWeight: '700', marginBottom: '1rem' }}>
+                        {cert.name}
+                      </h4>
+                      <h5 style={{ color: '#2a5298', marginBottom: '1rem' }}>
+                        {cert.issuer}
+                      </h5>
+                      <p style={{ color: '#6c757d', marginBottom: '1rem' }}>
+                        Issued: {cert.date}
+                      </p>
+                      {cert.url && (
+                        <Button 
+                          variant="outline-primary" 
+                          size="sm"
+                          href={cert.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          View Certificate
+                        </Button>
                       )}
                     </Card.Body>
                   </Card>
