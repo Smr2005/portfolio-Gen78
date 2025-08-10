@@ -54,18 +54,6 @@ function Template4({ isPreview = false, userData = null }) {
           "Digital Platform Redesign - Clean e-commerce interface",
           "Brand Identity Evolution - Refined minimalist approach"
         ]
-      },
-      {
-        company: "Design Studio Minimal",
-        position: "Design Intern",
-        duration: "Jun 2017 - Aug 2017",
-        location: "San Francisco, CA",
-        description: "Summer internship focusing on typography, layout design, and minimalist brand identity development.",
-        achievements: [
-          "Contributed to 10+ client brand identity projects",
-          "Developed typography guidelines for major tech client",
-          "Created award-winning poster series on minimalism"
-        ]
       }
     ],
     education: [
@@ -217,6 +205,20 @@ function Template4({ isPreview = false, userData = null }) {
         description: "Awarded for innovative use of typography in digital interfaces"
       }
     ],
+    internships: [
+      {
+        company: "Design Studio Minimal",
+        position: "Design Intern",
+        duration: "Jun 2017 - Aug 2017",
+        location: "San Francisco, CA",
+        description: "Summer internship focusing on typography, layout design, and minimalist brand identity development.",
+        achievements: [
+          "Contributed to 10+ client brand identity projects",
+          "Developed typography guidelines for major tech client",
+          "Created award-winning poster series on minimalism"
+        ]
+      }
+    ],
     philosophy: "I believe in the power of simplicity. Every element should serve a purpose, every space should breathe, and every design should communicate its message with clarity and elegance. Less is not just more—it's everything."
   };
 
@@ -319,6 +321,34 @@ function Template4({ isPreview = false, userData = null }) {
       
       .minimal-button:hover::before {
         left: 100%;
+      }
+      
+      /* ULTRA STRONG FORCE SQUARE PROFILE IMAGE - MATCH BACKEND */
+      .profile-img,
+      img.profile-img,
+      .hero-content img,
+      .minimal-hero img,
+      img[alt*="profile"],
+      img[src*="profileImage"],
+      img[class*="profile"],
+      .rounded,
+      .rounded-circle,
+      img.rounded,
+      img.rounded-circle,
+      .img-thumbnail {
+        border-radius: 0 !important;
+        -webkit-border-radius: 0 !important;
+        -moz-border-radius: 0 !important;
+        -ms-border-radius: 0 !important;
+        border-top-left-radius: 0 !important;
+        border-top-right-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+        width: 300px !important;
+        height: 300px !important;
+        max-width: 300px !important;
+        max-height: 300px !important;
+        object-fit: cover !important;
       }
       
       /* Mobile Responsive Styles */
@@ -429,7 +459,7 @@ function Template4({ isPreview = false, userData = null }) {
             }}>
               {data.name}
             </div>
-            <div style={{ display: 'flex', gap: '3rem', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
               <a href="#about" style={{ 
                 color: '#666666', 
                 textDecoration: 'none', 
@@ -439,14 +469,14 @@ function Template4({ isPreview = false, userData = null }) {
                 letterSpacing: '1px',
                 transition: 'color 0.3s ease'
               }}>About</a>
-              <a href="#work" style={{ 
+              <a href="#skills" style={{ 
                 color: '#666666', 
                 textDecoration: 'none', 
                 fontWeight: '400',
                 fontSize: '0.9rem',
                 textTransform: 'uppercase',
                 letterSpacing: '1px'
-              }}>Work</a>
+              }}>Skills</a>
               <a href="#experience" style={{ 
                 color: '#666666', 
                 textDecoration: 'none', 
@@ -455,6 +485,14 @@ function Template4({ isPreview = false, userData = null }) {
                 textTransform: 'uppercase',
                 letterSpacing: '1px'
               }}>Experience</a>
+              <a href="#work" style={{ 
+                color: '#666666', 
+                textDecoration: 'none', 
+                fontWeight: '400',
+                fontSize: '0.9rem',
+                textTransform: 'uppercase',
+                letterSpacing: '1px'
+              }}>Projects</a>
               <a href="#contact" style={{ 
                 color: '#666666', 
                 textDecoration: 'none', 
@@ -502,25 +540,35 @@ function Template4({ isPreview = false, userData = null }) {
                 margin: '0 auto'
               }}>
                 <div style={{
-                  width: '200px',
-                  height: '200px',
+                  width: '300px',
+                  height: '300px',
                   margin: '0 auto 3rem auto',
                   position: 'relative'
                 }}>
                   <img 
                     src={data.profileImage}
                     alt={data.name}
+                    className="profile-img"
                     style={{
                       width: '100%',
                       height: '100%',
                       objectFit: 'cover',
                       borderRadius: '0',
-                      filter: 'grayscale(100%)',
+                      WebkitBorderRadius: '0',
+                      MozBorderRadius: '0',
+                      msBorderRadius: '0',
+                      borderTopLeftRadius: '0',
+                      borderTopRightRadius: '0',
+                      borderBottomLeftRadius: '0',
+                      borderBottomRightRadius: '0',
+                      filter: 'grayscale(20%)',
                       transition: 'filter 0.3s ease',
-                      animation: 'minimalFloat 6s ease-in-out infinite'
+                      boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+                      maxWidth: '300px',
+                      maxHeight: '300px'
                     }}
                     onMouseEnter={(e) => e.target.style.filter = 'grayscale(0%)'}
-                    onMouseLeave={(e) => e.target.style.filter = 'grayscale(100%)'}
+                    onMouseLeave={(e) => e.target.style.filter = 'grayscale(20%)'}
                   />
                   <div style={{
                     position: 'absolute',
@@ -661,130 +709,85 @@ function Template4({ isPreview = false, userData = null }) {
                 </p>
               </div>
 
-              {/* Education */}
-              <div style={{ marginBottom: '4rem' }}>
-                <h3 style={{
-                  fontSize: '1.2rem',
-                  fontWeight: '400',
-                  color: '#000000',
-                  marginBottom: '2rem',
-                  textTransform: 'uppercase',
-                  letterSpacing: '2px',
-                  textAlign: 'center'
-                }}>
-                  Education
-                </h3>
-                {data.education.map((edu, index) => (
-                  <div key={index} className="minimal-card" style={{
-                    background: 'white',
-                    padding: '2rem',
-                    marginBottom: '1rem',
-                    border: '1px solid #e5e5e5'
-                  }}>
-                    <Row>
-                      <Col md={8}>
-                        <h5 style={{ 
-                          color: '#000000', 
-                          fontWeight: '400',
-                          marginBottom: '0.5rem',
-                          fontSize: '1rem'
-                        }}>
-                          {edu.degree}
-                        </h5>
-                        <div style={{ 
-                          color: '#666666', 
-                          marginBottom: '0.5rem',
-                          fontSize: '0.9rem'
-                        }}>
-                          {edu.school} • {edu.location}
-                        </div>
-                        <div style={{ 
-                          color: '#999999', 
-                          fontSize: '0.8rem',
-                          textTransform: 'uppercase',
-                          letterSpacing: '1px'
-                        }}>
-                          {edu.duration} • GPA: {edu.gpa}
-                        </div>
-                        {edu.thesis && (
-                          <div style={{ 
-                            marginTop: '1rem',
-                            fontSize: '0.9rem',
-                            color: '#666666',
-                            fontStyle: 'italic'
-                          }}>
-                            Thesis: "{edu.thesis}"
-                          </div>
-                        )}
-                      </Col>
-                      <Col md={4} className="text-right">
-                        <div style={{
-                          fontSize: '0.8rem',
-                          color: '#999999',
-                          textTransform: 'uppercase',
-                          letterSpacing: '1px'
-                        }}>
-                          {edu.honors}
-                        </div>
-                      </Col>
-                    </Row>
-                  </div>
-                ))}
-              </div>
 
-              {/* Skills */}
-              <div>
-                <h3 style={{
-                  fontSize: '1.2rem',
+
+
+            </Col>
+          </Row>
+        </Container>
+      </section>
+
+      {/* Skills Section */}
+      <section id="skills" style={{ padding: '120px 0', backgroundColor: '#fafafa' }}>
+        <Container>
+          <Row className="justify-content-center">
+            <Col lg={10}>
+              <div className="text-center mb-5">
+                <h2 style={{ 
+                  fontSize: '2.5rem', 
                   fontWeight: '400',
                   color: '#000000',
                   marginBottom: '2rem',
-                  textTransform: 'uppercase',
-                  letterSpacing: '2px',
-                  textAlign: 'center'
+                  letterSpacing: '-1px'
                 }}>
-                  Expertise
-                </h3>
-                <Row>
-                  {data.skills.map((skill, index) => (
-                    <Col md={6} key={index} className="mb-3">
-                      <div className="skill-minimal" style={{
+                  Skills
+                </h2>
+                <div style={{
+                  width: '60px',
+                  height: '1px',
+                  background: '#000000',
+                  margin: '2rem auto 4rem auto'
+                }}></div>
+              </div>
+              
+              <Row>
+                {data.skills.map((skill, index) => (
+                  <Col lg={6} key={index} className="mb-4">
+                    <div style={{
+                      background: 'white',
+                      padding: '2rem',
+                      border: '1px solid #f0f0f0',
+                      transition: 'all 0.3s ease'
+                    }}>
+                      <div style={{
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center',
-                        padding: '1rem 0',
-                        borderBottom: '1px solid #f0f0f0'
+                        marginBottom: '1rem'
                       }}>
-                        <div>
-                          <div style={{ 
-                            fontSize: '0.9rem',
-                            fontWeight: '400',
-                            color: '#000000',
-                            marginBottom: '0.2rem'
-                          }}>
-                            {skill.name}
-                          </div>
-                          <div style={{ 
-                            fontSize: '0.7rem',
-                            color: '#999999',
-                            textTransform: 'uppercase',
-                            letterSpacing: '1px'
-                          }}>
-                            {skill.category}
-                          </div>
-                        </div>
-                        <div style={{
-                          fontSize: '0.8rem',
-                          color: '#666666',
-                          fontWeight: '300'
+                        <h5 style={{
+                          fontSize: '1.1rem',
+                          fontWeight: '500',
+                          color: '#000000',
+                          margin: 0
+                        }}>
+                          {skill.name}
+                        </h5>
+                        <span style={{
+                          fontSize: '0.9rem',
+                          fontWeight: '300',
+                          color: '#666666'
                         }}>
                           {skill.level}%
-                        </div>
+                        </span>
                       </div>
-                    </Col>
-                  ))}
-                </Row>
-              </div>
+                      <div style={{
+                        width: '100%',
+                        height: '2px',
+                        background: '#f0f0f0',
+                        overflow: 'hidden'
+                      }}>
+                        <div style={{
+                          width: `${skill.level}%`,
+                          height: '100%',
+                          background: '#000000',
+                          transition: 'width 2s ease-in-out'
+                        }}></div>
+                      </div>
+                    </div>
+                  </Col>
+                ))}
+              </Row>
             </Col>
           </Row>
         </Container>
@@ -1225,6 +1228,212 @@ function Template4({ isPreview = false, userData = null }) {
           ))}
         </Container>
       </section>
+
+      {/* Education Section */}
+      <section style={{ padding: '120px 0', backgroundColor: '#fafafa' }}>
+        <Container>
+          <Row className="justify-content-center">
+            <Col lg={10}>
+              <div className="text-center mb-5">
+                <h2 style={{ 
+                  fontSize: '2.5rem', 
+                  fontWeight: '400',
+                  color: '#000000',
+                  marginBottom: '2rem',
+                  letterSpacing: '-1px'
+                }}>
+                  Education
+                </h2>
+                <div style={{
+                  width: '60px',
+                  height: '1px',
+                  background: '#000000',
+                  margin: '2rem auto 4rem auto'
+                }}></div>
+              </div>
+              
+              {data.education.map((edu, index) => (
+                <div key={index} style={{
+                  marginBottom: '3rem',
+                  padding: '3rem',
+                  background: 'white',
+                  border: '1px solid #f0f0f0',
+                  transition: 'all 0.3s ease'
+                }}>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    marginBottom: '1.5rem',
+                    flexWrap: 'wrap',
+                    gap: '1rem'
+                  }}>
+                    <div>
+                      <h3 style={{
+                        fontSize: '1.5rem',
+                        fontWeight: '600',
+                        color: '#000000',
+                        marginBottom: '0.5rem'
+                      }}>
+                        {edu.degree}
+                      </h3>
+                      <h4 style={{
+                        fontSize: '1.2rem',
+                        fontWeight: '300',
+                        color: '#666666',
+                        marginBottom: '0.5rem'
+                      }}>
+                        {edu.school}
+                      </h4>
+                      <div style={{
+                        fontSize: '0.9rem',
+                        color: '#888888',
+                        marginBottom: '1rem'
+                      }}>
+                        {edu.duration} • {edu.location}
+                      </div>
+                      {edu.gpa && (
+                        <p style={{
+                          fontSize: '0.9rem',
+                          color: '#888888',
+                          marginBottom: '1rem',
+                          fontWeight: '300'
+                        }}>
+                          GPA: {edu.gpa}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {edu.description && (
+                    <p style={{
+                      fontSize: '1rem',
+                      fontWeight: '300',
+                      lineHeight: '1.6',
+                      color: '#555555',
+                      margin: 0
+                    }}>
+                      {edu.description}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </Col>
+          </Row>
+        </Container>
+      </section>
+
+      {/* Internships Section */}
+      {data.internships && data.internships.length > 0 && (
+        <section style={{ padding: '120px 0', backgroundColor: 'white' }}>
+          <Container>
+            <Row className="justify-content-center">
+              <Col lg={10}>
+                <div className="text-center mb-5">
+                  <h2 style={{ 
+                    fontSize: '2.5rem', 
+                    fontWeight: '400',
+                    color: '#000000',
+                    marginBottom: '2rem',
+                    letterSpacing: '-1px'
+                  }}>
+                    Internships
+                  </h2>
+                  <div style={{
+                    width: '60px',
+                    height: '1px',
+                    background: '#000000',
+                    margin: '2rem auto 4rem auto'
+                  }}></div>
+                </div>
+                
+                {data.internships.map((internship, index) => (
+                  <div key={index} style={{
+                    marginBottom: '4rem',
+                    padding: '3rem',
+                    border: '1px solid #f0f0f0',
+                    background: '#fafafa',
+                    transition: 'all 0.3s ease'
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
+                      marginBottom: '2rem',
+                      flexWrap: 'wrap',
+                      gap: '1rem'
+                    }}>
+                      <div>
+                        <h3 style={{
+                          fontSize: '1.5rem',
+                          fontWeight: '600',
+                          color: '#000000',
+                          marginBottom: '0.5rem'
+                        }}>
+                          {internship.position}
+                        </h3>
+                        <h4 style={{
+                          fontSize: '1.2rem',
+                          fontWeight: '300',
+                          color: '#666666',
+                          marginBottom: '0.5rem'
+                        }}>
+                          {internship.company}
+                        </h4>
+                        <div style={{
+                          fontSize: '0.9rem',
+                          color: '#888888'
+                        }}>
+                          {internship.duration} • {internship.location}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {internship.description && (
+                      <p style={{
+                        fontSize: '1rem',
+                        fontWeight: '300',
+                        lineHeight: '1.6',
+                        color: '#555555',
+                        marginBottom: '2rem'
+                      }}>
+                        {internship.description}
+                      </p>
+                    )}
+                    
+                    {internship.achievements && internship.achievements.length > 0 && (
+                      <div style={{
+                        display: 'grid',
+                        gap: '0.5rem'
+                      }}>
+                        {internship.achievements.map((achievement, i) => (
+                          <div key={i} style={{
+                            fontSize: '0.95rem',
+                            color: '#666666',
+                            paddingLeft: '1rem',
+                            position: 'relative'
+                          }}>
+                            <span style={{
+                              position: 'absolute',
+                              left: 0,
+                              top: '0.2rem',
+                              width: '4px',
+                              height: '4px',
+                              background: '#000000',
+                              borderRadius: '50%'
+                            }}></span>
+                            {achievement}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </Col>
+            </Row>
+          </Container>
+        </section>
+      )}
 
       {/* Certifications Section */}
       <section style={{ padding: '120px 0', backgroundColor: 'white' }}>

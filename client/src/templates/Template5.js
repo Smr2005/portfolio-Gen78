@@ -45,7 +45,9 @@ function Template5({ isPreview = false, userData = null }) {
           "Achieved sub-200ms API response times",
           "Built real-time collaboration features"
         ]
-      },
+      }
+    ],
+    internships: [
       {
         company: "TechCorp",
         position: "Software Developer (Internship)",
@@ -398,7 +400,7 @@ ${data.skills.map(skill => `${skill.name} (${skill.level}%)`).join(', ')}
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
-              {['about', 'experience', 'skills', 'projects', 'certifications', 'contact'].map((section) => (
+              {['about', 'experience', 'education', 'internships', 'skills', 'projects', 'certifications', 'contact'].map((section) => (
                 <Nav.Link 
                   key={section}
                   href={`#${section}`}
@@ -559,26 +561,31 @@ ${data.skills.map(skill => `${skill.name} (${skill.level}%)`).join(', ')}
               </div>
             </Col>
             <Col lg={4} className="text-center">
-              <div style={{
-                background: '#21262d',
-                border: '1px solid #30363d',
-                borderRadius: '50%',
-                padding: '2rem',
-                display: 'inline-block',
-                marginBottom: '2rem'
-              }}>
-                <img 
-                  src={data.profileImage}
-                  alt={data.name}
-                  style={{
-                    width: '200px',
-                    height: '200px',
-                    borderRadius: '50%',
-                    objectFit: 'cover',
-                    border: '3px solid #58a6ff'
-                  }}
-                />
-              </div>
+              {data.profileImage && (
+                <div style={{
+                  background: '#21262d',
+                  border: '1px solid #30363d',
+                  borderRadius: '50%',
+                  padding: '2rem',
+                  display: 'inline-block',
+                  marginBottom: '2rem'
+                }}>
+                  <img 
+                    src={data.profileImage}
+                    alt={data.name}
+                    style={{
+                      width: '200px',
+                      height: '200px',
+                      borderRadius: '50%',
+                      objectFit: 'cover',
+                      border: '3px solid #58a6ff'
+                    }}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                </div>
+              )}
               <div style={{ marginTop: '2rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '1rem' }}>
                   <a href={data.github} target="_blank" rel="noopener noreferrer" style={{
@@ -712,6 +719,236 @@ ${data.skills.map(skill => `${skill.name} (${skill.level}%)`).join(', ')}
           ))}
         </Container>
       </section>
+
+      {/* Education Section */}
+      <section id="education" style={{ 
+        padding: '80px 0', 
+        backgroundColor: '#161b22'
+      }}>
+        <Container>
+          <div className="text-center mb-5">
+            <h2 style={{ 
+              fontSize: '2rem', 
+              color: '#f0f6fc',
+              marginBottom: '1rem',
+              fontFamily: 'Fira Code, monospace'
+            }}>
+              cat education.json
+            </h2>
+            <div style={{ 
+              width: '80px', 
+              height: '2px', 
+              background: '#58a6ff',
+              margin: '0 auto',
+              borderRadius: '1px'
+            }}></div>
+          </div>
+
+          {data.education.map((edu, index) => (
+            <div key={index} className="mb-4">
+              <Card style={{
+                background: '#21262d',
+                border: '1px solid #30363d',
+                color: '#c9d1d9',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                transition: 'transform 0.3s ease, box-shadow 0.3s ease'
+              }}
+              className="terminal-card">
+                <Card.Body style={{ padding: '2rem' }}>
+                  <Row className="align-items-start">
+                    <Col md={8}>
+                      <div style={{ fontFamily: 'Fira Code, monospace' }}>
+                        <h4 style={{ 
+                          color: '#58a6ff', 
+                          marginBottom: '0.5rem',
+                          fontFamily: 'Fira Code, monospace'
+                        }}>
+                          {edu.degree}
+                        </h4>
+                        <h5 style={{ 
+                          color: '#f0f6fc', 
+                          fontWeight: '400',
+                          marginBottom: '0.5rem'
+                        }}>
+                          {edu.school}
+                        </h5>
+                        <div style={{ 
+                          color: '#7d8590', 
+                          marginBottom: '1rem',
+                          fontSize: '0.9rem'
+                        }}>
+                          {edu.location} | {edu.duration}
+                        </div>
+                        {edu.gpa && (
+                          <div style={{ 
+                            color: '#57ab5a',
+                            marginBottom: '1rem',
+                            fontSize: '0.9rem',
+                            fontFamily: 'Fira Code, monospace'
+                          }}>
+                            GPA: {edu.gpa}
+                          </div>
+                        )}
+                        {edu.relevant && edu.relevant.length > 0 && (
+                          <div>
+                            <h6 style={{ 
+                              color: '#f0f6fc',
+                              marginBottom: '0.75rem',
+                              fontFamily: 'Fira Code, monospace',
+                              fontSize: '0.9rem'
+                            }}>
+                              Relevant Coursework:
+                            </h6>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                              {edu.relevant.map((course, courseIndex) => (
+                                <Badge key={courseIndex} style={{
+                                  background: '#1f6feb',
+                                  color: 'white',
+                                  fontSize: '0.75rem',
+                                  fontFamily: 'Fira Code, monospace',
+                                  padding: '6px 10px'
+                                }}>
+                                  {course}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </Col>
+                    <Col md={4} className="text-end">
+                      <div style={{
+                        background: '#238636',
+                        color: 'white',
+                        padding: '8px 12px',
+                        borderRadius: '6px',
+                        fontSize: '0.8rem',
+                        fontFamily: 'Fira Code, monospace',
+                        display: 'inline-block'
+                      }}>
+                        Graduated
+                      </div>
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Card>
+            </div>
+          ))}
+        </Container>
+      </section>
+
+      {/* Internships Section */}
+      {data.internships && data.internships.length > 0 && (
+        <section id="internships" style={{ 
+          padding: '80px 0', 
+          backgroundColor: '#0d1117'
+        }}>
+          <Container>
+            <div className="text-center mb-5">
+              <h2 style={{ 
+                fontSize: '2rem', 
+                color: '#f0f6fc',
+                marginBottom: '1rem',
+                fontFamily: 'Fira Code, monospace'
+              }}>
+                ls internships/
+              </h2>
+              <div style={{ 
+                width: '80px', 
+                height: '2px', 
+                background: '#58a6ff',
+                margin: '0 auto',
+                borderRadius: '1px'
+              }}></div>
+            </div>
+
+            {data.internships.map((internship, index) => (
+              <div key={index} className="mb-4">
+                <Card style={{
+                  background: '#21262d',
+                  border: '1px solid #30363d',
+                  color: '#c9d1d9',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                  transition: 'transform 0.3s ease, box-shadow 0.3s ease'
+                }}
+                className="terminal-card">
+                  <Card.Body style={{ padding: '2rem' }}>
+                    <Row className="align-items-start">
+                      <Col md={8}>
+                        <div style={{ fontFamily: 'Fira Code, monospace' }}>
+                          <h4 style={{ 
+                            color: '#58a6ff', 
+                            marginBottom: '0.5rem',
+                            fontFamily: 'Fira Code, monospace'
+                          }}>
+                            {internship.position}
+                          </h4>
+                          <h5 style={{ 
+                            color: '#f0f6fc', 
+                            fontWeight: '400',
+                            marginBottom: '0.5rem'
+                          }}>
+                            {internship.company}
+                          </h5>
+                          <div style={{ 
+                            color: '#7d8590', 
+                            marginBottom: '1rem',
+                            fontSize: '0.9rem'
+                          }}>
+                            {internship.location} | {internship.duration}
+                          </div>
+                          <p style={{ 
+                            color: '#c9d1d9', 
+                            lineHeight: '1.6',
+                            marginBottom: '1.5rem'
+                          }}>
+                            {internship.description}
+                          </p>
+                          {internship.achievements && internship.achievements.length > 0 && (
+                            <div>
+                              <h6 style={{ 
+                                color: '#f0f6fc',
+                                marginBottom: '0.75rem',
+                                fontFamily: 'Fira Code, monospace',
+                                fontSize: '0.9rem'
+                              }}>
+                                Key Achievements:
+                              </h6>
+                              <ul style={{ 
+                                color: '#7d8590',
+                                paddingLeft: '1.5rem'
+                              }}>
+                                {internship.achievements.map((achievement, achIndex) => (
+                                  <li key={achIndex} style={{ marginBottom: '0.25rem' }}>
+                                    {achievement}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      </Col>
+                      <Col md={4} className="text-end">
+                        <Badge 
+                          style={{
+                            background: '#7c3aed',
+                            color: 'white',
+                            fontFamily: 'Fira Code, monospace',
+                            fontSize: '0.8rem',
+                            padding: '8px 12px'
+                          }}
+                        >
+                          Internship
+                        </Badge>
+                      </Col>
+                    </Row>
+                  </Card.Body>
+                </Card>
+              </div>
+            ))}
+          </Container>
+        </section>
+      )}
 
       {/* Skills Section */}
       <section id="skills" style={{ 

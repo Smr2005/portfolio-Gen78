@@ -416,11 +416,12 @@ function generateTemplate1HTML(data, meta) {
         .profile-img { 
             width: 150px; 
             height: 150px; 
-            border-radius: 50%; 
+            border-radius: 0 !important; 
             border: 5px solid white;
             animation: float3d 6s ease-in-out infinite;
             transform-style: preserve-3d;
             transition: all 0.3s ease;
+            object-fit: cover;
         }
         
         .profile-img:hover {
@@ -1051,11 +1052,13 @@ function generateTemplate2HTML(data, meta) {
         .profile-img { 
             width: 180px; 
             height: 180px;
+            border-radius: 0 !important;
             border: 6px solid white; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             animation: morphShape 15s ease-in-out infinite;
             transition: all 0.3s ease;
             transform-style: preserve-3d;
+            object-fit: cover;
         }
         
         .profile-img:hover {
@@ -1380,7 +1383,7 @@ function generateTemplate2HTML(data, meta) {
             position: relative;
             width: 300px;
             height: 300px;
-            border-radius: 50%;
+            border-radius: 0 !important;
             object-fit: cover;
             border: 8px solid rgba(255,255,255,0.3);
             box-shadow: 0 25px 50px rgba(0,0,0,0.2);
@@ -1704,11 +1707,12 @@ function generateTemplate3HTML(data, meta) {
         .profile-img { 
             width: 160px; 
             height: 160px; 
-            border-radius: 15px; 
+            border-radius: 0 !important; 
             border: 4px solid white;
             transition: all 0.3s ease;
             animation: subtleFloat 4s ease-in-out infinite;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            object-fit: cover;
         }
         
         .profile-img:hover {
@@ -2343,270 +2347,1649 @@ function generateTemplate4HTML(data, meta) {
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600&display=swap" rel="stylesheet">
     
     <style>
+        /* OVERRIDE BOOTSTRAP ROUNDED CLASSES FIRST */
+        .rounded, .rounded-circle, .img-thumbnail, .img-fluid {
+            border-radius: 0 !important;
+        }
         body { 
-            font-family: 'Helvetica Neue', Arial, sans-serif; 
-            color: #333; 
-            line-height: 1.8; 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
+            background-color: #ffffff;
+            color: #1a1a1a;
+            line-height: 1.6;
             overflow-x: hidden;
+            margin: 0;
+            padding: 0;
         }
         
-        /* ENHANCED MINIMAL ANIMATIONS - MATCHING REACT TEMPLATE */
-        @keyframes minimalFadeIn {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
+        /* SIMPLE SQUARE IMAGE OVERRIDE */
+        .profile-img,
+        img.profile-img {
+            border-radius: 0 !important;
+            width: 300px !important;
+            height: 300px !important;
+            object-fit: cover !important;
         }
         
-        @keyframes minimalSlideIn {
-            0% { transform: translateX(-30px); opacity: 0; }
-            100% { transform: translateX(0); opacity: 1; }
+        /* EXACT PREVIEW MATCH - Hero Section */
+        .minimal-hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffffff;
+            padding: 50px 20px;
         }
         
-        @keyframes gentleFloat {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-5px); }
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
         }
         
-        @keyframes lineGrow {
-            0% { width: 0%; }
-            100% { width: var(--target-width); }
+        /* Profile Image - Square/Rectangle like in preview - NO BORDER RADIUS */
+        .profile-img, 
+        img.profile-img,
+        .hero-content .profile-img,
+        .minimal-hero .profile-img { 
+            width: 300px !important; 
+            height: 300px !important; 
+            object-fit: cover !important;
+            border-radius: 0 !important;
+            margin: 0 auto 40px auto !important;
+            display: block !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
+            -webkit-border-radius: 0 !important;
+            -moz-border-radius: 0 !important;
         }
         
-        .minimal-header { 
-            background: #fff; 
-            color: #333; 
-            padding: 100px 0; 
-            border-bottom: 1px solid #eee;
-            position: relative;
+        /* Name - Large, bold, exactly like preview */
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 400;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+            color: #000000;
+            line-height: 1;
         }
         
-        .minimal-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.02) 0%, transparent 70%);
+        /* Horizontal divider line - exactly like preview */
+        .hero-divider {
+            width: 60px;
+            height: 1px;
+            background: #000000;
+            margin: 30px auto;
         }
         
-        .profile-img { 
-            width: 120px; 
-            height: 120px; 
-            border-radius: 50%; 
-            filter: grayscale(100%);
+        /* Subtitle - uppercase, spaced, exactly like preview */
+        .hero-subtitle {
+            font-size: 0.9rem;
+            font-weight: 400;
+            margin-bottom: 40px;
+            color: #666666;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+        
+        /* About text - if present */
+        .hero-description {
+            font-size: 1rem;
+            font-weight: 300;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            color: #666666;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Button - exactly like preview */
+        .minimal-btn {
+            background: transparent;
+            border: 1px solid #000000;
+            color: #000000;
+            padding: 12px 30px;
+            font-size: 0.8rem;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 0;
+            text-decoration: none;
             transition: all 0.3s ease;
-            animation: gentleFloat 4s ease-in-out infinite;
+            display: inline-block;
         }
         
-        .profile-img:hover {
-            filter: grayscale(0%);
-            transform: scale(1.1);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            animation-play-state: paused;
+        .minimal-btn:hover {
+            background: #000000;
+            color: #ffffff;
         }
         
+        /* Section Styles */
         .minimal-section { 
-            padding: 60px 0;
-            animation: minimalFadeIn 1s ease-out;
+            padding: 80px 20px;
+            max-width: 800px;
+            margin: 0 auto;
         }
         
         .section-title { 
-            font-weight: 300; 
-            font-size: 2rem; 
-            margin-bottom: 40px; 
-            color: #333;
-            animation: minimalSlideIn 1s ease-out;
-            position: relative;
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 20px;
+            color: #000000;
+            text-align: center;
         }
         
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
+        .section-divider {
+            width: 40px;
             height: 1px;
-            background: #333;
-            animation: lineGrow 2s ease-out forwards;
-            --target-width: 60px;
+            background: #000000;
+            margin: 20px auto 60px auto;
         }
         
-        .minimal-card { 
-            border: none; 
-            border-bottom: 1px solid #eee; 
-            padding: 30px 0;
-            transition: all 0.3s ease;
-            animation: minimalFadeIn 1s ease-out;
-            position: relative;
+        /* Education Section */
+        .education-item {
+            margin-bottom: 40px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid #e5e5e5;
         }
         
-        .minimal-card:hover {
-            transform: translateX(10px);
-            background: rgba(0,0,0,0.01);
-            border-bottom-color: #333;
+        .education-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
         }
         
-        .minimal-card::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 0;
-            background: #333;
-            transition: width 0.3s ease;
+        .education-degree {
+            font-size: 1.3rem;
+            font-weight: 400;
+            color: #000000;
+            margin-bottom: 8px;
         }
         
-        .minimal-card:hover::before {
-            width: 3px;
+        .education-school {
+            font-size: 1rem;
+            color: #666666;
+            margin-bottom: 8px;
         }
         
-        .skill-bar { 
-            height: 2px; 
-            background: #333; 
-            margin: 10px 0;
-            transform-origin: left;
-            animation: lineGrow 2s ease-out;
-            --target-width: var(--skill-width);
+        .education-meta {
+            font-size: 0.85rem;
+            color: #999999;
+            margin-bottom: 15px;
         }
         
-        .skill-container {
-            position: relative;
+        .education-field {
+            font-size: 0.9rem;
+            color: #666666;
+            margin-bottom: 10px;
+        }
+        
+        .education-description {
+            font-size: 0.9rem;
+            color: #666666;
+            line-height: 1.6;
+        }
+        
+        /* Experience Section */
+        .experience-item {
+            margin-bottom: 40px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        
+        .experience-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .experience-position {
+            font-size: 1.3rem;
+            font-weight: 400;
+            margin-bottom: 8px;
+            color: #000000;
+        }
+        
+        .experience-company {
+            font-size: 1rem;
+            font-weight: 400;
+            margin-bottom: 8px;
+            color: #666666;
+        }
+        
+        .experience-duration {
+            font-size: 0.85rem;
+            color: #999999;
+            margin-bottom: 15px;
+        }
+        
+        .experience-description {
+            font-size: 0.9rem;
+            font-weight: 300;
+            line-height: 1.6;
+            color: #666666;
+        }
+        
+        /* Projects Section */
+        .project-item {
+            margin-bottom: 50px;
+            padding-bottom: 50px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        
+        .project-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .project-title {
+            font-size: 1.3rem;
+            font-weight: 400;
+            margin-bottom: 15px;
+            color: #000000;
+        }
+        
+        .project-description {
+            font-size: 0.95rem;
+            font-weight: 300;
+            line-height: 1.6;
+            color: #666666;
             margin-bottom: 20px;
         }
         
-        .skill-container:hover .skill-bar {
-            height: 4px;
-            background: linear-gradient(90deg, #333, #666);
+        .project-tech {
+            margin-bottom: 20px;
         }
         
-        .btn-minimal {
-            color: #333;
+        .project-tech-label {
+            font-size: 0.8rem;
+            color: #999999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .project-tech-list {
+            font-size: 0.9rem;
+            color: #666666;
+        }
+        
+        .project-links {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .project-link {
+            color: #000000;
             text-decoration: none;
-            padding: 8px 0;
-            border-bottom: 1px solid transparent;
+            font-size: 0.8rem;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #000000;
+            padding-bottom: 2px;
+            transition: opacity 0.3s ease;
+        }
+        
+        .project-link:hover {
+            opacity: 0.6;
+            color: #000000;
+        }
+        
+        /* Skills Section */
+        .skill-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .skill-name {
+            font-size: 0.95rem;
+            font-weight: 400;
+            color: #000000;
+        }
+        
+        .skill-level {
+            font-size: 0.85rem;
+            color: #666666;
+            font-weight: 300;
+        }
+        
+        /* Certifications Section */
+        .cert-item {
+            background: #fafafa;
+            padding: 30px;
+            border: 1px solid #e5e5e5;
+            margin-bottom: 20px;
             transition: all 0.3s ease;
-            display: inline-block;
-            position: relative;
         }
         
-        .btn-minimal:hover {
-            color: #000;
-            border-bottom-color: #333;
+        .cert-item:hover {
             transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
         
-        .btn-minimal::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 0;
-            height: 1px;
-            background: #333;
-            transition: width 0.3s ease;
+        .cert-name {
+            color: #000000;
+            font-weight: 400;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
         }
         
-        .btn-minimal:hover::after {
-            width: 100%;
+        .cert-issuer {
+            font-size: 0.9rem;
+            color: #666666;
+            margin-bottom: 15px;
         }
         
-        /* MOBILE OPTIMIZATIONS */
+        .cert-date {
+            font-size: 0.85rem;
+            color: #999999;
+            margin-bottom: 15px;
+        }
+        
+        .cert-verify {
+            margin-top: 15px;
+        }
+        
+        /* Achievements Section */
+        .achievements {
+            margin-top: 15px;
+        }
+        
+        .achievement-item {
+            font-size: 0.9rem;
+            color: #666666;
+            margin-bottom: 5px;
+            line-height: 1.5;
+        }
+        
+        /* Mobile Responsive */
         @media (max-width: 768px) {
-            .minimal-card:hover,
-            .skill-container:hover .skill-bar {
-                transform: none !important;
-                height: 2px !important;
-                background: #333 !important;
+            .profile-img,
+            img.profile-img,
+            .hero-content .profile-img,
+            .minimal-hero .profile-img {
+                width: 250px !important;
+                height: 250px !important;
+                border-radius: 0 !important;
+                -webkit-border-radius: 0 !important;
+                -moz-border-radius: 0 !important;
             }
             
-            .profile-img {
-                animation: none !important;
+            .hero-title {
+                font-size: 2.5rem;
             }
             
-            .profile-img:hover {
-                transform: scale(1.05) !important;
+            .hero-subtitle {
+                font-size: 0.8rem;
+                letter-spacing: 3px;
             }
             
-            .minimal-card:hover {
-                transform: translateX(5px) !important;
+            .section-title {
+                font-size: 1.5rem;
             }
-        }
-        
-        .fade-in-minimal {
-            animation: minimalFadeIn 1s ease-out;
+            
+            .minimal-section {
+                padding: 60px 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="minimal-header text-center">
-        <div class="container">
-            ${data.profileImage ? `<img src="${data.profileImage}" alt="${data.name}" class="profile-img profile-3d mb-4">` : ''}
-            <h1 class="display-5 fw-light mb-3">${data.name}</h1>
-            <h2 class="h4 fw-light text-muted mb-4">${data.title}</h2>
-            ${data.about ? `<p class="lead fw-light" style="max-width: 600px; margin: 0 auto;">${data.about}</p>` : ''}
-            <div class="mt-5">
-                ${data.email ? `<a href="mailto:${data.email}" class="text-decoration-none text-dark me-4">${data.email}</a>` : ''}
-                ${data.linkedin ? `<a href="${data.linkedin}" target="_blank" class="text-decoration-none text-dark me-4">LinkedIn</a>` : ''}
-                ${data.github ? `<a href="${data.github}" target="_blank" class="text-decoration-none text-dark">GitHub</a>` : ''}
+    <!-- Minimal Navigation -->
+    <nav style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid #e5e5e5;
+        z-index: 1000;
+        padding: 1.5rem 0;
+    ">
+        <div style="
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        ">
+            <div style="
+                font-size: 1.5rem;
+                font-weight: 300;
+                color: #000000;
+                letter-spacing: -0.5px;
+            ">
+                ${data.name}
+            </div>
+            <div style="display: flex; gap: 3rem; align-items: center;">
+                <a href="#about" style="
+                    color: #666666;
+                    text-decoration: none;
+                    font-weight: 400;
+                    font-size: 0.9rem;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                ">About</a>
+                <a href="#work" style="
+                    color: #666666;
+                    text-decoration: none;
+                    font-weight: 400;
+                    font-size: 0.9rem;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                ">Work</a>
+                <a href="#experience" style="
+                    color: #666666;
+                    text-decoration: none;
+                    font-weight: 400;
+                    font-size: 0.9rem;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                ">Experience</a>
+                <a href="#contact" style="
+                    color: #666666;
+                    text-decoration: none;
+                    font-weight: 400;
+                    font-size: 0.9rem;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                ">Contact</a>
             </div>
         </div>
-    </div>
+    </nav>
 
-    ${data.projects && data.projects.length > 0 ? `
-    <section class="minimal-section">
-        <div class="container">
-            <h2 class="section-title text-center">Selected Work</h2>
-            ${data.projects.map(project => `
-                <div class="minimal-card">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <h4 class="fw-light">${project.title}</h4>
-                            <p class="text-muted">${project.description}</p>
-                            ${project.demo || project.github ? `
-                                <div class="mt-3">
-                                    ${project.demo ? `<a href="${project.demo}" target="_blank" class="text-decoration-none text-dark me-4">View Project</a>` : ''}
-                                    ${project.github ? `<a href="${project.github}" target="_blank" class="text-decoration-none text-dark">Source Code</a>` : ''}
-                                </div>
-                            ` : ''}
-                        </div>
+    <!-- Hero Section - Exact Preview Match -->
+    <section style="
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        background: #ffffff;
+        padding-top: 100px;
+    ">
+        <div style="
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 20px;
+        ">
+            <div style="
+                text-align: center;
+                max-width: 800px;
+                margin: 0 auto;
+            ">
+                <!-- Profile Image - Square with Checkmark -->
+                <div style="
+                    width: 300px;
+                    height: 300px;
+                    margin: 0 auto 3rem auto;
+                    position: relative;
+                ">
+                    ${data.profileImage ? `
+                    <img src="${data.profileImage}" alt="${data.name}" class="profile-img" style="
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        border-radius: 0;
+                        filter: grayscale(20%);
+                        transition: filter 0.3s ease;
+                        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                    ">
+                    ` : ''}
+                    <div style="
+                        position: absolute;
+                        bottom: -10px;
+                        right: -10px;
+                        width: 30px;
+                        height: 30px;
+                        background: #000000;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-size: 0.8rem;
+                    ">
+                        ✓
                     </div>
                 </div>
-            `).join('')}
+
+                <!-- Name -->
+                <h1 style="
+                    font-size: 4rem;
+                    font-weight: 100;
+                    margin-bottom: 1rem;
+                    letter-spacing: -3px;
+                    color: #000000;
+                    line-height: 0.9;
+                ">${data.name || 'Your Name'}</h1>
+                
+                <!-- Divider Line -->
+                <div style="
+                    width: 80px;
+                    height: 1px;
+                    background: #000000;
+                    margin: 2rem auto;
+                "></div>
+                
+                <!-- Title -->
+                <h2 style="
+                    font-size: 1rem;
+                    font-weight: 300;
+                    margin-bottom: 3rem;
+                    color: #666666;
+                    text-transform: uppercase;
+                    letter-spacing: 3px;
+                ">${data.title || data.tagline || 'YOUR TITLE'}</h2>
+                
+                <!-- About Text -->
+                ${data.about ? `
+                <p style="
+                    font-size: 1.1rem;
+                    font-weight: 300;
+                    line-height: 1.8;
+                    margin-bottom: 3rem;
+                    color: #666666;
+                    max-width: 600px;
+                    margin: 0 auto 3rem auto;
+                ">${data.about}</p>
+                ` : ''}
+                
+                <!-- Contact Information -->
+                <div style="
+                    display: flex;
+                    justify-content: center;
+                    gap: 3rem;
+                    margin-bottom: 3rem;
+                    flex-wrap: wrap;
+                ">
+                    ${data.email ? `
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        font-size: 0.9rem;
+                        color: #666666;
+                    ">
+                        <span>📧</span>
+                        <a href="mailto:${data.email}" style="
+                            color: #666666;
+                            text-decoration: none;
+                        ">${data.email}</a>
+                    </div>
+                    ` : ''}
+                    ${data.phone ? `
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        font-size: 0.9rem;
+                        color: #666666;
+                    ">
+                        <span>📞</span>
+                        <a href="tel:${data.phone}" style="
+                            color: #666666;
+                            text-decoration: none;
+                        ">${data.phone}</a>
+                    </div>
+                    ` : ''}
+                    ${data.location ? `
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        font-size: 0.9rem;
+                        color: #666666;
+                    ">
+                        <span>📍</span>
+                        <span>${data.location}</span>
+                    </div>
+                    ` : ''}
+                </div>
+                
+                <!-- Social Links -->
+                ${(data.linkedin || data.github || data.website || data.twitter) ? `
+                <div style="
+                    display: flex;
+                    justify-content: center;
+                    gap: 2rem;
+                    margin-bottom: 3rem;
+                ">
+                    ${data.linkedin ? `
+                    <a href="${data.linkedin}" target="_blank" style="
+                        color: #666666;
+                        text-decoration: none;
+                        font-size: 0.8rem;
+                        font-weight: 400;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        border-bottom: 1px solid transparent;
+                        padding-bottom: 2px;
+                        transition: all 0.3s ease;
+                    ">LinkedIn</a>
+                    ` : ''}
+                    ${data.github ? `
+                    <a href="${data.github}" target="_blank" style="
+                        color: #666666;
+                        text-decoration: none;
+                        font-size: 0.8rem;
+                        font-weight: 400;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        border-bottom: 1px solid transparent;
+                        padding-bottom: 2px;
+                        transition: all 0.3s ease;
+                    ">GitHub</a>
+                    ` : ''}
+                    ${data.website ? `
+                    <a href="${data.website}" target="_blank" style="
+                        color: #666666;
+                        text-decoration: none;
+                        font-size: 0.8rem;
+                        font-weight: 400;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        border-bottom: 1px solid transparent;
+                        padding-bottom: 2px;
+                        transition: all 0.3s ease;
+                    ">Website</a>
+                    ` : ''}
+                    ${data.twitter ? `
+                    <a href="${data.twitter}" target="_blank" style="
+                        color: #666666;
+                        text-decoration: none;
+                        font-size: 0.8rem;
+                        font-weight: 400;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        border-bottom: 1px solid transparent;
+                        padding-bottom: 2px;
+                        transition: all 0.3s ease;
+                    ">Twitter</a>
+                    ` : ''}
+                </div>
+                ` : ''}
+                
+                <!-- Button -->
+                <button onclick="document.getElementById('work').scrollIntoView({behavior: 'smooth'})" style="
+                    background: transparent;
+                    border: 1px solid #000000;
+                    color: #000000;
+                    padding: 15px 40px;
+                    font-size: 0.8rem;
+                    font-weight: 400;
+                    text-transform: uppercase;
+                    letter-spacing: 2px;
+                    border-radius: 0;
+                    margin-bottom: 3rem;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                ">VIEW SELECTED WORK</button>
+                
+                <!-- Philosophy Quote -->
+                ${data.philosophy ? `
+                <div style="
+                    border-top: 1px solid #e5e5e5;
+                    padding-top: 3rem;
+                    margin-top: 3rem;
+                ">
+                    <blockquote style="
+                        font-size: 1rem;
+                        font-style: italic;
+                        color: #999999;
+                        font-weight: 300;
+                        line-height: 1.6;
+                        max-width: 500px;
+                        margin: 0 auto;
+                    ">${data.philosophy}</blockquote>
+                </div>
+                ` : ''}
+            </div>
         </div>
     </section>
-    ` : ''}
 
+    <!-- Skills Section -->
     ${data.skills && data.skills.length > 0 ? `
-    <section class="minimal-section bg-light">
-        <div class="container">
-            <h2 class="section-title text-center">Skills</h2>
-            <div class="row">
+    <section style="
+        padding: 120px 0;
+        background-color: #fafafa;
+    ">
+        <div style="
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
+        ">
+            <h2 style="
+                font-size: 2.5rem;
+                font-weight: 400;
+                color: #000000;
+                margin-bottom: 2rem;
+                letter-spacing: -1px;
+            ">Skills</h2>
+            <div style="
+                width: 60px;
+                height: 1px;
+                background: #000000;
+                margin: 2rem auto 4rem auto;
+            "></div>
+            
+            <div style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 2rem;
+                text-align: left;
+            ">
                 ${data.skills.map(skill => `
-                    <div class="col-md-6 mb-4">
-                        <div class="d-flex justify-content-between">
-                            <span>${skill.name}</span>
-                            <span class="text-muted">${skill.level}%</span>
-                        </div>
-                        <div class="skill-bar" style="width: ${skill.level}%"></div>
+                <div style="
+                    background: white;
+                    padding: 2rem;
+                    border: 1px solid #f0f0f0;
+                    transition: all 0.3s ease;
+                ">
+                    <div style="
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 1rem;
+                    ">
+                        <h5 style="
+                            font-size: 1.1rem;
+                            font-weight: 500;
+                            color: #000000;
+                            margin: 0;
+                        ">${typeof skill === 'object' ? skill.name : skill}</h5>
+                        <span style="
+                            font-size: 0.9rem;
+                            font-weight: 300;
+                            color: #666666;
+                        ">${typeof skill === 'object' ? skill.level + '%' : '85%'}</span>
                     </div>
+                    <div style="
+                        width: 100%;
+                        height: 2px;
+                        background: #f0f0f0;
+                        overflow: hidden;
+                    ">
+                        <div style="
+                            width: ${typeof skill === 'object' ? skill.level : 85}%;
+                            height: 100%;
+                            background: #000000;
+                            transition: width 2s ease-in-out;
+                        "></div>
+                    </div>
+                </div>
                 `).join('')}
             </div>
         </div>
     </section>
     ` : ''}
 
-    <footer class="text-center py-5">
-        <div class="container">
-            <p class="text-muted">&copy; ${new Date().getFullYear()} ${data.name}</p>
-            <small class="text-muted">Powered by <a href="${getFrontendUrl()}" target="_blank" class="text-muted">Portfolio Generator</a></small>
+    <!-- Experience Section -->
+    ${data.experience && data.experience.length > 0 ? `
+    <section style="
+        padding: 120px 0;
+        background-color: white;
+    ">
+        <div style="
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        ">
+            <h2 style="
+                font-size: 2.5rem;
+                font-weight: 400;
+                color: #000000;
+                margin-bottom: 2rem;
+                letter-spacing: -1px;
+                text-align: center;
+            ">Experience</h2>
+            <div style="
+                width: 60px;
+                height: 1px;
+                background: #000000;
+                margin: 2rem auto 4rem auto;
+            "></div>
+            
+            ${data.experience.map(exp => `
+            <div style="
+                margin-bottom: 4rem;
+                padding: 3rem;
+                border: 1px solid #f0f0f0;
+                background: #fafafa;
+                transition: all 0.3s ease;
+            ">
+                <div style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    margin-bottom: 2rem;
+                    flex-wrap: wrap;
+                    gap: 1rem;
+                ">
+                    <div>
+                        <h3 style="
+                            font-size: 1.5rem;
+                            font-weight: 600;
+                            color: #000000;
+                            margin-bottom: 0.5rem;
+                        ">${exp.position || exp.role || 'Position'}</h3>
+                        <h4 style="
+                            font-size: 1.2rem;
+                            font-weight: 300;
+                            color: #666666;
+                            margin-bottom: 0.5rem;
+                        ">${exp.company || exp.organization || 'Company'}</h4>
+                        ${exp.location ? `
+                        <p style="
+                            font-size: 0.9rem;
+                            color: #999999;
+                            margin: 0;
+                        ">${exp.location}</p>
+                        ` : ''}
+                    </div>
+                    <div style="
+                        text-align: right;
+                        font-size: 0.9rem;
+                        color: #666666;
+                        font-weight: 300;
+                    ">
+                        ${exp.duration || ''}
+                    </div>
+                </div>
+                
+                ${exp.description ? `
+                <p style="
+                    font-size: 1rem;
+                    font-weight: 300;
+                    line-height: 1.6;
+                    color: #555555;
+                    margin-bottom: 2rem;
+                ">${exp.description}</p>
+                ` : ''}
+                
+                ${exp.achievements && exp.achievements.length > 0 ? `
+                <div>
+                    <h6 style="
+                        font-size: 0.9rem;
+                        font-weight: 500;
+                        color: #000000;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        margin-bottom: 1rem;
+                    ">Key Achievements</h6>
+                    <div style="
+                        display: grid;
+                        gap: 0.5rem;
+                    ">
+                        ${exp.achievements.map(achievement => `
+                        <div style="
+                            font-size: 0.95rem;
+                            color: #666666;
+                            padding-left: 1rem;
+                            position: relative;
+                        ">
+                            <span style="
+                                position: absolute;
+                                left: 0;
+                                top: 0.2rem;
+                                width: 4px;
+                                height: 4px;
+                                background: #000000;
+                                border-radius: 50%;
+                            "></span>
+                            ${achievement}
+                        </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
+            </div>
+            `).join('')}
         </div>
-    </footer>
+    </section>
+    ` : ''}
+
+    <!-- Projects Section -->
+    ${data.projects && data.projects.length > 0 ? `
+    <section id="work" style="
+        padding: 120px 0;
+        background-color: white;
+    ">
+        <div style="
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
+        ">
+            <h2 style="
+                font-size: 2.5rem;
+                font-weight: 400;
+                color: #000000;
+                margin-bottom: 2rem;
+                letter-spacing: -1px;
+            ">
+                Selected Work
+            </h2>
+            <div style="
+                width: 60px;
+                height: 1px;
+                background: #000000;
+                margin: 2rem auto 4rem auto;
+            "></div>
+            
+            <!-- Project Grid -->
+            <div style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 3rem;
+                margin-top: 4rem;
+            ">
+                ${data.projects.map(project => `
+                <div style="
+                    text-align: left;
+                    background: #fafafa;
+                    padding: 0;
+                    border: 1px solid #f0f0f0;
+                    transition: all 0.3s ease;
+                    overflow: hidden;
+                ">
+                    ${project.image ? `
+                    <div style="
+                        width: 100%;
+                        height: 250px;
+                        background-image: url('${project.image}');
+                        background-size: cover;
+                        background-position: center;
+                        margin-bottom: 2rem;
+                    "></div>
+                    ` : ''}
+                    
+                    <div style="padding: 2rem;">
+                        <h3 style="
+                            font-size: 1.3rem;
+                            font-weight: 600;
+                            color: #000000;
+                            margin-bottom: 1rem;
+                        ">${project.title || project.name || 'Project'}</h3>
+                        
+                        <p style="
+                            font-size: 1rem;
+                            font-weight: 300;
+                            line-height: 1.6;
+                            color: #666666;
+                            margin-bottom: 1.5rem;
+                        ">${project.description || ''}</p>
+                        
+                        ${project.tech && project.tech.length > 0 ? `
+                        <div style="
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 0.5rem;
+                            margin-bottom: 1.5rem;
+                        ">
+                            ${project.tech.map(tech => `
+                            <span style="
+                                font-size: 0.8rem;
+                                font-weight: 300;
+                                color: #888888;
+                                background: #f8f8f8;
+                                padding: 0.3rem 0.8rem;
+                                border-radius: 0;
+                                text-transform: uppercase;
+                                letter-spacing: 0.5px;
+                            ">${tech}</span>
+                            `).join('')}
+                        </div>
+                        ` : ''}
+                        
+                        <div style="
+                            display: flex;
+                            gap: 1rem;
+                        ">
+                            ${project.demo || project.liveLink ? `
+                            <a href="${project.demo || project.liveLink}" target="_blank" style="
+                                color: #000000;
+                                text-decoration: none;
+                                font-size: 0.8rem;
+                                font-weight: 400;
+                                text-transform: uppercase;
+                                letter-spacing: 1px;
+                                border-bottom: 1px solid #000000;
+                                padding-bottom: 2px;
+                                transition: all 0.3s ease;
+                            ">View Live</a>
+                            ` : ''}
+                            
+                            ${project.github || project.source ? `
+                            <a href="${project.github || project.source}" target="_blank" style="
+                                color: #666666;
+                                text-decoration: none;
+                                font-size: 0.8rem;
+                                font-weight: 400;
+                                text-transform: uppercase;
+                                letter-spacing: 1px;
+                                border-bottom: 1px solid #666666;
+                                padding-bottom: 2px;
+                                transition: all 0.3s ease;
+                            ">View Code</a>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+                `).join('')}
+            </div>
+        </div>
+    </section>
+    ` : ''}
+
+    <!-- Education Section -->
+    ${data.education && data.education.length > 0 ? `
+    <section style="
+        padding: 120px 0;
+        background-color: #fafafa;
+    ">
+        <div style="
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        ">
+            <h2 style="
+                font-size: 2.5rem;
+                font-weight: 400;
+                color: #000000;
+                margin-bottom: 2rem;
+                letter-spacing: -1px;
+                text-align: center;
+            ">Education</h2>
+            <div style="
+                width: 60px;
+                height: 1px;
+                background: #000000;
+                margin: 2rem auto 4rem auto;
+            "></div>
+            
+            ${data.education.map(edu => `
+            <div style="
+                margin-bottom: 3rem;
+                padding: 3rem;
+                background: white;
+                border: 1px solid #f0f0f0;
+                transition: all 0.3s ease;
+            ">
+                <div style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    margin-bottom: 1.5rem;
+                    flex-wrap: wrap;
+                    gap: 1rem;
+                ">
+                    <div>
+                        <h3 style="
+                            font-size: 1.4rem;
+                            font-weight: 600;
+                            color: #000000;
+                            margin-bottom: 0.5rem;
+                        ">${edu.degree || edu.institution || 'Education'}</h3>
+                        <h4 style="
+                            font-size: 1.1rem;
+                            font-weight: 300;
+                            color: #666666;
+                            margin-bottom: 0.5rem;
+                        ">${edu.school || edu.institution || ''}</h4>
+                        ${edu.location ? `
+                        <p style="
+                            font-size: 0.9rem;
+                            color: #999999;
+                            margin: 0;
+                        ">${edu.location}</p>
+                        ` : ''}
+                    </div>
+                    <div style="
+                        text-align: right;
+                        font-size: 0.9rem;
+                        color: #666666;
+                        font-weight: 300;
+                    ">
+                        ${edu.duration || ''}
+                    </div>
+                </div>
+                
+                ${edu.fieldOfStudy ? `
+                <p style="
+                    font-size: 0.9rem;
+                    color: #888888;
+                    margin-bottom: 1rem;
+                    font-weight: 300;
+                ">Field of Study: ${edu.fieldOfStudy}</p>
+                ` : ''}
+                
+                ${edu.gpa ? `
+                <p style="
+                    font-size: 0.9rem;
+                    color: #888888;
+                    margin-bottom: 1rem;
+                    font-weight: 300;
+                ">GPA: ${edu.gpa}</p>
+                ` : ''}
+                
+                ${edu.description ? `
+                <p style="
+                    font-size: 1rem;
+                    font-weight: 300;
+                    line-height: 1.6;
+                    color: #555555;
+                    margin: 0;
+                ">${edu.description}</p>
+                ` : ''}
+            </div>
+            `).join('')}
+        </div>
+    </section>
+    ` : ''}
+
+
+
+    <!-- Projects Section -->
+    ${data.projects && data.projects.length > 0 ? `
+    <section id="work" style="
+        padding: 120px 0;
+        background-color: white;
+    ">
+        <div style="
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
+        ">
+            <h2 style="
+                font-size: 2.5rem;
+                font-weight: 400;
+                color: #000000;
+                margin-bottom: 2rem;
+                letter-spacing: -1px;
+            ">
+                Selected Work
+            </h2>
+            <div style="
+                width: 60px;
+                height: 1px;
+                background: #000000;
+                margin: 2rem auto 4rem auto;
+            "></div>
+            
+            <!-- Project Grid -->
+            <div style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 3rem;
+                margin-top: 4rem;
+            ">
+                ${data.projects.map(project => `
+                <div style="
+                    text-align: left;
+                    border: 1px solid #f0f0f0;
+                    transition: all 0.3s ease;
+                    padding: 0;
+                    background: white;
+                ">
+                    ${project.image ? `
+                    <div style="
+                        width: 100%;
+                        height: 250px;
+                        overflow: hidden;
+                        background: #f8f8f8;
+                    ">
+                        <img src="${project.image}" alt="${project.title}" style="
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                            transition: transform 0.3s ease;
+                        ">
+                    </div>
+                    ` : ''}
+                    <div style="padding: 2rem;">
+                        <h3 style="
+                            font-size: 1.3rem;
+                            font-weight: 600;
+                            color: #000000;
+                            margin-bottom: 1rem;
+                            letter-spacing: -0.5px;
+                        ">${project.title}</h3>
+                        <p style="
+                            font-size: 0.95rem;
+                            font-weight: 300;
+                            color: #666666;
+                            line-height: 1.6;
+                            margin-bottom: 1.5rem;
+                        ">${project.description}</p>
+                        ${project.technologies ? `
+                        <div style="
+                            margin-bottom: 1.5rem;
+                        ">
+                            <div style="
+                                display: flex;
+                                flex-wrap: wrap;
+                                gap: 0.5rem;
+                            ">
+                                ${Array.isArray(project.technologies) ? project.technologies.map(tech => `
+                                <span style="
+                                    font-size: 0.75rem;
+                                    color: #666666;
+                                    background: #f8f8f8;
+                                    padding: 0.3rem 0.8rem;
+                                    border-radius: 2px;
+                                    font-weight: 400;
+                                    text-transform: uppercase;
+                                    letter-spacing: 0.5px;
+                                ">${tech}</span>
+                                `).join('') : `<span style="color: #666666; font-size: 0.9rem;">${project.technologies}</span>`}
+                            </div>
+                        </div>
+                        ` : ''}
+                        <div style="display: flex; gap: 1rem;">
+                            ${project.liveLink || project.demo ? `
+                            <a href="${project.liveLink || project.demo}" target="_blank" style="
+                                color: #000000;
+                                text-decoration: none;
+                                font-size: 0.8rem;
+                                font-weight: 400;
+                                text-transform: uppercase;
+                                letter-spacing: 1px;
+                                border-bottom: 1px solid #000000;
+                                padding-bottom: 2px;
+                                transition: all 0.3s ease;
+                            ">Live Demo</a>
+                            ` : ''}
+                            ${project.github ? `
+                            <a href="${project.github}" target="_blank" style="
+                                color: #000000;
+                                text-decoration: none;
+                                font-size: 0.8rem;
+                                font-weight: 400;
+                                text-transform: uppercase;
+                                letter-spacing: 1px;
+                                border-bottom: 1px solid #000000;
+                                padding-bottom: 2px;
+                                transition: all 0.3s ease;
+                            ">GitHub</a>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+                `).join('')}
+            </div>
+        </div>
+    </section>
+    ` : ''}
+
+
+
+    <!-- Internships Section -->
+    ${(data.internships && Array.isArray(data.internships) && data.internships.length > 0) || (data.internship && Array.isArray(data.internship) && data.internship.length > 0) ? `
+    <section style="
+        padding: 120px 0;
+        background-color: white;
+    ">
+        <div style="
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        ">
+            <h2 style="
+                font-size: 2.5rem;
+                font-weight: 400;
+                color: #000000;
+                margin-bottom: 2rem;
+                letter-spacing: -1px;
+                text-align: center;
+            ">Internships</h2>
+            <div style="
+                width: 60px;
+                height: 1px;
+                background: #000000;
+                margin: 2rem auto 4rem auto;
+            "></div>
+            
+            ${(data.internships || data.internship).map(internship => `
+            <div style="
+                margin-bottom: 4rem;
+                padding: 3rem;
+                border: 1px solid #f0f0f0;
+                background: #fafafa;
+                transition: all 0.3s ease;
+            ">
+                <div style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    margin-bottom: 2rem;
+                    flex-wrap: wrap;
+                    gap: 1rem;
+                ">
+                    <div>
+                        <h3 style="
+                            font-size: 1.5rem;
+                            font-weight: 600;
+                            color: #000000;
+                            margin-bottom: 0.5rem;
+                        ">${internship.position || internship.role || 'Position'}</h3>
+                        <h4 style="
+                            font-size: 1.2rem;
+                            font-weight: 300;
+                            color: #666666;
+                            margin-bottom: 0.5rem;
+                        ">${internship.company || internship.organization || 'Company'}</h4>
+                        ${internship.location ? `
+                        <p style="
+                            font-size: 0.9rem;
+                            color: #999999;
+                            margin: 0;
+                        ">${internship.location}</p>
+                        ` : ''}
+                    </div>
+                    <div style="
+                        text-align: right;
+                        font-size: 0.9rem;
+                        color: #666666;
+                        font-weight: 300;
+                    ">
+                        ${internship.duration || ''}
+                    </div>
+                </div>
+                
+                ${internship.description ? `
+                <p style="
+                    font-size: 1rem;
+                    font-weight: 300;
+                    line-height: 1.6;
+                    color: #555555;
+                    margin-bottom: 2rem;
+                ">${internship.description}</p>
+                ` : ''}
+                
+                ${internship.achievements && internship.achievements.length > 0 ? `
+                <div>
+                    <h6 style="
+                        font-size: 0.9rem;
+                        font-weight: 500;
+                        color: #000000;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        margin-bottom: 1rem;
+                    ">Key Achievements</h6>
+                    <div style="
+                        display: grid;
+                        gap: 0.5rem;
+                    ">
+                        ${internship.achievements.map(achievement => `
+                        <div style="
+                            font-size: 0.95rem;
+                            color: #666666;
+                            padding-left: 1rem;
+                            position: relative;
+                        ">
+                            <span style="
+                                position: absolute;
+                                left: 0;
+                                top: 0.2rem;
+                                width: 4px;
+                                height: 4px;
+                                background: #000000;
+                                border-radius: 50%;
+                            "></span>
+                            ${achievement}
+                        </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
+            </div>
+            `).join('')}
+        </div>
+    </section>
+    ` : ''}
+
+    <!-- Certifications Section -->
+    ${data.certifications && data.certifications.length > 0 ? `
+    <section style="
+        padding: 120px 0;
+        background-color: #fafafa;
+    ">
+        <div style="
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
+        ">
+            <h2 style="
+                font-size: 2.5rem;
+                font-weight: 400;
+                color: #000000;
+                margin-bottom: 2rem;
+                letter-spacing: -1px;
+            ">Certifications</h2>
+            <div style="
+                width: 60px;
+                height: 1px;
+                background: #000000;
+                margin: 2rem auto 4rem auto;
+            "></div>
+            
+            <div style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 2rem;
+                text-align: left;
+            ">
+                ${data.certifications.map(cert => `
+                <div style="
+                    background: white;
+                    padding: 2.5rem;
+                    border: 1px solid #f0f0f0;
+                    transition: all 0.3s ease;
+                    text-align: center;
+                ">
+                    <div style="
+                        width: 60px;
+                        height: 60px;
+                        background: #f8f8f8;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        margin: 0 auto 1.5rem auto;
+                        font-size: 1.5rem;
+                    ">🏆</div>
+                    
+                    <h4 style="
+                        font-size: 1.2rem;
+                        font-weight: 600;
+                        color: #000000;
+                        margin-bottom: 0.5rem;
+                    ">${cert.name || cert.title || 'Certification'}</h4>
+                    
+                    <p style="
+                        font-size: 1rem;
+                        font-weight: 300;
+                        color: #666666;
+                        margin-bottom: 1rem;
+                    ">${cert.issuer || cert.organization || 'Issuer'}</p>
+                    
+                    ${cert.dateObtained || cert.date ? `
+                    <p style="
+                        font-size: 0.9rem;
+                        color: #888888;
+                        margin-bottom: 1.5rem;
+                        font-weight: 300;
+                    ">Obtained: ${cert.dateObtained || cert.date}</p>
+                    ` : ''}
+                    
+                    ${cert.verificationUrl || cert.verifyLink ? `
+                    <a href="${cert.verificationUrl || cert.verifyLink}" target="_blank" style="
+                        color: #000000;
+                        text-decoration: none;
+                        font-size: 0.8rem;
+                        font-weight: 400;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        border-bottom: 1px solid #000000;
+                        padding-bottom: 2px;
+                        transition: all 0.3s ease;
+                    ">Verify Certificate</a>
+                    ` : ''}
+                </div>
+                `).join('')}
+            </div>
+        </div>
+    </section>
+    ` : ''}
+
+    <!-- Contact Section -->
+    <section id="contact" style="
+        padding: 120px 0;
+        background-color: #000000;
+        color: white;
+        text-align: center;
+    ">
+        <div style="max-width: 800px; margin: 0 auto; padding: 0 20px;">
+            <h2 style="
+                font-size: 2.5rem;
+                font-weight: 100;
+                margin-bottom: 2rem;
+                letter-spacing: -1px;
+            ">
+                Let's Work Together
+            </h2>
+            <div style="
+                width: 40px;
+                height: 1px;
+                background: white;
+                margin: 2rem auto 4rem auto;
+            "></div>
+            <div style="
+                display: flex;
+                justify-content: center;
+                gap: 3rem;
+                flex-wrap: wrap;
+                margin-bottom: 3rem;
+            ">
+                ${data.email ? `
+                <div>
+                    <div style="
+                        font-size: 0.8rem;
+                        color: #999999;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        margin-bottom: 0.5rem;
+                    ">Email</div>
+                    <a href="mailto:${data.email}" style="
+                        color: white;
+                        text-decoration: none;
+                        font-weight: 300;
+                    ">${data.email}</a>
+                </div>
+                ` : ''}
+                ${data.phone ? `
+                <div>
+                    <div style="
+                        font-size: 0.8rem;
+                        color: #999999;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        margin-bottom: 0.5rem;
+                    ">Phone</div>
+                    <a href="tel:${data.phone}" style="
+                        color: white;
+                        text-decoration: none;
+                        font-weight: 300;
+                    ">${data.phone}</a>
+                </div>
+                ` : ''}
+                ${data.location ? `
+                <div>
+                    <div style="
+                        font-size: 0.8rem;
+                        color: #999999;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        margin-bottom: 0.5rem;
+                    ">Location</div>
+                    <div style="color: white; font-weight: 300;">${data.location}</div>
+                </div>
+                ` : ''}
+            </div>
+            <div style="
+                display: flex;
+                justify-content: center;
+                gap: 2rem;
+                margin-top: 3rem;
+            ">
+                ${data.linkedin ? `
+                <a href="${data.linkedin}" target="_blank" style="
+                    color: #666666;
+                    text-decoration: none;
+                    font-size: 0.9rem;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    transition: color 0.3s ease;
+                ">LinkedIn</a>
+                ` : ''}
+                ${data.behance ? `
+                <a href="${data.behance}" target="_blank" style="
+                    color: #666666;
+                    text-decoration: none;
+                    font-size: 0.9rem;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    transition: color 0.3s ease;
+                ">Behance</a>
+                ` : ''}
+                ${data.website ? `
+                <a href="${data.website}" target="_blank" style="
+                    color: #666666;
+                    text-decoration: none;
+                    font-size: 0.9rem;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    transition: color 0.3s ease;
+                ">Website</a>
+                ` : ''}
+            </div>
+        </div>
+    </section>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+    
+    <!-- ENSURE SQUARE PROFILE IMAGE -->
+    <style>
+        .profile-img {
+            border-radius: 0 !important;
+        }
+    </style>
 </body>
 </html>
     `;
@@ -2886,11 +4269,38 @@ function generateTemplate5HTML(data, meta) {
         .fade-in-terminal {
             animation: terminalBoot 1s ease-out;
         }
+        
+        /* PROFILE IMAGE - SQUARE NOT CIRCULAR */
+        .profile-img { 
+            width: 200px; 
+            height: 200px; 
+            border-radius: 0 !important; 
+            border: 3px solid #58a6ff;
+            animation: terminalBoot 2s ease-out;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 0 auto 20px auto;
+            object-fit: cover;
+            box-shadow: 0 10px 20px rgba(88, 166, 255, 0.2);
+        }
+        
+        .profile-img:hover {
+            border-color: #7ee787;
+            box-shadow: 0 15px 30px rgba(126, 231, 135, 0.3);
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="terminal-header">
+            ${data.profileImage ? `
+                <div class="mb-4 text-center">
+                    <span class="terminal-prompt">$</span> <span class="terminal-text">display profile.jpg</span>
+                    <br>
+                    <img src="${data.profileImage}" alt="${data.name}" class="profile-img mt-3">
+                </div>
+            ` : ''}
             <div class="mb-3">
                 <span class="terminal-prompt">$</span> <span class="terminal-text">whoami</span>
             </div>
@@ -2963,6 +4373,64 @@ function generateTemplate5HTML(data, meta) {
                     <div><strong>${exp.position}</strong> @ ${exp.company}</div>
                     <div class="text-muted">${exp.duration} | ${exp.location || ''}</div>
                     <div class="mt-2">${exp.description}</div>
+                </div>
+            `).join('')}
+        </div>
+        ` : ''}
+
+        ${data.education && data.education.length > 0 ? `
+        <div class="terminal-card">
+            <div class="mb-3">
+                <span class="terminal-prompt">$</span> <span class="terminal-text">cat education.json</span>
+            </div>
+            <div class="code-block">
+                [<br>
+                ${data.education.map((edu, index) => `
+                    &nbsp;&nbsp;{<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;"degree": "${edu.degree || edu.title}",<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;"institution": "${edu.institution || edu.school}",<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;"duration": "${edu.duration}",<br>
+                    ${edu.gpa ? `&nbsp;&nbsp;&nbsp;&nbsp;"gpa": "${edu.gpa}",<br>` : ''}
+                    ${edu.location ? `&nbsp;&nbsp;&nbsp;&nbsp;"location": "${edu.location}",<br>` : ''}
+                    &nbsp;&nbsp;&nbsp;&nbsp;"status": "completed"<br>
+                    &nbsp;&nbsp;}${index < data.education.length - 1 ? ',' : ''}<br>
+                `).join('')}
+                ]
+            </div>
+            ${data.education.map(edu => `
+                <div class="code-block mt-3">
+                    <div class="mb-2">
+                        <strong>${edu.degree || edu.title}</strong>
+                    </div>
+                    <div class="text-muted mb-2">${edu.institution || edu.school} | ${edu.duration}</div>
+                    ${edu.gpa ? `<div class="mb-2"><span class="terminal-text">GPA:</span> ${edu.gpa}</div>` : ''}
+                    ${edu.location ? `<div class="mb-2"><span class="terminal-text">Location:</span> ${edu.location}</div>` : ''}
+                    ${edu.description ? `<div class="mt-2">${edu.description}</div>` : ''}
+                </div>
+            `).join('')}
+        </div>
+        ` : ''}
+
+        ${(data.internships && data.internships.length > 0) || (data.internship && data.internship.length > 0) ? `
+        <div class="terminal-card">
+            <div class="mb-3">
+                <span class="terminal-prompt">$</span> <span class="terminal-text">cat internships.log</span>
+            </div>
+            ${(data.internships || data.internship || []).map(internship => `
+                <div class="code-block mb-3">
+                    <div class="mb-2">
+                        <strong>${internship.position || internship.role}</strong> @ ${internship.company || internship.organization}
+                    </div>
+                    <div class="text-muted mb-2">${internship.duration} ${internship.location ? `| ${internship.location}` : ''}</div>
+                    ${internship.description ? `<div class="mt-2"># ${internship.description}</div>` : ''}
+                    ${internship.achievements && internship.achievements.length > 0 ? `
+                        <div class="mt-2">
+                            <div class="terminal-text">Achievements:</div>
+                            <ul class="mt-1">
+                                ${internship.achievements.map(achievement => `<li>${achievement}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
                 </div>
             `).join('')}
         </div>
@@ -3066,11 +4534,12 @@ function generateTemplate6HTML(data, meta) {
         .profile-img { 
             width: 150px; 
             height: 150px; 
-            border-radius: 50%; 
+            border-radius: 0 !important; 
             border: 5px solid white;
             animation: marketingBounce 4s ease-in-out infinite;
             transition: all 0.3s ease;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            object-fit: cover;
         }
         
         .profile-img:hover {
