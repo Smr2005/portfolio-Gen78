@@ -8,6 +8,7 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "build": "npm install && cd client && rm -f yarn.lock && rm -rf node_modules && npm install --legacy-peer-deps && npx browserslist@latest --update-db && npm run build:legacy",
+    "render-build": "npm install && cd client && npm install --legacy-peer-deps && npm run build:legacy && echo 'Checking build output...' && ls -la client/ && ls -la client/build/ || echo 'Build directory not found'",
     "heroku-postbuild": "npm run build",
     "postinstall": "echo 'Dependencies installed successfully'",
     "audit-fix": "npm audit fix && cd client && npm audit fix"

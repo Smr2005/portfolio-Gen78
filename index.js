@@ -189,7 +189,22 @@ app.get("/api/test-data-storage", (req, res) => {
 // Serve static files from React build in production
 if (process.env.NODE_ENV === 'production' || process.env.PORT) {
     // Serve static files from React build
-    app.use(express.static(path.join(__dirname, 'client/build')));
+    const buildPath = path.join(__dirname, 'client/build');
+    console.log('Serving static files from:', buildPath);
+    console.log('Directory exists:', require('fs').existsSync(buildPath));
+    
+    app.use(express.static(buildPath));
+    
+    // Add explicit file serving for common assets
+    app.get('/static/*', (req, res, next) => {
+        const filePath = path.join(buildPath, req.path);
+        console.log('Serving static file:', filePath);
+        if (require('fs').existsSync(filePath)) {
+            res.sendFile(filePath);
+        } else {
+            next();
+        }
+    });
 }
 
 // Public route to serve published portfolios as HTML
@@ -1228,7 +1243,57 @@ app.get('/admin-cleanup', (req, res) => {
 if (process.env.NODE_ENV === 'production' || process.env.PORT) {
     // Handle React routing, return all requests to React app
     app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+        const indexPath = path.join(__dirname, 'client/build', 'index.html');
+        console.log('Attempting to serve React app from:', indexPath);
+        console.log('File exists:', require('fs').existsSync(indexPath));
+        
+        if (require('fs').existsSync(indexPath)) {
+            res.sendFile(indexPath);
+        } else {
+            // Fallback if build files don't exist
+            console.error('React build files not found!');
+            res.status(500).send(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Application Error</title>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1">
+                    <style>
+                        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f5f5f5; }
+                        .error-container { max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                        .error-code { font-size: 72px; color: #e74c3c; margin-bottom: 20px; }
+                        .error-message { font-size: 24px; color: #333; margin-bottom: 20px; }
+                        .error-details { color: #666; margin-bottom: 30px; }
+                        .retry-btn { background: #3498db; color: white; padding: 15px 30px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; }
+                        .retry-btn:hover { background: #2980b9; }
+                    </style>
+                </head>
+                <body>
+                    <div class="error-container">
+                        <div class="error-code">🚧</div>
+                        <div class="error-message">Application is Starting Up</div>
+                        <div class="error-details">
+                            The application is currently building or starting up.<br>
+                            This usually takes 2-5 minutes on first deployment.
+                        </div>
+                        <button class="retry-btn" onclick="window.location.reload()">
+                            🔄 Refresh Page
+                        </button>
+                        <br><br>
+                        <small>Build path: ${indexPath}</small>
+                    </div>
+                    
+                    <script>
+                        // Auto-refresh every 30 seconds
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 30000);
+                    </script>
+                </body>
+                </html>
+            `);
+        }
     });
 }
 
