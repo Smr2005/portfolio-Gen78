@@ -481,73 +481,170 @@ function EnhancedBuilder() {
     return <TemplateComponent userData={userData} />;
   };
 
+  const isMobile = window.innerWidth < 768;
+  const isSmallMobile = window.innerWidth < 480;
+
   return (
     <div>
-      <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
-        <Navbar.Brand>Portfolio Builder</Navbar.Brand>
+      <Navbar 
+        bg="dark" 
+        variant="dark" 
+        expand="lg" 
+        className="mb-4"
+        style={{
+          padding: isMobile ? '0.5rem 1rem' : undefined
+        }}
+      >
+        <Navbar.Brand style={{
+          fontSize: isSmallMobile ? '1.2rem' : isMobile ? '1.4rem' : '1.6rem'
+        }}>
+          🎨 Portfolio Builder
+        </Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse>
-          <Nav className="ml-auto">
+          <Nav className="ml-auto" style={{
+            backgroundColor: isMobile ? 'rgba(52,58,64,0.95)' : 'transparent',
+            borderRadius: isMobile ? '8px' : '0',
+            marginTop: isMobile ? '0.5rem' : '0',
+            padding: isMobile ? '0.5rem' : '0',
+            gap: isMobile ? '0.5rem' : '0.75rem'
+          }}>
             <Button 
               variant="outline-light" 
-              className="mr-2"
+              className={isMobile ? "mb-2" : "mr-2"}
               onClick={() => setShowPreview(!showPreview)}
+              style={{
+                minHeight: isMobile ? '44px' : 'auto',
+                fontSize: isSmallMobile ? '0.9rem' : '1rem',
+                padding: isSmallMobile ? '0.75rem 1rem' : '0.5rem 1rem',
+                width: isMobile ? '100%' : 'auto'
+              }}
             >
-              {showPreview ? 'Edit' : 'Preview'}
+              {showPreview ? '✏️ Edit' : '👁️ Preview'}
             </Button>
             <Button 
               variant="success" 
-              className="mr-2"
+              className={isMobile ? "mb-2" : "mr-2"}
               onClick={handleSave}
               disabled={saving}
+              style={{
+                minHeight: isMobile ? '44px' : 'auto',
+                fontSize: isSmallMobile ? '0.9rem' : '1rem',
+                padding: isSmallMobile ? '0.75rem 1rem' : '0.5rem 1rem',
+                width: isMobile ? '100%' : 'auto'
+              }}
             >
-              {saving ? 'Saving...' : 'Save'}
+              {saving ? '⏳ Saving...' : '💾 Save'}
             </Button>
             <Button 
               variant="primary"
               onClick={handlePublish}
               disabled={publishing}
+              style={{
+                minHeight: isMobile ? '44px' : 'auto',
+                fontSize: isSmallMobile ? '0.9rem' : '1rem',
+                padding: isSmallMobile ? '0.75rem 1rem' : '0.5rem 1rem',
+                width: isMobile ? '100%' : 'auto'
+              }}
             >
-              {publishing ? 'Publishing...' : 'Publish'}
+              {publishing ? '🚀 Publishing...' : '🌐 Publish'}
             </Button>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
 
-      <Container fluid>
-        {error && <Alert variant="danger">{error}</Alert>}
-        {saved && <Alert variant="success">Portfolio saved successfully!</Alert>}
+      <Container fluid style={{
+        padding: isMobile ? '0 10px' : undefined
+      }}>
+        {error && (
+          <Alert variant="danger" style={{
+            fontSize: isSmallMobile ? '0.9rem' : '1rem',
+            padding: isSmallMobile ? '0.75rem' : '1rem',
+            margin: isMobile ? '0.5rem 0' : '1rem 0'
+          }}>
+            ❌ {error}
+          </Alert>
+        )}
+        {saved && (
+          <Alert variant="success" style={{
+            fontSize: isSmallMobile ? '0.9rem' : '1rem',
+            padding: isSmallMobile ? '0.75rem' : '1rem',
+            margin: isMobile ? '0.5rem 0' : '1rem 0'
+          }}>
+            ✅ Portfolio saved successfully!
+          </Alert>
+        )}
         {publishedUrl && (
-          <Alert variant="success">
-            Portfolio published! <a href={publishedUrl} target="_blank" rel="noopener noreferrer">View it here</a>
+          <Alert variant="success" style={{
+            fontSize: isSmallMobile ? '0.9rem' : '1rem',
+            padding: isSmallMobile ? '0.75rem' : '1rem',
+            margin: isMobile ? '0.5rem 0' : '1rem 0'
+          }}>
+            🎉 Portfolio published! <a href={publishedUrl} target="_blank" rel="noopener noreferrer">View it here</a>
           </Alert>
         )}
 
         <Row>
           {!showPreview && (
-            <Col md={6}>
+            <Col md={6} xs={12} className={isMobile ? "mb-4" : ""}>
               <Card>
-                <Card.Header>
-                  <h5>Portfolio Information</h5>
+                <Card.Header style={{
+                  padding: isSmallMobile ? '0.75rem 1rem' : '1rem 1.25rem'
+                }}>
+                  <h5 style={{
+                    fontSize: isSmallMobile ? '1.2rem' : isMobile ? '1.3rem' : '1.4rem',
+                    margin: 0
+                  }}>
+                    📝 Portfolio Information
+                  </h5>
                 </Card.Header>
-                <Card.Body>
-                  <Tabs activeKey={activeTab} onSelect={setActiveTab}>
+                <Card.Body style={{
+                  padding: isSmallMobile ? '1rem 0.75rem' : isMobile ? '1.25rem 1rem' : '1.5rem 1.25rem'
+                }}>
+                  <Tabs 
+                    activeKey={activeTab} 
+                    onSelect={setActiveTab}
+                    className="mb-3"
+                    variant={isMobile ? "pills" : "tabs"}
+                    justify={isMobile}
+                  >
                     
                     {/* Personal Information Tab */}
-                    <Tab eventKey="personal" title="Personal">
+                    <Tab 
+                      eventKey="personal" 
+                      title={isMobile ? "👤" : "👤 Personal"}
+                    >
                       <div className="mt-3">
                         <Form.Group className="mb-3">
-                          <Form.Label>Profile Picture</Form.Label>
+                          <Form.Label style={{
+                            fontSize: isSmallMobile ? '0.9rem' : '1rem',
+                            fontWeight: '600',
+                            marginBottom: '0.5rem'
+                          }}>
+                            📸 Profile Picture
+                          </Form.Label>
                           <Form.Control
                             type="file"
                             accept="image/*"
                             onChange={(e) => handleFileUpload('profileImage', e.target.files[0])}
+                            style={{
+                              fontSize: '16px', // Prevent zoom on iOS
+                              padding: isSmallMobile ? '0.75rem' : '0.875rem',
+                              minHeight: isMobile ? '44px' : 'auto'
+                            }}
                           />
                           {userData.profileImage && (
                             <img 
                               src={userData.profileImage} 
                               alt="Profile" 
-                              style={{width: '100px', height: '100px', objectFit: 'cover', marginTop: '10px'}}
+                              style={{
+                                width: isSmallMobile ? '80px' : '100px', 
+                                height: isSmallMobile ? '80px' : '100px', 
+                                objectFit: 'cover', 
+                                marginTop: '10px',
+                                borderRadius: '50%',
+                                border: '3px solid #007bff'
+                              }}
                             />
                           )}
                         </Form.Group>
@@ -1010,13 +1107,31 @@ function EnhancedBuilder() {
             </Col>
           )}
           
-          <Col md={showPreview ? 12 : 6}>
+          <Col md={showPreview ? 12 : 6} xs={12}>
             <Card>
-              <Card.Header>
-                <h5>Portfolio Preview</h5>
+              <Card.Header style={{
+                padding: isSmallMobile ? '0.75rem 1rem' : '1rem 1.25rem'
+              }}>
+                <h5 style={{
+                  fontSize: isSmallMobile ? '1.2rem' : isMobile ? '1.3rem' : '1.4rem',
+                  margin: 0
+                }}>
+                  👁️ Portfolio Preview
+                </h5>
               </Card.Header>
-              <Card.Body style={{ maxHeight: '80vh', overflow: 'auto' }}>
-                {renderTemplate()}
+              <Card.Body style={{ 
+                maxHeight: isMobile ? '50vh' : '80vh', 
+                overflow: 'auto',
+                padding: isSmallMobile ? '0.75rem' : '1rem'
+              }}>
+                <div style={{
+                  transform: isMobile ? 'scale(0.4)' : showPreview ? 'scale(0.8)' : 'scale(0.6)',
+                  transformOrigin: 'top left',
+                  width: isMobile ? '250%' : showPreview ? '125%' : '167%',
+                  height: isMobile ? '250%' : showPreview ? '125%' : '167%'
+                }}>
+                  {renderTemplate()}
+                </div>
               </Card.Body>
             </Card>
           </Col>
@@ -1026,14 +1141,47 @@ function EnhancedBuilder() {
   );
   } catch (error) {
     console.error('EnhancedBuilder error:', error);
+    const isMobile = window.innerWidth < 768;
+    const isSmallMobile = window.innerWidth < 480;
+    
     return (
-      <Container className="mt-5">
-        <Alert variant="danger">
-          <h4>Error Loading Portfolio Builder</h4>
-          <p>There was an error loading the portfolio builder. Please try refreshing the page.</p>
-          <p><strong>Error:</strong> {error.message}</p>
-          <Button variant="primary" onClick={() => history.push('/')}>
-            Go to Home
+      <Container className="mt-5" style={{
+        padding: isMobile ? '0 15px' : undefined
+      }}>
+        <Alert variant="danger" style={{
+          padding: isSmallMobile ? '1.5rem 1rem' : '2rem',
+          textAlign: 'center'
+        }}>
+          <h4 style={{
+            fontSize: isSmallMobile ? '1.5rem' : isMobile ? '1.75rem' : '2rem',
+            marginBottom: '1rem'
+          }}>
+            ⚠️ Error Loading Portfolio Builder
+          </h4>
+          <p style={{
+            fontSize: isSmallMobile ? '1rem' : '1.1rem',
+            marginBottom: '1rem'
+          }}>
+            There was an error loading the portfolio builder. Please try refreshing the page.
+          </p>
+          <p style={{
+            fontSize: isSmallMobile ? '0.9rem' : '1rem',
+            marginBottom: '1.5rem'
+          }}>
+            <strong>Error:</strong> {error.message}
+          </p>
+          <Button 
+            variant="primary" 
+            onClick={() => history.push('/')}
+            style={{
+              minHeight: '44px',
+              fontSize: isSmallMobile ? '1rem' : '1.1rem',
+              padding: isSmallMobile ? '0.75rem 1.5rem' : '0.875rem 2rem',
+              width: isMobile ? '100%' : 'auto',
+              maxWidth: '300px'
+            }}
+          >
+            🏠 Go to Home
           </Button>
         </Alert>
       </Container>

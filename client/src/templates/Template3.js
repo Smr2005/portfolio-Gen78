@@ -306,6 +306,78 @@ function Template3({ isPreview = false, userData = null }) {
       .project-showcase:hover {
         transform: perspective(1000px) rotateX(5deg) rotateY(3deg) translateZ(10px);
       }
+      
+      /* Mobile Responsive Styles */
+      @media (max-width: 768px) {
+        .business-card:hover,
+        .metric-card:hover,
+        .skill-progress:hover,
+        .project-showcase:hover {
+          transform: none !important;
+        }
+        
+        .business-card {
+          animation: none !important;
+        }
+        
+        h1 {
+          font-size: 2rem !important;
+        }
+        
+        h2 {
+          font-size: 1.5rem !important;
+        }
+        
+        h3 {
+          font-size: 1.25rem !important;
+        }
+        
+        .container {
+          padding-left: 15px !important;
+          padding-right: 15px !important;
+        }
+        
+        .btn {
+          width: 100% !important;
+          margin-bottom: 0.5rem !important;
+        }
+        
+        nav {
+          padding: 0.5rem 0 !important;
+        }
+        
+        section {
+          padding: 60px 0 !important;
+        }
+      }
+      
+      @media (max-width: 480px) {
+        h1 {
+          font-size: 1.75rem !important;
+        }
+        
+        h2 {
+          font-size: 1.25rem !important;
+        }
+        
+        h3 {
+          font-size: 1.1rem !important;
+        }
+        
+        .container {
+          padding-left: 10px !important;
+          padding-right: 10px !important;
+        }
+        
+        .btn {
+          font-size: 0.9rem !important;
+          padding: 0.6rem 1rem !important;
+        }
+        
+        .card {
+          padding: 1rem !important;
+        }
+      }
     `;
     document.head.appendChild(style);
     

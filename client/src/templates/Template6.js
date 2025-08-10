@@ -260,6 +260,109 @@ function Template6({ isPreview = false, userData = null }) {
       .marketing-card {
         transition: all 0.3s ease;
       }
+      
+      /* Mobile Responsive Styles */
+      @media (max-width: 768px) {
+        .float-animation,
+        .pulse-animation,
+        .slide-up {
+          animation: none !important;
+        }
+        
+        .gradient-bg {
+          animation: none !important;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        }
+        
+        .marketing-card:hover {
+          transform: none !important;
+          box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
+        }
+        
+        h1 {
+          font-size: 2rem !important;
+        }
+        
+        h2 {
+          font-size: 1.5rem !important;
+        }
+        
+        h3 {
+          font-size: 1.25rem !important;
+        }
+        
+        .container {
+          padding-left: 15px !important;
+          padding-right: 15px !important;
+        }
+        
+        .btn {
+          width: 100% !important;
+          margin-bottom: 0.5rem !important;
+          min-height: 44px !important;
+        }
+        
+        .navbar {
+          padding: 0.5rem 1rem !important;
+        }
+        
+        .navbar-nav {
+          text-align: center !important;
+        }
+        
+        .navbar-nav .nav-link {
+          padding: 0.75rem 1rem !important;
+          border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+        }
+        
+        section {
+          padding: 60px 0 !important;
+        }
+        
+        .card-body {
+          padding: 1rem !important;
+        }
+        
+        .progress-bar {
+          height: 8px !important;
+        }
+      }
+      
+      @media (max-width: 480px) {
+        h1 {
+          font-size: 1.75rem !important;
+        }
+        
+        h2 {
+          font-size: 1.25rem !important;
+        }
+        
+        h3 {
+          font-size: 1.1rem !important;
+        }
+        
+        .container {
+          padding-left: 10px !important;
+          padding-right: 10px !important;
+        }
+        
+        .btn {
+          font-size: 0.9rem !important;
+          padding: 0.75rem 1rem !important;
+        }
+        
+        .card {
+          padding: 0.75rem !important;
+        }
+        
+        section {
+          padding: 40px 0 !important;
+        }
+        
+        .marketing-card {
+          margin-bottom: 1rem !important;
+        }
+      }
     `;
     document.head.appendChild(style);
     

@@ -50,40 +50,54 @@ const UserProfileClean = () => {
     history.push(path);
   };
 
+  const isMobile = window.innerWidth < 768;
+  const isSmallMobile = window.innerWidth < 480;
+
   const styles = {
     container: {
-      padding: '20px',
+      padding: isSmallMobile ? '10px' : isMobile ? '15px' : '20px',
       maxWidth: '1200px',
       margin: '0 auto',
       fontFamily: 'Arial, sans-serif'
     },
     header: {
-      marginBottom: '30px',
+      marginBottom: isMobile ? '20px' : '30px',
       display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      flexWrap: 'wrap'
+      justifyContent: isMobile ? 'center' : 'space-between',
+      alignItems: isMobile ? 'stretch' : 'center',
+      flexDirection: isMobile ? 'column' : 'row',
+      flexWrap: 'wrap',
+      gap: isMobile ? '15px' : '0'
     },
     title: {
       margin: 0,
-      color: '#333'
+      color: '#333',
+      fontSize: isSmallMobile ? '1.5rem' : isMobile ? '1.75rem' : '2rem',
+      textAlign: isMobile ? 'center' : 'left'
     },
     subtitle: {
       color: '#6c757d',
-      margin: '5px 0 0 0'
+      margin: '5px 0 0 0',
+      fontSize: isSmallMobile ? '0.9rem' : '1rem',
+      textAlign: isMobile ? 'center' : 'left'
     },
     buttonGroup: {
       display: 'flex',
-      gap: '10px',
-      flexWrap: 'wrap'
+      gap: isMobile ? '8px' : '10px',
+      flexWrap: 'wrap',
+      justifyContent: isMobile ? 'center' : 'flex-start',
+      width: isMobile ? '100%' : 'auto'
     },
     button: {
-      padding: '10px 20px',
+      padding: isSmallMobile ? '8px 16px' : isMobile ? '10px 18px' : '10px 20px',
       border: 'none',
       borderRadius: '4px',
       cursor: 'pointer',
-      fontSize: '14px',
-      fontWeight: '500'
+      fontSize: isSmallMobile ? '12px' : '14px',
+      fontWeight: '500',
+      minHeight: '44px',
+      minWidth: isMobile ? '120px' : 'auto',
+      touchAction: 'manipulation'
     },
     primaryButton: {
       backgroundColor: '#007bff',
@@ -100,41 +114,49 @@ const UserProfileClean = () => {
     card: {
       border: '1px solid #dee2e6',
       borderRadius: '8px',
-      padding: '20px',
+      padding: isSmallMobile ? '15px' : isMobile ? '18px' : '20px',
       backgroundColor: '#fff',
-      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+      marginBottom: isMobile ? '15px' : '20px'
     },
     grid: {
       display: 'grid',
-      gridTemplateColumns: '2fr 1fr',
-      gap: '20px',
-      marginBottom: '30px'
+      gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr',
+      gap: isMobile ? '15px' : '20px',
+      marginBottom: isMobile ? '20px' : '30px'
     },
     flexColumn: {
       display: 'flex',
       flexDirection: 'column',
-      gap: '10px'
+      gap: isMobile ? '8px' : '10px'
     },
     alert: {
       backgroundColor: '#d4edda',
       color: '#155724',
-      padding: '15px',
+      padding: isSmallMobile ? '12px' : '15px',
       borderRadius: '4px',
-      marginBottom: '20px',
+      marginBottom: isMobile ? '15px' : '20px',
       border: '1px solid #c3e6cb',
-      position: 'relative'
+      position: 'relative',
+      fontSize: isSmallMobile ? '14px' : '16px'
+    },
+    navigation: {
+      backgroundColor: '#f8f9fa',
+      padding: isSmallMobile ? '8px 15px' : '10px 20px',
+      borderBottom: '1px solid #dee2e6'
+    },
+    navTitle: {
+      margin: 0,
+      color: '#333',
+      fontSize: isSmallMobile ? '1.1rem' : '1.25rem'
     }
   };
 
   return (
     <div>
       {/* Navigation */}
-      <div style={{ 
-        backgroundColor: '#f8f9fa', 
-        padding: '10px 20px', 
-        borderBottom: '1px solid #dee2e6' 
-      }}>
-        <h4 style={{ margin: 0, color: '#333' }}>Portfolio Generator</h4>
+      <div style={styles.navigation}>
+        <h4 style={styles.navTitle}>Portfolio Generator</h4>
       </div>
 
       <div style={styles.container}>

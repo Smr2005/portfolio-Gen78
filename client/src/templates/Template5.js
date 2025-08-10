@@ -219,6 +219,108 @@ function Template5({ isPreview = false, userData = null }) {
       .glow-on-hover:hover {
         animation: glow 2s infinite;
       }
+      
+      /* Mobile Responsive Styles */
+      @media (max-width: 768px) {
+        .terminal-card,
+        .glow-on-hover:hover {
+          animation: none !important;
+        }
+        
+        .terminal-cursor::after {
+          animation: none !important;
+        }
+        
+        h1 {
+          font-size: 2rem !important;
+        }
+        
+        h2 {
+          font-size: 1.5rem !important;
+        }
+        
+        h3 {
+          font-size: 1.25rem !important;
+        }
+        
+        .container {
+          padding-left: 15px !important;
+          padding-right: 15px !important;
+        }
+        
+        .btn {
+          width: 100% !important;
+          margin-bottom: 0.5rem !important;
+          min-height: 44px !important;
+        }
+        
+        .navbar {
+          padding: 0.5rem 1rem !important;
+        }
+        
+        .navbar-nav {
+          text-align: center !important;
+        }
+        
+        .navbar-nav .nav-link {
+          padding: 0.75rem 1rem !important;
+          border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+        }
+        
+        section {
+          padding: 60px 0 !important;
+        }
+        
+        .terminal-card {
+          margin: 1rem 0 !important;
+          padding: 1rem !important;
+        }
+        
+        .card-body {
+          padding: 1rem !important;
+        }
+        
+        .progress-bar {
+          height: 8px !important;
+        }
+      }
+      
+      @media (max-width: 480px) {
+        h1 {
+          font-size: 1.75rem !important;
+        }
+        
+        h2 {
+          font-size: 1.25rem !important;
+        }
+        
+        h3 {
+          font-size: 1.1rem !important;
+        }
+        
+        .container {
+          padding-left: 10px !important;
+          padding-right: 10px !important;
+        }
+        
+        .btn {
+          font-size: 0.9rem !important;
+          padding: 0.75rem 1rem !important;
+        }
+        
+        .card {
+          padding: 0.75rem !important;
+        }
+        
+        .terminal-card {
+          padding: 0.75rem !important;
+          font-size: 0.8rem !important;
+        }
+        
+        section {
+          padding: 40px 0 !important;
+        }
+      }
     `;
     document.head.appendChild(style);
     

@@ -482,34 +482,53 @@ const PostRegisterData=()=>{
         />
 
         <div className="row pt-5">
-          <div className="col-12 col-md-6 p-5">
-            <h1 style={{ color: "white", fontSize: "8vh" }}>
+          <div className="col-12 col-md-6 p-3 p-md-5">
+            <h1 className="head" style={{ 
+              color: window.innerWidth < 1000 ? "black" : "white", 
+              fontSize: window.innerWidth < 480 ? "4vh" : window.innerWidth < 768 ? "5vh" : "8vh",
+              lineHeight: "1.2",
+              marginBottom: "1rem"
+            }}>
               The easy way to <br />
               build a Portfolio website
             </h1>
-            <h5 className="pt-2" style={{ color: "whitesmoke" }}>
-              Simple tools for your big ideas.Start your free website trial
+            <h5 className="pt-2" style={{ 
+              color: window.innerWidth < 1000 ? "black" : "whitesmoke",
+              fontSize: window.innerWidth < 480 ? "14px" : window.innerWidth < 768 ? "16px" : "20px",
+              lineHeight: "1.4"
+            }}>
+              Simple tools for your big ideas. Start your free website trial
               today, with awesome templates, no credit card required.
             </h5>
             <Button onClick={() => {
               const aboutSection = document.getElementById('about-section');
               if (aboutSection) aboutSection.scrollIntoView({ behavior: 'smooth' });
-            }} className="mt-3" variant="light" size="lg">
+            }} className="mt-3" variant="light" size={window.innerWidth < 768 ? "md" : "lg"}>
               GET STARTED
             </Button>
           </div>
-          <div className="col-12 col-md-6 py-5 pl-5">
+          <div className="col-12 col-md-6 py-3 py-md-5 px-3 px-md-5">
             <Carousel
               activeIndex={index}
               onSelect={handleSelect}
-              className=" mt-lg-5 pt-lg-5"
+              className="mt-3 mt-lg-5 pt-lg-5"
+              style={{
+                maxHeight: window.innerWidth < 768 ? "300px" : "auto",
+                overflow: "hidden"
+              }}
             >
               <Carousel.Item interval={300}>
                 <img
                   className="d-block w-100"
                   src={images.portfolio1}
                   alt="Modern Portfolio Template"
-                  style={{cursor: 'pointer'}}
+                  style={{
+                    cursor: 'pointer',
+                    borderRadius: '10px',
+                    boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+                    maxHeight: window.innerWidth < 768 ? '250px' : 'auto',
+                    objectFit: 'cover'
+                  }}
                   onClick={() => history.push('/preview/template1')}
                 />
               </Carousel.Item>
@@ -518,7 +537,13 @@ const PostRegisterData=()=>{
                   className="d-block w-100"
                   src={images.portfolio2}
                   alt="Creative Portfolio Template"
-                  style={{cursor: 'pointer'}}
+                  style={{
+                    cursor: 'pointer',
+                    borderRadius: '10px',
+                    boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+                    maxHeight: window.innerWidth < 768 ? '250px' : 'auto',
+                    objectFit: 'cover'
+                  }}
                   onClick={() => history.push('/preview/template2')}
                 />
               </Carousel.Item>
@@ -527,7 +552,13 @@ const PostRegisterData=()=>{
                   className="d-block w-100"
                   src={images.portfolio3}
                   alt="Professional Portfolio Template"
-                  style={{cursor: 'pointer'}}
+                  style={{
+                    cursor: 'pointer',
+                    borderRadius: '10px',
+                    boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+                    maxHeight: window.innerWidth < 768 ? '250px' : 'auto',
+                    objectFit: 'cover'
+                  }}
                   onClick={() => history.push('/preview/template3')}
                 />
               </Carousel.Item>
@@ -536,7 +567,13 @@ const PostRegisterData=()=>{
                   className="d-block w-100"
                   src={images.portfolio4}
                   alt="Minimalist Portfolio Template"
-                  style={{cursor: 'pointer'}}
+                  style={{
+                    cursor: 'pointer',
+                    borderRadius: '10px',
+                    boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+                    maxHeight: window.innerWidth < 768 ? '250px' : 'auto',
+                    objectFit: 'cover'
+                  }}
                   onClick={() => history.push('/preview/template4')}
                 />
               </Carousel.Item>

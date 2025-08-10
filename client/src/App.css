@@ -1,6 +1,9 @@
 .App {
   text-align: center;
+  width: 100%;
+  overflow-x: hidden;
 }
+
 .App-header {
   background-color: #282c34;
   min-height: 10vh;
@@ -10,4 +13,25 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  padding: 1rem;
+}
+
+/* Mobile-specific App styles */
+@media (max-width: 768px) {
+  .App {
+    text-align: left;
+  }
+  
+  .App-header {
+    min-height: 8vh;
+    font-size: calc(8px + 2vmin);
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .App-header {
+    min-height: 6vh;
+    font-size: calc(6px + 2vmin);
+  }
 }

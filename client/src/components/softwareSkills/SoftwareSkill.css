@@ -5,25 +5,105 @@
     margin-bottom: 0px;
     margin-top: 0px;
     text-align: center;
-  }
-  
-  .software-skill-inline {
-    display: inline-block;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.software-skill-inline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     margin-right: 20px;
     margin-bottom: 20px;
-  }
-  
-  .software-skill-inline > i {
+    padding: 1rem;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    min-width: 80px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+}
+
+.software-skill-inline:hover {
+    transform: translateY(-5px);
+    background: rgba(255,255,255,0.1);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.software-skill-inline > i {
     color: #868e96;
-  }
-  
-  .software-skill-inline > i:hover {
+    transition: color 0.3s ease;
+    margin-bottom: 0.5rem;
+}
+
+.software-skill-inline > i:hover {
     color: #645beb;
-  }
-  .software-skill-inline > p {
+}
+
+.software-skill-inline > p {
     color: #868e96;
     font-size: 10px;
-  }
-  .software-skill-inline > i:hover ~ p{
+    margin: 0;
+    text-align: center;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.software-skill-inline > i:hover ~ p{
     color: #645beb;
-  }
+}
+
+/* Mobile-specific styles */
+@media (max-width: 480px) {
+    .dev-icons {
+        font-size: 2rem;
+        gap: 0.5rem;
+        padding: 0 1rem;
+    }
+    
+    .software-skill-inline {
+        margin-right: 10px;
+        margin-bottom: 15px;
+        padding: 0.75rem;
+        min-width: 60px;
+        border-radius: 8px;
+    }
+    
+    .software-skill-inline > i {
+        margin-bottom: 0.25rem;
+    }
+    
+    .software-skill-inline > p {
+        font-size: 8px;
+    }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+    .dev-icons {
+        font-size: 2.5rem;
+        gap: 0.75rem;
+    }
+    
+    .software-skill-inline {
+        margin-right: 15px;
+        margin-bottom: 18px;
+        padding: 0.875rem;
+        min-width: 70px;
+        border-radius: 9px;
+    }
+    
+    .software-skill-inline > p {
+        font-size: 9px;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .dev-icons {
+        font-size: 2.75rem;
+    }
+    
+    .software-skill-inline {
+        min-width: 75px;
+    }
+}

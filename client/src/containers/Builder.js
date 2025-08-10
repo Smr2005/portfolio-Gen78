@@ -323,24 +323,64 @@ function Builder() {
     );
   }
 
+  const isMobile = window.innerWidth < 768;
+  const isSmallMobile = window.innerWidth < 480;
+
   // Show login prompt if not authenticated
   if (!isAuthenticated) {
     return (
       <div>
-        <Navbar variant="dark" expand="lg" style={{backgroundColor: '#343a40'}}>
-          <Navbar.Brand onClick={() => history.push('/')} style={{cursor: 'pointer'}}>
+        <Navbar 
+          variant="dark" 
+          expand="lg" 
+          style={{
+            backgroundColor: '#343a40',
+            padding: isMobile ? '0.5rem 1rem' : undefined
+          }}
+        >
+          <Navbar.Brand 
+            onClick={() => history.push('/')} 
+            style={{
+              cursor: 'pointer',
+              fontSize: isSmallMobile ? '1.2rem' : isMobile ? '1.4rem' : '1.6rem'
+            }}
+          >
             &#8918;Portfolio Generator/&#8919;
           </Navbar.Brand>
         </Navbar>
-        <Container className="mt-5">
+        <Container className="mt-5" style={{
+          padding: isMobile ? '0 15px' : undefined
+        }}>
           <Row className="justify-content-center">
-            <Col md={6}>
+            <Col md={6} xs={12}>
               <Card>
-                <Card.Body className="text-center">
-                  <h3>Authentication Required</h3>
-                  <p>Please login to access the portfolio builder.</p>
-                  <Button variant="primary" onClick={() => history.push('/')}>
-                    Go to Login
+                <Card.Body className="text-center" style={{
+                  padding: isSmallMobile ? '1.5rem 1rem' : '2rem 1.5rem'
+                }}>
+                  <h3 style={{
+                    fontSize: isSmallMobile ? '1.5rem' : isMobile ? '1.75rem' : '2rem',
+                    marginBottom: '1rem'
+                  }}>
+                    🔒 Authentication Required
+                  </h3>
+                  <p style={{
+                    fontSize: isSmallMobile ? '1rem' : '1.1rem',
+                    marginBottom: '1.5rem'
+                  }}>
+                    Please login to access the portfolio builder.
+                  </p>
+                  <Button 
+                    variant="primary" 
+                    onClick={() => history.push('/')}
+                    style={{
+                      minHeight: '44px',
+                      fontSize: isSmallMobile ? '1rem' : '1.1rem',
+                      padding: isSmallMobile ? '0.75rem 1.5rem' : '0.875rem 2rem',
+                      width: isMobile ? '100%' : 'auto',
+                      maxWidth: '300px'
+                    }}
+                  >
+                    🏠 Go to Login
                   </Button>
                 </Card.Body>
               </Card>
@@ -353,98 +393,220 @@ function Builder() {
 
   return (
     <div>
-      <Navbar variant="dark" expand="lg" style={{backgroundColor: '#343a40'}}>
-        <Navbar.Brand onClick={() => history.push('/')} style={{cursor: 'pointer'}}>
+      <Navbar 
+        variant="dark" 
+        expand="lg" 
+        style={{
+          backgroundColor: '#343a40',
+          padding: isMobile ? '0.5rem 1rem' : undefined
+        }}
+      >
+        <Navbar.Brand 
+          onClick={() => history.push('/')} 
+          style={{
+            cursor: 'pointer',
+            fontSize: isSmallMobile ? '1.2rem' : isMobile ? '1.4rem' : '1.6rem'
+          }}
+        >
           &#8918;Portfolio Generator/&#8919;
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ml-auto">
-            <Nav.Link onClick={() => setShowPreview(true)}>
-              Preview
+          <Nav className="ml-auto" style={{
+            backgroundColor: isMobile ? 'rgba(52,58,64,0.95)' : 'transparent',
+            borderRadius: isMobile ? '8px' : '0',
+            marginTop: isMobile ? '0.5rem' : '0',
+            padding: isMobile ? '0.5rem 0' : '0'
+          }}>
+            <Nav.Link 
+              onClick={() => setShowPreview(true)}
+              style={{
+                padding: isMobile ? '0.75rem 1rem' : '0.5rem 1rem',
+                textAlign: isMobile ? 'center' : 'left',
+                borderBottom: isMobile ? '1px solid rgba(255,255,255,0.1)' : 'none',
+                fontSize: isSmallMobile ? '14px' : '16px'
+              }}
+            >
+              👁️ Preview
             </Nav.Link>
-            <Nav.Link onClick={() => history.push('/templates')}>
-              Templates
+            <Nav.Link 
+              onClick={() => history.push('/templates')}
+              style={{
+                padding: isMobile ? '0.75rem 1rem' : '0.5rem 1rem',
+                textAlign: isMobile ? 'center' : 'left',
+                borderBottom: isMobile ? '1px solid rgba(255,255,255,0.1)' : 'none',
+                fontSize: isSmallMobile ? '14px' : '16px'
+              }}
+            >
+              🎨 Templates
             </Nav.Link>
-            <Nav.Link onClick={() => history.push('/my-work')}>
-              My Work
+            <Nav.Link 
+              onClick={() => history.push('/my-work')}
+              style={{
+                padding: isMobile ? '0.75rem 1rem' : '0.5rem 1rem',
+                textAlign: isMobile ? 'center' : 'left',
+                borderBottom: isMobile ? '1px solid rgba(255,255,255,0.1)' : 'none',
+                fontSize: isSmallMobile ? '14px' : '16px'
+              }}
+            >
+              💼 My Work
             </Nav.Link>
-            <Nav.Link onClick={() => history.push('/dashboard')}>
-              Dashboard
+            <Nav.Link 
+              onClick={() => history.push('/dashboard')}
+              style={{
+                padding: isMobile ? '0.75rem 1rem' : '0.5rem 1rem',
+                textAlign: isMobile ? 'center' : 'left',
+                fontSize: isSmallMobile ? '14px' : '16px'
+              }}
+            >
+              📊 Dashboard
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
 
-      <Container fluid className="mt-4">
+      <Container fluid className="mt-4" style={{
+        padding: isMobile ? '0 10px' : undefined
+      }}>
         {saved && (
-          <Alert variant="success" className="text-center">
-            Portfolio saved successfully!
+          <Alert variant="success" className="text-center" style={{
+            fontSize: isSmallMobile ? '0.9rem' : '1rem',
+            padding: isSmallMobile ? '0.75rem' : '1rem',
+            margin: isMobile ? '0.5rem 0' : '1rem 0'
+          }}>
+            ✅ Portfolio saved successfully!
           </Alert>
         )}
         
         {error && (
-          <Alert variant="danger" className="text-center">
-            {error}
+          <Alert variant="danger" className="text-center" style={{
+            fontSize: isSmallMobile ? '0.9rem' : '1rem',
+            padding: isSmallMobile ? '0.75rem' : '1rem',
+            margin: isMobile ? '0.5rem 0' : '1rem 0'
+          }}>
+            ❌ {error}
           </Alert>
         )}
         
         {publishedUrl && (
-          <Alert variant="success" className="text-center">
-            Portfolio published! <a href={publishedUrl} target="_blank" rel="noopener noreferrer">View Live Portfolio</a>
+          <Alert variant="success" className="text-center" style={{
+            fontSize: isSmallMobile ? '0.9rem' : '1rem',
+            padding: isSmallMobile ? '0.75rem' : '1rem',
+            margin: isMobile ? '0.5rem 0' : '1rem 0'
+          }}>
+            🎉 Portfolio published! <a href={publishedUrl} target="_blank" rel="noopener noreferrer">View Live Portfolio</a>
           </Alert>
         )}
         
         <Row>
-          <Col md={6}>
+          <Col md={6} xs={12} className={isMobile ? "mb-4" : ""}>
             <Card>
-              <Card.Header>
-                <h4>Edit Your Portfolio</h4>
+              <Card.Header style={{
+                padding: isSmallMobile ? '0.75rem 1rem' : '1rem 1.25rem'
+              }}>
+                <h4 style={{
+                  fontSize: isSmallMobile ? '1.25rem' : isMobile ? '1.4rem' : '1.5rem',
+                  margin: 0
+                }}>
+                  ✏️ Edit Your Portfolio
+                </h4>
               </Card.Header>
-              <Card.Body>
+              <Card.Body style={{
+                padding: isSmallMobile ? '1rem 0.75rem' : isMobile ? '1.25rem 1rem' : '1.5rem 1.25rem'
+              }}>
                 <Form>
                   <Form.Group className="mb-3">
-                    <Form.Label>Full Name</Form.Label>
+                    <Form.Label style={{
+                      fontSize: isSmallMobile ? '0.9rem' : '1rem',
+                      fontWeight: '600',
+                      marginBottom: '0.5rem'
+                    }}>
+                      👤 Full Name
+                    </Form.Label>
                     <Form.Control
                       type="text"
                       value={userData.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
                       placeholder="Enter your full name"
+                      style={{
+                        fontSize: '16px', // Prevent zoom on iOS
+                        padding: isSmallMobile ? '0.75rem' : '0.875rem',
+                        minHeight: isMobile ? '44px' : 'auto'
+                      }}
                     />
                   </Form.Group>
 
                   <Form.Group className="mb-3">
-                    <Form.Label>Professional Title</Form.Label>
+                    <Form.Label style={{
+                      fontSize: isSmallMobile ? '0.9rem' : '1rem',
+                      fontWeight: '600',
+                      marginBottom: '0.5rem'
+                    }}>
+                      💼 Professional Title
+                    </Form.Label>
                     <Form.Control
                       type="text"
                       value={userData.title}
                       onChange={(e) => handleInputChange('title', e.target.value)}
                       placeholder="e.g., Full Stack Developer"
+                      style={{
+                        fontSize: '16px',
+                        padding: isSmallMobile ? '0.75rem' : '0.875rem',
+                        minHeight: isMobile ? '44px' : 'auto'
+                      }}
                     />
                   </Form.Group>
 
                   <Form.Group className="mb-3">
-                    <Form.Label>Email</Form.Label>
+                    <Form.Label style={{
+                      fontSize: isSmallMobile ? '0.9rem' : '1rem',
+                      fontWeight: '600',
+                      marginBottom: '0.5rem'
+                    }}>
+                      📧 Email
+                    </Form.Label>
                     <Form.Control
                       type="email"
                       value={userData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
                       placeholder="your.email@example.com"
+                      style={{
+                        fontSize: '16px',
+                        padding: isSmallMobile ? '0.75rem' : '0.875rem',
+                        minHeight: isMobile ? '44px' : 'auto'
+                      }}
                     />
                   </Form.Group>
 
                   <Form.Group className="mb-3">
-                    <Form.Label>Phone</Form.Label>
+                    <Form.Label style={{
+                      fontSize: isSmallMobile ? '0.9rem' : '1rem',
+                      fontWeight: '600',
+                      marginBottom: '0.5rem'
+                    }}>
+                      📱 Phone
+                    </Form.Label>
                     <Form.Control
                       type="text"
                       value={userData.phone}
                       onChange={(e) => handleInputChange('phone', e.target.value)}
                       placeholder="+1 (555) 123-4567"
+                      style={{
+                        fontSize: '16px',
+                        padding: isSmallMobile ? '0.75rem' : '0.875rem',
+                        minHeight: isMobile ? '44px' : 'auto'
+                      }}
                     />
                   </Form.Group>
 
                   <Form.Group className="mb-3">
-                    <Form.Label>About Me</Form.Label>
+                    <Form.Label style={{
+                      fontSize: isSmallMobile ? '0.9rem' : '1rem',
+                      fontWeight: '600',
+                      marginBottom: '0.5rem'
+                    }}>
+                      📝 About Me
+                    </Form.Label>
                     <Form.Control
                       as="textarea"
                       rows={4}
@@ -626,27 +788,47 @@ function Builder() {
                     </Button>
                   </Form.Group>
 
-                  <div className="d-grid gap-2">
+                  <div className="d-grid gap-2" style={{
+                    marginTop: isMobile ? '1.5rem' : '1rem'
+                  }}>
                     <Button 
                       variant="primary" 
                       onClick={handleSave}
                       disabled={saving || publishing}
+                      style={{
+                        minHeight: '44px',
+                        fontSize: isSmallMobile ? '0.9rem' : '1rem',
+                        padding: isSmallMobile ? '0.75rem 1rem' : '0.875rem 1.25rem',
+                        fontWeight: '600'
+                      }}
                     >
-                      {saving ? 'Saving...' : 'Save Portfolio'}
+                      {saving ? '⏳ Saving...' : '💾 Save Portfolio'}
                     </Button>
                     <Button 
                       variant="success" 
                       onClick={handlePublish}
                       disabled={saving || publishing}
+                      style={{
+                        minHeight: '44px',
+                        fontSize: isSmallMobile ? '0.9rem' : '1rem',
+                        padding: isSmallMobile ? '0.75rem 1rem' : '0.875rem 1.25rem',
+                        fontWeight: '600'
+                      }}
                     >
-                      {publishing ? 'Publishing...' : 'Publish Portfolio'}
+                      {publishing ? '🚀 Publishing...' : '🌐 Publish Portfolio'}
                     </Button>
                     <Button 
                       variant="outline-secondary" 
                       onClick={() => setShowPreview(true)}
                       disabled={saving || publishing}
+                      style={{
+                        minHeight: '44px',
+                        fontSize: isSmallMobile ? '0.9rem' : '1rem',
+                        padding: isSmallMobile ? '0.75rem 1rem' : '0.875rem 1.25rem',
+                        fontWeight: '600'
+                      }}
                     >
-                      Preview
+                      👁️ Preview
                     </Button>
                   </div>
                 </Form>
@@ -654,13 +836,29 @@ function Builder() {
             </Card>
           </Col>
 
-          <Col md={6}>
+          <Col md={6} xs={12}>
             <Card>
-              <Card.Header>
-                <h4>Live Preview</h4>
+              <Card.Header style={{
+                padding: isSmallMobile ? '0.75rem 1rem' : '1rem 1.25rem'
+              }}>
+                <h4 style={{
+                  fontSize: isSmallMobile ? '1.25rem' : isMobile ? '1.4rem' : '1.5rem',
+                  margin: 0
+                }}>
+                  👁️ Live Preview
+                </h4>
               </Card.Header>
-              <Card.Body style={{ height: '600px', overflow: 'auto' }}>
-                <div style={{ transform: 'scale(0.5)', transformOrigin: 'top left', width: '200%', height: '200%' }}>
+              <Card.Body style={{ 
+                height: isMobile ? '400px' : '600px', 
+                overflow: 'auto',
+                padding: isSmallMobile ? '0.75rem' : '1rem'
+              }}>
+                <div style={{ 
+                  transform: isMobile ? 'scale(0.3)' : 'scale(0.5)', 
+                  transformOrigin: 'top left', 
+                  width: isMobile ? '333%' : '200%', 
+                  height: isMobile ? '333%' : '200%' 
+                }}>
                   {renderTemplate()}
                 </div>
               </Card.Body>

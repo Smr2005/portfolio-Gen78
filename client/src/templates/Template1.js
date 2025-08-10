@@ -238,6 +238,112 @@ function Template1({ isPreview = false, userData = null }) {
       .skill-bar-3d:hover {
         transform: translateZ(10px) rotateX(5deg);
       }
+      
+      /* Mobile-specific styles */
+      @media (max-width: 768px) {
+        .card-3d:hover {
+          transform: none;
+        }
+        
+        .profile-3d {
+          animation: none;
+        }
+        
+        .skill-bar-3d:hover {
+          transform: none;
+        }
+        
+        .navbar-brand {
+          font-size: 1.2rem !important;
+        }
+        
+        .nav-link {
+          padding: 0.75rem 1rem !important;
+          text-align: center;
+        }
+        
+        .btn {
+          margin: 0.25rem 0;
+          width: 100%;
+        }
+        
+        .container {
+          padding-left: 15px;
+          padding-right: 15px;
+        }
+        
+        .row {
+          margin-left: -10px;
+          margin-right: -10px;
+        }
+        
+        .col-md-4, .col-md-6, .col-md-8 {
+          padding-left: 10px;
+          padding-right: 10px;
+          margin-bottom: 1rem;
+        }
+        
+        h1 {
+          font-size: 2rem !important;
+        }
+        
+        h2 {
+          font-size: 1.5rem !important;
+        }
+        
+        h3 {
+          font-size: 1.25rem !important;
+        }
+        
+        .card {
+          margin-bottom: 1rem;
+        }
+        
+        .progress {
+          height: 8px;
+        }
+        
+        .badge {
+          font-size: 0.75rem;
+          margin: 0.125rem;
+        }
+      }
+      
+      @media (max-width: 480px) {
+        .navbar-brand {
+          font-size: 1rem !important;
+        }
+        
+        .container {
+          padding-left: 10px;
+          padding-right: 10px;
+        }
+        
+        .card {
+          padding: 1rem;
+        }
+        
+        h1 {
+          font-size: 1.75rem !important;
+        }
+        
+        h2 {
+          font-size: 1.25rem !important;
+        }
+        
+        h3 {
+          font-size: 1.1rem !important;
+        }
+        
+        .btn {
+          font-size: 0.875rem;
+          padding: 0.5rem 1rem;
+        }
+        
+        .progress {
+          height: 6px;
+        }
+      }
     `;
     document.head.appendChild(style);
     

@@ -73,6 +73,9 @@ function Preview() {
     }
   };
 
+  const isMobile = window.innerWidth < 768;
+  const isSmallMobile = window.innerWidth < 480;
+
   return (
     <div>
       {/* Preview Controls */}
@@ -81,31 +84,55 @@ function Preview() {
         top: 0,
         left: 0,
         right: 0,
-        background: 'rgba(0,0,0,0.9)',
+        background: 'rgba(0,0,0,0.95)',
         color: 'white',
-        padding: '10px 0',
+        padding: isMobile ? '8px 0' : '10px 0',
         zIndex: 10000,
         textAlign: 'center'
       }}>
-        <div className="container">
-          <div className="row align-items-center">
-            <div className="col-md-4">
+        <div className="container" style={{
+          padding: isMobile ? '0 10px' : undefined
+        }}>
+          <div className={`row align-items-center ${isMobile ? 'text-center' : ''}`}>
+            <div className={isMobile ? "col-12 mb-2" : "col-md-4"}>
               <Button 
                 variant="outline-light" 
-                size="sm"
+                size={isSmallMobile ? "sm" : "sm"}
                 onClick={() => history.push('/templates')}
+                style={{
+                  fontSize: isSmallMobile ? '0.8rem' : '0.9rem',
+                  padding: isSmallMobile ? '0.4rem 0.8rem' : '0.5rem 1rem',
+                  minHeight: isMobile ? '36px' : 'auto',
+                  width: isMobile ? '100%' : 'auto',
+                  maxWidth: isMobile ? '280px' : 'none'
+                }}
               >
                 ← Back to Templates
               </Button>
             </div>
-            <div className="col-md-4">
-              <strong>Preview: {template.name}</strong>
+            <div className={isMobile ? "col-12 mb-2" : "col-md-4"}>
+              <strong style={{
+                fontSize: isSmallMobile ? '0.9rem' : isMobile ? '1rem' : '1.1rem',
+                display: 'block',
+                whiteSpace: isMobile ? 'nowrap' : 'normal',
+                overflow: isMobile ? 'hidden' : 'visible',
+                textOverflow: isMobile ? 'ellipsis' : 'clip'
+              }}>
+                Preview: {template.name}
+              </strong>
             </div>
-            <div className="col-md-4">
+            <div className={isMobile ? "col-12" : "col-md-4"}>
               <Button 
                 variant="success" 
-                size="sm"
+                size={isSmallMobile ? "sm" : "sm"}
                 onClick={() => history.push(`/builder?template=${templateId}`)}
+                style={{
+                  fontSize: isSmallMobile ? '0.8rem' : '0.9rem',
+                  padding: isSmallMobile ? '0.4rem 0.8rem' : '0.5rem 1rem',
+                  minHeight: isMobile ? '36px' : 'auto',
+                  width: isMobile ? '100%' : 'auto',
+                  maxWidth: isMobile ? '280px' : 'none'
+                }}
               >
                 Use This Template →
               </Button>
@@ -115,7 +142,9 @@ function Preview() {
       </div>
       
       {/* Template Preview */}
-      <div style={{ paddingTop: '60px' }}>
+      <div style={{ 
+        paddingTop: isMobile ? '120px' : '60px' // More space needed on mobile due to stacked buttons
+      }}>
         {renderTemplate()}
       </div>
     </div>

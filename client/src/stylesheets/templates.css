@@ -3,10 +3,21 @@
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
+    min-height: 100vh;
+    padding-bottom: 2rem;
 }
+
 .temp {
     position: relative;
     overflow: hidden;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.temp:hover {
+    transform: translateY(-5px);
 }
 
 .temp .temp-overlay {
@@ -22,18 +33,17 @@
     -webkit-transition: all 0.4s ease-in-out 0s;
     -moz-transition: all 0.4s ease-in-out 0s;
     transition: all 0.4s ease-in-out 0s;
-  }
-  
-  .temp:hover .temp-overlay{
+    border-radius: 10px;
+}
+
+.temp:hover .temp-overlay{
     opacity: 1;
-  }
-  
-  
-  .temp-details {
+}
+
+.temp-details {
     position: absolute;
     text-align: center;
-    padding-left: 1em;
-    padding-right: 1em;
+    padding: 1rem;
     width: 100%;
     top: 50%;
     left: 50%;
@@ -44,26 +54,91 @@
     -webkit-transition: all 0.3s ease-in-out 0s;
     -moz-transition: all 0.3s ease-in-out 0s;
     transition: all 0.3s ease-in-out 0s;
-    left: 20%;
-  }
-  
-  .temp:hover .temp-details{
+}
+
+.temp:hover .temp-details{
     top: 50%;
     left: 50%;
     opacity: 1;
-  }
+}
 
-  .animated {
+/* Mobile-specific template styles */
+@media (max-width: 768px) {
+    .temp {
+        margin-bottom: 1rem;
+        border-radius: 8px;
+    }
+    
+    .temp .temp-overlay {
+        opacity: 0.8; /* Always show overlay on mobile for better visibility */
+        border-radius: 8px;
+    }
+    
+    .temp-details {
+        opacity: 1; /* Always show details on mobile */
+        padding: 0.75rem;
+        font-size: 14px;
+    }
+    
+    .temp-details h5 {
+        font-size: 16px;
+        margin-bottom: 0.5rem;
+    }
+    
+    .temp-details .btn {
+        padding: 8px 16px;
+        font-size: 14px;
+        margin: 0.25rem;
+        min-height: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    #templates-body {
+        padding: 1rem 0.5rem 2rem;
+    }
+    
+    .temp {
+        margin-bottom: 0.75rem;
+        border-radius: 6px;
+    }
+    
+    .temp-details {
+        padding: 0.5rem;
+        font-size: 12px;
+    }
+    
+    .temp-details h5 {
+        font-size: 14px;
+        margin-bottom: 0.25rem;
+    }
+    
+    .temp-details .btn {
+        padding: 6px 12px;
+        font-size: 12px;
+        margin: 0.125rem;
+        min-height: 36px;
+    }
+}
+
+.animated {
     color: white;
     text-transform: uppercase;
     text-decoration: none;
     letter-spacing: 0.15em;
-    
     display: inline-block;
     padding: 15px 20px;
     position: relative;
-  }
-  .animated:after {    
+    min-height: 44px;
+    min-width: 44px;
+    touch-action: manipulation;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.animated:after {    
     background: none repeat scroll 0 0 transparent;
     bottom: 0;
     content: "";
@@ -74,12 +149,62 @@
     background: rgb(255, 255, 255);
     transition: width 0.3s ease 0s, left 0.3s ease 0s;
     width: 0;
-  }
-  .animated:hover:after { 
+}
+
+.animated:hover:after { 
     width: 100%; 
     left: 0; 
-  }
-  .animated:hover {
-      color: rgb(255, 255, 255);
-      text-decoration: none;
-  }
+}
+
+.animated:hover {
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+    background: rgba(255,255,255,0.2);
+}
+
+/* Mobile-specific animated button styles */
+@media (max-width: 768px) {
+    .animated {
+        padding: 12px 16px;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        min-height: 40px;
+        border-radius: 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .animated {
+        padding: 10px 14px;
+        font-size: 11px;
+        min-height: 36px;
+        border-radius: 4px;
+    }
+}
+
+/* Template grid improvements for mobile */
+@media (max-width: 576px) {
+    .row .col-md-4 {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Navbar mobile improvements */
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.5rem;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.75rem 1rem;
+        text-align: center;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .navbar-collapse {
+        background: rgba(52, 58, 64, 0.95);
+        margin-top: 0.5rem;
+        border-radius: 8px;
+        padding: 0.5rem 0;
+    }
+}

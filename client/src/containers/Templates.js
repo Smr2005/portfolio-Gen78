@@ -108,32 +108,72 @@ function Templates() {
           </Nav>
         </Navbar.Collapse>
       </Navbar>
-      <div className="container">
-        <h1 className="text-center p-2" style={{ fontSize: "8vh" }}>
+      <div className="container-fluid px-3 px-md-4">
+        <h1 className="text-center p-2" style={{ 
+          fontSize: window.innerWidth < 480 ? "4vh" : window.innerWidth < 768 ? "5vh" : "8vh",
+          color: "white",
+          textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
+          marginBottom: "2rem"
+        }}>
           Portfolio Templates
         </h1>
-        <div className="row">
+        <div className="row justify-content-center">
           {templates.map((template, index) => (
-            <div key={template.id} className="col-12 col-md-6 p-3 temp" data-aos="fade-up">
-              <img className="img-fluid" src={template.image} alt={template.name} />
-              <div className="temp-overlay"></div>
-              <div className="temp-details">
-                <a href="#" onClick={(e) => {e.preventDefault(); handleUseTemplate(template.id);}} className="animated">
-                  Use this Template
-                </a>
-                <br />
-                <a href="#" onClick={(e) => {e.preventDefault(); handlePreview(template.id);}} className="animated">
-                  Preview
-                </a>
-              </div>
-              <div className="mobile-temp-detail d-flex d-block d-md-none">
-                <a href="#" onClick={(e) => {e.preventDefault(); handleUseTemplate(template.id);}} className="animated" style={{ color: "black" }}>
-                  Use this Template
-                </a>
-                <br />
-                <a href="#" onClick={(e) => {e.preventDefault(); handlePreview(template.id);}} className="animated" style={{ color: "black" }}>
-                  Preview
-                </a>
+            <div key={template.id} className="col-12 col-sm-6 col-lg-4 p-2 p-md-3 temp" data-aos="fade-up">
+              <div className="template-card">
+                <img 
+                  className="img-fluid" 
+                  src={template.image} 
+                  alt={template.name}
+                  style={{
+                    borderRadius: '10px',
+                    width: '100%',
+                    height: window.innerWidth < 768 ? '200px' : '250px',
+                    objectFit: 'cover'
+                  }}
+                />
+                <div className="temp-overlay"></div>
+                <div className="temp-details">
+                  <h5 className="text-white mb-3">{template.name}</h5>
+                  <div className="d-flex flex-column flex-sm-row gap-2 justify-content-center">
+                    <Button 
+                      variant="light" 
+                      size={window.innerWidth < 768 ? "sm" : "md"}
+                      onClick={() => handleUseTemplate(template.id)}
+                      className="mb-2 mb-sm-0"
+                    >
+                      Use Template
+                    </Button>
+                    <Button 
+                      variant="outline-light" 
+                      size={window.innerWidth < 768 ? "sm" : "md"}
+                      onClick={() => handlePreview(template.id)}
+                    >
+                      Preview
+                    </Button>
+                  </div>
+                </div>
+                
+                {/* Mobile-specific buttons below image */}
+                <div className="d-block d-md-none mt-3 text-center">
+                  <h6 className="mb-2" style={{color: 'white'}}>{template.name}</h6>
+                  <div className="d-flex gap-2 justify-content-center">
+                    <Button 
+                      variant="light" 
+                      size="sm"
+                      onClick={() => handleUseTemplate(template.id)}
+                    >
+                      Use Template
+                    </Button>
+                    <Button 
+                      variant="outline-light" 
+                      size="sm"
+                      onClick={() => handlePreview(template.id)}
+                    >
+                      Preview
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
           ))}

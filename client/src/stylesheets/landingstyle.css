@@ -3,6 +3,7 @@
 .landing-navbar {
   background: transparent !important ;
   font-size: 20px;
+  padding: 0.5rem 1rem;
 }
 
 .landing-navbar.active {
@@ -17,28 +18,85 @@
 
 #basic-navbar-nav .links {
   color: white !important;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
 }
 
 #main {
   background-image: url("../images/bg.png");
   background-repeat: no-repeat;
   background-size: cover;
+  background-position: center;
+  min-height: 100vh;
 }
 
 .head {
   font-size: 8vh;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
-@media screen and (min-width: 0px) and (max-width: 400px) {
+/* Enhanced Mobile-First Media Queries */
+@media screen and (max-width: 480px) {
+  .landing-navbar {
+    font-size: 16px;
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .brand {
+    font-size: 3.5vh !important;
+  }
+  
   .head {
+    font-size: 4vh;
+    color: black;
+    padding: 0 1rem;
+    text-align: center;
+  }
+  
+  #basic-navbar-nav .links {
+    padding: 0.75rem 1rem;
+    font-size: 16px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  
+  .navbar-collapse {
+    background: rgba(22, 26, 29, 0.95);
+    margin-top: 0.5rem;
+    border-radius: 8px;
+  }
+}
+
+@media screen and (min-width: 481px) and (max-width: 768px) {
+  .landing-navbar {
+    font-size: 18px;
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .brand {
+    font-size: 4vh !important;
+  }
+  
+  .head {
+    font-size: 5vh;
+    color: black;
+    padding: 0 1rem;
+  }
+  
+  #basic-navbar-nav .links {
+    padding: 0.5rem 1rem;
+    font-size: 17px;
+  }
+}
+
+@media screen and (min-width: 769px) and (max-width: 999px) {
+  .head {
+    font-size: 6vh;
     color: black;
   }
 }
-@media screen and (min-width: 401px) and (max-width: 999px) {
-  .head {
-    color: black;
-  }
-}
+
 @media screen and (min-width: 1000px) {
   .head {
     color: white;
@@ -48,6 +106,8 @@
 img {
   -webkit-filter: drop-shadow(5px 5px 5px #222);
   filter: drop-shadow(5px 5px 5px #222);
+  max-width: 100%;
+  height: auto;
 }
 
 .description {
@@ -56,6 +116,8 @@ img {
   -webkit-box-shadow: 2px 0px 21px -4px rgba(0, 0, 0, 0.89);
   -moz-box-shadow: 2px 0px 21px -4px rgba(0, 0, 0, 0.89);
   box-shadow: 2px 0px 21px -4px rgba(0, 0, 0, 0.89);
+  padding: 1.5rem;
+  margin: 1rem;
 }
 
 .animated {
@@ -63,12 +125,15 @@ img {
     text-transform: uppercase;
     text-decoration: none;
     letter-spacing: 0.15em;
-    
     display: inline-block;
     padding: 15px 20px;
     position: relative;
-  }
-  .animated:after {    
+    min-height: 44px;
+    min-width: 44px;
+    touch-action: manipulation;
+}
+
+.animated:after {    
     background: none repeat scroll 0 0 transparent;
     bottom: 0;
     content: "";
@@ -79,12 +144,72 @@ img {
     background: rgb(56, 52, 52);
     transition: width 0.3s ease 0s, left 0.3s ease 0s;
     width: 0;
-  }
-  .animated:hover:after { 
+}
+
+.animated:hover:after { 
     width: 100%; 
     left: 0; 
+}
+
+.animated:hover {
+    color: rgb(56, 52, 52);
+    text-decoration: none;
+}
+
+/* Mobile-specific styles for description and animated elements */
+@media screen and (max-width: 480px) {
+  .description {
+    border-radius: 15px;
+    padding: 1rem;
+    margin: 0.5rem;
+    font-size: 14px;
+    line-height: 1.4;
   }
-  .animated:hover {
-      color: rgb(56, 52, 52);
-      text-decoration: none;
+  
+  .animated {
+    padding: 12px 16px;
+    font-size: 12px;
+    letter-spacing: 0.1em;
   }
+}
+
+@media screen and (min-width: 481px) and (max-width: 768px) {
+  .description {
+    padding: 1.25rem;
+    margin: 0.75rem;
+    font-size: 15px;
+  }
+  
+  .animated {
+    padding: 14px 18px;
+    font-size: 13px;
+  }
+}
+
+/* Carousel and modal mobile optimizations */
+@media screen and (max-width: 768px) {
+  .carousel-item img {
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  .modal-dialog {
+    margin: 0.5rem;
+    max-width: calc(100% - 1rem);
+  }
+  
+  .modal-body {
+    padding: 1rem;
+  }
+  
+  .form-control {
+    font-size: 16px;
+    padding: 12px;
+  }
+  
+  .btn {
+    padding: 12px 20px;
+    font-size: 16px;
+    min-height: 44px;
+  }
+}

@@ -1,56 +1,165 @@
 .skills-main-div {
     display: flex;
-  }
-  .skills-text-div {
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem 0;
+}
+
+.skills-text-div {
     margin-left: 50px;
-  }
-  
-  .skills-main-div > * {
+}
+
+.skills-main-div > * {
     flex: 1;
     margin-bottom: 30px;
-  }
-  
-  .skills-image-div > img {
+}
+
+.skills-image-div > img {
     max-width: 100%;
     height: auto;
-  }
-  
-  .skills-heading {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.skills-heading {
     font-size: 56px;
     font-weight: 400;
-  }
-  
-  /* Media Query */
-  @media (max-width: 1380px) {
-    .skills-heading {
-      font-size: 40px;
-    }
-  }
-  @media (max-width: 768px) {
-    .skills-heading {
-      font-size: 30px;
-      text-align: center;
-    }
-    .greeting-text-p {
-      font-size: 16px;
-      line-height: normal;
-    }
+    line-height: 1.2;
+    margin-bottom: 1rem;
+}
+
+/* Enhanced Mobile-First Media Queries */
+@media (max-width: 480px) {
     .skills-main-div {
-      flex-direction: column
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem 0;
     }
+    
     .skills-text-div {
-      margin-left: 0px;
-      margin: 20px;
+        margin-left: 0;
+        margin: 0 1rem;
+        text-align: center;
     }
+    
+    .skills-heading {
+        font-size: 24px;
+        text-align: center;
+        margin-bottom: 0.75rem;
+    }
+    
+    .greeting-text-p {
+        font-size: 14px;
+        line-height: 1.4;
+        text-align: center;
+    }
+    
     .skills-text {
-      font-size: 16px;
+        font-size: 14px;
+        line-height: 1.4;
+        text-align: center;
     }
+    
     .skills-text-subtitle {
-      font-size: 16px;
-      text-align: center;
+        font-size: 14px;
+        text-align: center;
+        margin-bottom: 0.5rem;
     }
+    
     .skills-image-div {
-      /* display: none; */
-      order: 2;
+        order: 2;
+        margin: 0 1rem;
     }
-  }
+    
+    .skills-image-div > img {
+        border-radius: 8px;
+    }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+    .skills-main-div {
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 1.5rem 0;
+    }
+    
+    .skills-text-div {
+        margin-left: 0;
+        margin: 0 1.5rem;
+    }
+    
+    .skills-heading {
+        font-size: 28px;
+        text-align: center;
+    }
+    
+    .greeting-text-p {
+        font-size: 15px;
+        line-height: 1.5;
+    }
+    
+    .skills-text {
+        font-size: 15px;
+        line-height: 1.5;
+    }
+    
+    .skills-text-subtitle {
+        font-size: 15px;
+        text-align: center;
+    }
+    
+    .skills-image-div {
+        order: 2;
+        margin: 0 1.5rem;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .skills-heading {
+        font-size: 36px;
+    }
+    
+    .skills-text-div {
+        margin-left: 30px;
+    }
+}
+
+@media (min-width: 1025px) and (max-width: 1380px) {
+    .skills-heading {
+        font-size: 40px;
+    }
+}
+
+@media (max-width: 768px) {
+    .skills-heading {
+        font-size: 30px;
+        text-align: center;
+    }
+    
+    .greeting-text-p {
+        font-size: 16px;
+        line-height: normal;
+    }
+    
+    .skills-main-div {
+        flex-direction: column;
+    }
+    
+    .skills-text-div {
+        margin-left: 0px;
+        margin: 20px;
+    }
+    
+    .skills-text {
+        font-size: 16px;
+    }
+    
+    .skills-text-subtitle {
+        font-size: 16px;
+        text-align: center;
+    }
+    
+    .skills-image-div {
+        order: 2;
+    }
+}

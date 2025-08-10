@@ -59,40 +59,100 @@ const PasswordReset = ({ show, handleClose }) => {
   };
 
   return (
-    <Modal show={show} onHide={handleModalClose} backdrop="static" keyboard={false}>
+    <Modal 
+      show={show} 
+      onHide={handleModalClose} 
+      backdrop="static" 
+      keyboard={false}
+      dialogClassName={window.innerWidth < 768 ? "mobile-modal" : ""}
+      style={window.innerWidth < 768 ? {
+        '--bs-modal-width': '90%',
+        '--bs-modal-margin': '0.5rem'
+      } : {}}
+    >
       <Modal.Header closeButton>
-        <Modal.Title>Reset Password</Modal.Title>
+        <Modal.Title style={{
+          fontSize: window.innerWidth < 480 ? '1.2rem' : window.innerWidth < 768 ? '1.4rem' : '1.5rem'
+        }}>
+          🔐 Reset Password
+        </Modal.Title>
       </Modal.Header>
-      <Modal.Body>
-        {message && <Alert variant="success">{message}</Alert>}
-        {error && <Alert variant="danger">{error}</Alert>}
+      <Modal.Body style={{
+        padding: window.innerWidth < 480 ? '1rem' : '1.5rem'
+      }}>
+        {message && <Alert variant="success" style={{
+          fontSize: window.innerWidth < 480 ? '0.9rem' : '1rem',
+          padding: window.innerWidth < 480 ? '0.75rem' : '1rem'
+        }}>{message}</Alert>}
+        {error && <Alert variant="danger" style={{
+          fontSize: window.innerWidth < 480 ? '0.9rem' : '1rem',
+          padding: window.innerWidth < 480 ? '0.75rem' : '1rem'
+        }}>{error}</Alert>}
         
         <Form onSubmit={handleSubmit}>
           <Form.Group controlId="resetEmail">
-            <Form.Label>Email address</Form.Label>
+            <Form.Label style={{
+              fontSize: window.innerWidth < 480 ? '0.9rem' : '1rem',
+              marginBottom: '0.5rem'
+            }}>
+              Email address
+            </Form.Label>
             <Form.Control
               type="email"
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              style={{
+                fontSize: '16px', // Prevent zoom on iOS
+                padding: window.innerWidth < 480 ? '0.75rem' : '0.875rem',
+                minHeight: window.innerWidth < 768 ? '44px' : 'auto'
+              }}
             />
-            <Form.Text className="text-muted">
+            <Form.Text 
+              className="text-muted"
+              style={{
+                fontSize: window.innerWidth < 480 ? '0.8rem' : '0.875rem',
+                marginTop: '0.5rem'
+              }}
+            >
               We'll send you a link to reset your password.
             </Form.Text>
           </Form.Group>
         </Form>
       </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={handleModalClose} disabled={loading}>
-          Cancel
+      <Modal.Footer style={{
+        padding: window.innerWidth < 480 ? '1rem' : '1.5rem',
+        gap: window.innerWidth < 768 ? '0.5rem' : '0',
+        flexDirection: window.innerWidth < 768 ? 'column' : 'row'
+      }}>
+        <Button 
+          variant="secondary" 
+          onClick={handleModalClose} 
+          disabled={loading}
+          style={{
+            minHeight: '44px',
+            fontSize: window.innerWidth < 480 ? '0.9rem' : '1rem',
+            padding: window.innerWidth < 480 ? '0.75rem 1rem' : '0.875rem 1.25rem',
+            width: window.innerWidth < 768 ? '100%' : 'auto',
+            order: window.innerWidth < 768 ? 2 : 1
+          }}
+        >
+          ❌ Cancel
         </Button>
         <Button 
           variant="primary" 
           onClick={handleSubmit} 
           disabled={loading || !email}
+          style={{
+            minHeight: '44px',
+            fontSize: window.innerWidth < 480 ? '0.9rem' : '1rem',
+            padding: window.innerWidth < 480 ? '0.75rem 1rem' : '0.875rem 1.25rem',
+            width: window.innerWidth < 768 ? '100%' : 'auto',
+            order: window.innerWidth < 768 ? 1 : 2
+          }}
         >
-          {loading ? 'Sending...' : 'Send Reset Link'}
+          {loading ? '📧 Sending...' : '📧 Send Reset Link'}
         </Button>
       </Modal.Footer>
     </Modal>

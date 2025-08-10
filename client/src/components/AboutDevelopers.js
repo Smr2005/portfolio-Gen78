@@ -245,21 +245,46 @@ const AboutDevelopers = () => {
       {state && <UserNavigation />}
       <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
       {/* Header */}
-      <div style={{ backgroundColor: '#343a40', color: 'white', padding: '60px 0' }}>
+      <div style={{ 
+        backgroundColor: '#343a40', 
+        color: 'white', 
+        padding: window.innerWidth < 480 ? '40px 0' : window.innerWidth < 768 ? '50px 0' : '60px 0' 
+      }}>
         <Container>
           <Row className="text-center">
             <Col>
-              <h1 className="display-4 mb-3" data-aos="fade-up">Meet Our Development Team</h1>
-              <p className="lead" data-aos="fade-up" data-aos-delay="200">
+              <h1 
+                className={window.innerWidth < 768 ? "h2 mb-3" : "display-4 mb-3"} 
+                data-aos={window.innerWidth < 768 ? "" : "fade-up"}
+                style={{
+                  fontSize: window.innerWidth < 480 ? '1.8rem' : window.innerWidth < 768 ? '2.2rem' : undefined
+                }}
+              >
+                Meet Our Development Team
+              </h1>
+              <p 
+                className="lead" 
+                data-aos={window.innerWidth < 768 ? "" : "fade-up"} 
+                data-aos-delay="200"
+                style={{
+                  fontSize: window.innerWidth < 480 ? '1rem' : window.innerWidth < 768 ? '1.1rem' : undefined,
+                  padding: window.innerWidth < 768 ? '0 1rem' : '0'
+                }}
+              >
                 The talented individuals behind Portfolio Generator
               </p>
               <Button 
                 variant="outline-light" 
                 onClick={() => history.push('/')}
-                data-aos="fade-up" 
+                data-aos={window.innerWidth < 768 ? "" : "fade-up"}
                 data-aos-delay="400"
+                size={window.innerWidth < 768 ? "md" : "lg"}
+                style={{
+                  minHeight: '44px',
+                  padding: window.innerWidth < 480 ? '10px 20px' : '12px 24px'
+                }}
               >
-                Back to Home
+                🏠 Back to Home
               </Button>
             </Col>
           </Row>
@@ -267,38 +292,78 @@ const AboutDevelopers = () => {
       </div>
 
       {/* Team Stats */}
-      <Container className="py-5">
+      <Container className={window.innerWidth < 768 ? "py-3" : "py-5"}>
         <Row className="text-center mb-5">
-          <Col md={3} className="mb-3" data-aos="fade-up">
+          <Col xs={6} md={3} className="mb-3" data-aos={window.innerWidth < 768 ? "" : "fade-up"}>
             <Card className="h-100 border-0 shadow-sm">
-              <Card.Body>
-                <h3 className="text-primary">{teamStats.totalMembers}</h3>
-                <p className="mb-0">Total Members</p>
+              <Card.Body style={{ padding: window.innerWidth < 480 ? '1rem 0.5rem' : undefined }}>
+                <h3 
+                  className="text-primary"
+                  style={{ fontSize: window.innerWidth < 480 ? '1.5rem' : undefined }}
+                >
+                  {teamStats.totalMembers}
+                </h3>
+                <p 
+                  className="mb-0"
+                  style={{ fontSize: window.innerWidth < 480 ? '0.9rem' : undefined }}
+                >
+                  Total Members
+                </p>
               </Card.Body>
             </Card>
           </Col>
-          <Col md={3} className="mb-3" data-aos="fade-up" data-aos-delay="100">
+          <Col xs={6} md={3} className="mb-3" data-aos={window.innerWidth < 768 ? "" : "fade-up"} data-aos-delay="100">
             <Card className="h-100 border-0 shadow-sm">
-              <Card.Body>
-                <h3 className="text-success">{teamStats.frontendTeam}</h3>
+              <Card.Body style={{ padding: window.innerWidth < 480 ? '1rem 0.5rem' : undefined }}>
+                <h3 
+                  className="text-success"
+                  style={{ fontSize: window.innerWidth < 480 ? '1.5rem' : undefined }}
+                >
+                  {teamStats.frontendTeam}
+                </h3>
                 <p className="mb-0">Frontend Team</p>
               </Card.Body>
             </Card>
           </Col>
-          <Col md={3} className="mb-3" data-aos="fade-up" data-aos-delay="200">
+          <Col xs={6} md={3} className="mb-3" data-aos={window.innerWidth < 768 ? "" : "fade-up"} data-aos-delay="200">
             <Card className="h-100 border-0 shadow-sm">
-              <Card.Body>
-                <h3 className="text-info">{teamStats.deploymentTeam}</h3>
-                <p className="mb-0">Deployment Team</p>
+              <Card.Body style={{ padding: window.innerWidth < 480 ? '1rem 0.5rem' : undefined }}>
+                <h3 
+                  className="text-info"
+                  style={{ fontSize: window.innerWidth < 480 ? '1.5rem' : undefined }}
+                >
+                  {teamStats.deploymentTeam}
+                </h3>
+                <p 
+                  className="mb-0"
+                  style={{ fontSize: window.innerWidth < 480 ? '0.9rem' : undefined }}
+                >
+                  Deployment Team
+                </p>
               </Card.Body>
             </Card>
           </Col>
-          <Col md={3} className="mb-3" data-aos="fade-up" data-aos-delay="300">
+          <Col xs={6} md={3} className="mb-3" data-aos={window.innerWidth < 768 ? "" : "fade-up"} data-aos-delay="300">
             <Card className="h-100 border-0 shadow-sm">
-              <Card.Body>
-                <h3 className="text-warning">2</h3>
-                <p className="mb-0">Individual Roles</p>
-                <small className="text-muted">Backend & Testing</small>
+              <Card.Body style={{ padding: window.innerWidth < 480 ? '1rem 0.5rem' : undefined }}>
+                <h3 
+                  className="text-warning"
+                  style={{ fontSize: window.innerWidth < 480 ? '1.5rem' : undefined }}
+                >
+                  2
+                </h3>
+                <p 
+                  className="mb-0"
+                  style={{ fontSize: window.innerWidth < 480 ? '0.9rem' : undefined }}
+                >
+                  Individual Roles
+                </p>
+                <small 
+                  className="text-muted"
+                  style={{ fontSize: window.innerWidth < 480 ? '0.8rem' : undefined }}
+                >
+                  Backend & Testing
+                </small>
               </Card.Body>
             </Card>
           </Col>
