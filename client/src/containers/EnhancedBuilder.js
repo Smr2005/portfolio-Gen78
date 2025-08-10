@@ -430,6 +430,36 @@ function EnhancedBuilder() {
         return;
       }
 
+      // CRITICAL FIX: Save current data BEFORE publishing to ensure preview matches published version
+      console.log('🔄 Auto-saving current data before publishing...');
+      
+      // Save current data first
+      const saveResponse = await fetch('/api/portfolio/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          templateId,
+          userData,
+          meta: {
+            title: `${userData.name} - Portfolio`,
+            description: userData.about || `Portfolio of ${userData.name}`,
+            keywords: userData.skills?.map(skill => skill.name) || []
+          }
+        })
+      });
+
+      if (!saveResponse.ok) {
+        const saveData = await saveResponse.json();
+        setError('Failed to save current changes: ' + (saveData.error || 'Unknown error'));
+        return;
+      }
+
+      console.log('✅ Current data saved successfully. Now publishing...');
+
+      // Now publish the freshly saved data
       const response = await fetch('/api/portfolio/publish', {
         method: 'POST',
         headers: {
@@ -441,11 +471,16 @@ function EnhancedBuilder() {
 
       if (response.ok) {
         setPublishedUrl(data.publishedUrl);
+        setSaved(true); // Show save confirmation too
+        setTimeout(() => setSaved(false), 3000);
+        
+        console.log('🎉 Portfolio published successfully:', data.publishedUrl);
       } else {
         setError(data.error || 'Failed to publish portfolio');
       }
     } catch (err) {
       setError('Network error. Please try again.');
+      console.error('Publish error:', err);
     } finally {
       setPublishing(false);
     }
@@ -547,7 +582,7 @@ function EnhancedBuilder() {
                 width: isMobile ? '100%' : 'auto'
               }}
             >
-              {publishing ? '🚀 Publishing...' : '🌐 Publish'}
+{publishing ? '💾🚀 Saving & Publishing...' : '🌐 Publish'}
             </Button>
           </Nav>
         </Navbar.Collapse>
@@ -574,13 +609,13 @@ function EnhancedBuilder() {
             ✅ Portfolio saved successfully!
           </Alert>
         )}
-        {publishedUrl && (
+{publishedUrl && (
           <Alert variant="success" style={{
             fontSize: isSmallMobile ? '0.9rem' : '1rem',
             padding: isSmallMobile ? '0.75rem' : '1rem',
             margin: isMobile ? '0.5rem 0' : '1rem 0'
           }}>
-            🎉 Portfolio published! <a href={publishedUrl} target="_blank" rel="noopener noreferrer">View it here</a>
+            🎉 Portfolio saved & published successfully! <a href={publishedUrl} target="_blank" rel="noopener noreferrer">View Live Portfolio →</a>
           </Alert>
         )}
 

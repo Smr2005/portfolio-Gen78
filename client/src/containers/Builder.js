@@ -228,10 +228,36 @@ function Builder() {
         return;
       }
 
-      // First save the portfolio
-      await handleSave();
+      // CRITICAL FIX: Save current data BEFORE publishing to ensure preview matches published version
+      console.log('🔄 Auto-saving current data before publishing...');
       
-      // Then publish it
+      // Save current data first - explicit save call
+      const saveResponse = await fetch('/api/portfolio/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          templateId,
+          userData,
+          meta: {
+            title: `${userData.name} - Portfolio`,
+            description: userData.about || `Portfolio of ${userData.name}`,
+            keywords: userData.skills?.map(skill => skill.name) || []
+          }
+        })
+      });
+
+      if (!saveResponse.ok) {
+        const saveData = await saveResponse.json();
+        setError('Failed to save current changes: ' + (saveData.error || 'Unknown error'));
+        return;
+      }
+
+      console.log('✅ Current data saved successfully. Now publishing...');
+      
+      // Then publish the freshly saved data
       const response = await fetch('/api/portfolio/publish', {
         method: 'POST',
         headers: {
@@ -244,12 +270,17 @@ function Builder() {
 
       if (response.ok) {
         setPublishedUrl(data.publishedUrl);
-        alert(`Portfolio published successfully! Your portfolio is now live at: ${data.publishedUrl}`);
+        setSaved(true); // Show save confirmation
+        setTimeout(() => setSaved(false), 3000);
+        
+        alert(`🎉 Portfolio published successfully! Your portfolio is now live at: ${data.publishedUrl}`);
+        console.log('🎉 Portfolio published successfully:', data.publishedUrl);
       } else {
         setError(data.error || 'Failed to publish portfolio');
       }
     } catch (err) {
       setError('Network error. Please try again.');
+      console.error('Publish error:', err);
     } finally {
       setPublishing(false);
     }
@@ -309,7 +340,7 @@ function Builder() {
                   onClick={handlePublish}
                   disabled={saving || publishing}
                 >
-                  {publishing ? 'Publishing...' : 'Publish Portfolio'}
+{publishing ? '💾🚀 Saving & Publishing...' : 'Publish Portfolio'}
                 </Button>
               </div>
             </div>
@@ -815,7 +846,7 @@ function Builder() {
                         fontWeight: '600'
                       }}
                     >
-                      {publishing ? '🚀 Publishing...' : '🌐 Publish Portfolio'}
+{publishing ? '💾🚀 Saving & Publishing...' : '🌐 Publish Portfolio'}
                     </Button>
                     <Button 
                       variant="outline-secondary" 
