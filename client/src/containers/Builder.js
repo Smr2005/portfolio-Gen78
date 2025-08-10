@@ -273,7 +273,7 @@ function Builder() {
         setSaved(true); // Show save confirmation
         setTimeout(() => setSaved(false), 3000);
         
-        alert(`🎉 Portfolio published successfully! Your portfolio is now live at: ${data.publishedUrl}`);
+alert(`🎉 Published! View at: ${data.publishedUrl}`);
         console.log('🎉 Portfolio published successfully:', data.publishedUrl);
       } else {
         setError(data.error || 'Failed to publish portfolio');
@@ -340,7 +340,7 @@ function Builder() {
                   onClick={handlePublish}
                   disabled={saving || publishing}
                 >
-{publishing ? '💾🚀 Saving & Publishing...' : 'Publish Portfolio'}
+                  {publishing ? 'Publishing...' : 'Publish'}
                 </Button>
               </div>
             </div>
@@ -505,7 +505,7 @@ function Builder() {
             padding: isSmallMobile ? '0.75rem' : '1rem',
             margin: isMobile ? '0.5rem 0' : '1rem 0'
           }}>
-            ✅ Portfolio saved successfully!
+{isSmallMobile ? '✅ Saved!' : '✅ Portfolio saved successfully!'}
           </Alert>
         )}
         
@@ -833,7 +833,10 @@ function Builder() {
                         fontWeight: '600'
                       }}
                     >
-                      {saving ? '⏳ Saving...' : '💾 Save Portfolio'}
+                      {saving 
+                        ? (isSmallMobile ? 'Saving...' : '💾 Saving...') 
+                        : (isSmallMobile ? 'Save' : '💾 Save')
+                      }
                     </Button>
                     <Button 
                       variant="success" 
@@ -846,7 +849,10 @@ function Builder() {
                         fontWeight: '600'
                       }}
                     >
-{publishing ? '💾🚀 Saving & Publishing...' : '🌐 Publish Portfolio'}
+                      {publishing 
+                        ? (isSmallMobile ? 'Publishing...' : '🚀 Publishing...') 
+                        : (isSmallMobile ? 'Publish' : '🚀 Publish')
+                      }
                     </Button>
                     <Button 
                       variant="outline-secondary" 
@@ -859,7 +865,7 @@ function Builder() {
                         fontWeight: '600'
                       }}
                     >
-                      👁️ Preview
+                      {isSmallMobile ? 'Preview' : '👁️ Preview'}
                     </Button>
                   </div>
                 </Form>

@@ -555,7 +555,7 @@ function EnhancedBuilder() {
                 width: isMobile ? '100%' : 'auto'
               }}
             >
-              {showPreview ? '✏️ Edit' : '👁️ Preview'}
+              {showPreview ? (isSmallMobile ? 'Edit' : '✏️ Edit') : (isSmallMobile ? 'Preview' : '👁️ Preview')}
             </Button>
             <Button 
               variant="success" 
@@ -569,7 +569,7 @@ function EnhancedBuilder() {
                 width: isMobile ? '100%' : 'auto'
               }}
             >
-              {saving ? '⏳ Saving...' : '💾 Save'}
+              {saving ? (isSmallMobile ? 'Saving...' : '💾 Saving...') : (isSmallMobile ? 'Save' : '💾 Save')}
             </Button>
             <Button 
               variant="primary"
@@ -582,7 +582,10 @@ function EnhancedBuilder() {
                 width: isMobile ? '100%' : 'auto'
               }}
             >
-{publishing ? '💾🚀 Saving & Publishing...' : '🌐 Publish'}
+              {publishing 
+                ? (isSmallMobile ? 'Publishing...' : '🚀 Publishing...') 
+                : (isSmallMobile ? 'Publish' : '🚀 Publish')
+              }
             </Button>
           </Nav>
         </Navbar.Collapse>
@@ -606,7 +609,7 @@ function EnhancedBuilder() {
             padding: isSmallMobile ? '0.75rem' : '1rem',
             margin: isMobile ? '0.5rem 0' : '1rem 0'
           }}>
-            ✅ Portfolio saved successfully!
+{isSmallMobile ? '✅ Saved!' : '✅ Portfolio saved successfully!'}
           </Alert>
         )}
 {publishedUrl && (
@@ -615,7 +618,10 @@ function EnhancedBuilder() {
             padding: isSmallMobile ? '0.75rem' : '1rem',
             margin: isMobile ? '0.5rem 0' : '1rem 0'
           }}>
-            🎉 Portfolio saved & published successfully! <a href={publishedUrl} target="_blank" rel="noopener noreferrer">View Live Portfolio →</a>
+{isSmallMobile 
+              ? <>🎉 Published! <a href={publishedUrl} target="_blank" rel="noopener noreferrer">View →</a></>
+              : <>🎉 Portfolio published successfully! <a href={publishedUrl} target="_blank" rel="noopener noreferrer">View Live Portfolio →</a></>
+            }
           </Alert>
         )}
 
