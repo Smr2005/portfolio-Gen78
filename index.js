@@ -144,7 +144,7 @@ app.get("/api/health", async (req, res, next) => {
         status: "Portfolio Generator Backend is running!",
         timestamp: new Date().toISOString(),
         environment: process.env.NODE_ENV || 'development',
-        port: process.env.PORT || 5001,
+        port: process.env.PORT || 5000,
         cors_origin: req.headers.origin
     });
 });
@@ -155,28 +155,6 @@ app.post("/api/test-upload", upload.single('testFile'), (req, res) => {
         message: "Test upload endpoint working",
         file: req.file ? "File received" : "No file",
         headers: req.headers
-    });
-});
-
-// Debug endpoint to check frontend connectivity
-app.get("/api/debug", (req, res) => {
-    res.json({
-        message: "Backend API is accessible!",
-        timestamp: new Date().toISOString(),
-        origin: req.headers.origin,
-        userAgent: req.headers['user-agent'],
-        method: req.method,
-        cors_headers_present: !!req.headers.origin
-    });
-});
-
-// Test POST endpoint to check form data
-app.post("/api/test-post", (req, res) => {
-    res.json({
-        message: "POST request successful",
-        body: req.body,
-        headers: Object.keys(req.headers),
-        contentType: req.headers['content-type']
     });
 });
 
@@ -1066,23 +1044,15 @@ function generateTemplate2HTML(data, meta) {
     <title>${meta?.title || data.name + ' - Creative Portfolio'}</title>
     <meta name="description" content="${meta?.description || 'Creative Portfolio of ' + data.name}">
     
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        * {
+        body { 
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body { 
-            font-family: 'Poppins', sans-serif; 
-            background-color: #fdf6e3;
-            line-height: 1.6;
             overflow-x: hidden;
         }
         
@@ -1133,11 +1103,13 @@ function generateTemplate2HTML(data, meta) {
         }
         
         .creative-header { 
-            background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
-            min-height: 100vh;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            color: white; 
+            padding: 100px 0;
             position: relative;
             overflow: hidden;
-            padding-top: 100px;
         }
         
         .creative-header::before {
@@ -1565,26 +1537,8 @@ function generateTemplate2HTML(data, meta) {
     </style>
 </head>
 <body>
-    <!-- Fixed Navigation -->
-    <nav style="position: fixed; top: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,107,107,0.2); z-index: 1000; padding: 1rem 0;">
-        <div class="container">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-                <div style="font-size: 1.8rem; font-weight: 700; background: linear-gradient(45deg, #ff6b6b, #feca57); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                    ${data.name}
-                </div>
-                <div style="display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;">
-                    <a href="#about" style="color: #2c3e50; text-decoration: none; font-weight: 500;">About</a>
-                    <a href="#experience" style="color: #2c3e50; text-decoration: none; font-weight: 500;">Experience</a>
-                    <a href="#portfolio" style="color: #2c3e50; text-decoration: none; font-weight: 500;">Portfolio</a>
-                    <a href="#skills" style="color: #2c3e50; text-decoration: none; font-weight: 500;">Skills</a>
-                    <a href="#contact" style="color: #2c3e50; text-decoration: none; font-weight: 500;">Contact</a>
-                </div>
-            </div>
-        </div>
-    </nav>
-    
     <!-- Creative Hero Section - EXACT MATCH TO REACT -->
-    <section class="hero-section" style="padding-top: 100px;">
+    <section class="hero-section">
         <!-- Animated Background Shapes -->
         <div class="bg-shape" style="top: 10%; left: 5%; width: 150px; height: 150px; animation: morphShape 8s ease-in-out infinite, colorShift 12s linear infinite;"></div>
         <div class="bg-shape" style="top: 60%; right: 10%; width: 120px; height: 120px; animation: morphShape 6s ease-in-out infinite reverse, colorShift 10s linear infinite reverse;"></div>
@@ -1620,25 +1574,9 @@ function generateTemplate2HTML(data, meta) {
         </div>
     </section>
 
-    <!-- About Section -->
-    <section id="about" class="py-5" style="background: white;">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-12">
-                    <h2 class="section-title text-center">About Me</h2>
-                    <div class="creative-card p-5">
-                        <p style="font-size: 1.1rem; color: #34495e; line-height: 1.8; text-align: center; margin-bottom: 0;">
-                            ${data.about || 'Creative professional passionate about innovative design and user experience. I bring ideas to life through thoughtful design, attention to detail, and a deep understanding of user needs. My work spans across various disciplines, always striving to create meaningful and impactful visual experiences.'}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Skills Section -->
     ${data.skills && data.skills.length > 0 ? `
-    <section id="skills" class="py-5" style="background-color: #fdf6e3;">
+    <section class="py-5">
         <div class="container">
             <h2 class="section-title text-center">Creative Skills</h2>
             <div class="row">
@@ -1660,7 +1598,7 @@ function generateTemplate2HTML(data, meta) {
 
     <!-- Projects Section -->
     ${data.projects && data.projects.length > 0 ? `
-    <section id="portfolio" class="py-5 bg-light">
+    <section class="py-5 bg-light">
         <div class="container">
             <h2 class="section-title text-center">Creative Projects</h2>
             <div class="row">
@@ -1691,7 +1629,7 @@ function generateTemplate2HTML(data, meta) {
 
     <!-- Experience Section -->
     ${data.experience && data.experience.length > 0 ? `
-    <section id="experience" class="py-5">
+    <section class="py-5">
         <div class="container">
             <h2 class="section-title text-center">Experience</h2>
             ${data.experience.map(exp => `
@@ -1782,70 +1720,19 @@ function generateTemplate2HTML(data, meta) {
     </section>
     ` : ''}
 
-    <!-- Contact Section -->
-    <section id="contact" style="background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3); padding: 80px 0; position: relative;">
-        <div class="container text-center">
-            <h2 class="text-white mb-4" style="font-size: 3rem; font-weight: 800;">Let's Create Something Amazing</h2>
-            <p class="text-white mb-4" style="font-size: 1.3rem; opacity: 0.9;">Ready to bring your creative vision to life?</p>
-            ${data.email ? `
-            <a href="mailto:${data.email}" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white; padding: 18px 40px; font-size: 1.2rem; border-radius: 30px; backdrop-filter: blur(10px); text-decoration: none; transition: all 0.3s ease;" 
-               onmouseover="this.style.background='white'; this.style.color='#ff6b6b';" 
-               onmouseout="this.style.background='rgba(255,255,255,0.2)'; this.style.color='white';">
-               ✉️ Get In Touch
-            </a>
-            ` : ''}
-        </div>
-    </section>
-
     <!-- Footer -->
-    <footer style="background: #2c3e50; color: white; text-align: center; padding: 40px 0;">
+    <footer class="creative-header text-center py-4">
         <div class="container">
-            <p class="mb-2" style="font-size: 1.1rem;">&copy; ${new Date().getFullYear()} ${data.name}. All rights reserved.</p>
-            <small style="opacity: 0.7;">Powered by <a href="${getFrontendUrl()}" target="_blank" style="color: #ff6b6b;">Portfolio Generator</a></small>
+            <p class="mb-0">&copy; ${new Date().getFullYear()} ${data.name}. All rights reserved.</p>
+            <small class="d-block mt-2">Powered by <a href="${getFrontendUrl()}" target="_blank" class="text-white">Portfolio Generator</a></small>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-        
-        // Add scroll offset for fixed nav
-        window.addEventListener('scroll', function() {
-            const nav = document.querySelector('nav');
-            if (window.scrollY > 50) {
-                nav.style.background = 'rgba(255,255,255,0.98)';
-                nav.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
-            } else {
-                nav.style.background = 'rgba(255,255,255,0.95)';
-                nav.style.boxShadow = 'none';
-            }
-        });
-    </script>
 </body>
 </html>
     `;
 }
-
-// Start the server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-    console.log(`📱 Frontend: ${getFrontendUrl()}`);
-    console.log(`🔗 Backend: ${getBaseUrl()}`);
-    console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-});
 
 function generateTemplate3HTML(data, meta) {
     return `
@@ -4964,7 +4851,7 @@ function generateTemplate5HTML(data, meta) {
 </body>
 </html>
     `;
-                                }
+}
 
 function generateTemplate6HTML(data, meta) {
     return `
@@ -5011,6 +4898,11 @@ function generateTemplate6HTML(data, meta) {
             100% { background-position: 0% 50%; }
         }
         
+        @keyframes countUp {
+            0% { opacity: 0; transform: scale(0.5); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
         .float-animation {
             animation: float 6s ease-in-out infinite;
         }
@@ -5028,11 +4920,229 @@ function generateTemplate6HTML(data, meta) {
             background-size: 400% 400%;
             animation: gradient 15s ease infinite;
         }
+        
+        /* NAVBAR */
+        .navbar {
+            background-color: rgba(255,255,255,0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        
+        .navbar-brand {
+            color: #667eea !important;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        .nav-link {
+            color: #666 !important;
+            font-weight: 500;
+            margin: 0 0.5rem;
+            text-transform: capitalize;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: #667eea !important;
+        }
+        
+        /* HERO SECTION */
+        .hero-section {
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+            padding-top: 100px;
+        }
+        
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .floating-1 {
+            top: 20%;
+            left: 10%;
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.2);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        .floating-2 {
+            top: 60%;
+            right: 15%;
+            width: 150px;
+            height: 150px;
+            background: rgba(255,255,255,0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .hero-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: #666;
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+        
+        .hero-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .hero-info span {
+            color: #667eea;
+        }
+        
+        .hero-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 2rem;
+        }
+        
+        /* PROFILE IMAGE */
+        .profile-container {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 50%;
+            padding: 2rem;
+            display: inline-block;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+        
+        .profile-img {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid #667eea;
+        }
+        
+        /* BUTTONS */
+        .btn-marketing {
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-marketing.primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-marketing.primary:hover {
+            background: linear-gradient(45deg, #5a6fd8, #6a4190);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .btn-marketing.secondary {
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.3);
+        }
+        
+        .btn-marketing.secondary:hover {
+            background: linear-gradient(45deg, #e881ea, #f3455a);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(240, 147, 251, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .btn-marketing.outline {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+            box-shadow: none;
+        }
+        
+        .btn-marketing.outline:hover {
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+        }
+        
+        /* SOCIAL LINKS */
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .social-link {
+            color: rgba(255,255,255,0.8);
+            font-size: 2rem;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 50%;
+            backdrop-filter: blur(10px);
+            text-decoration: none;
+              }
+        
+        .social-link:hover {
+            color: white;
+            transform: scale(1.1);
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
-    <h1>Template 5</h1>
-    <p>Portfolio content here</p>
+    <!-- Contact Section -->
+    <section id="contact" class="gradient-bg text-center" style="padding: 60px 0; color: white;">
+        <div class="container">
+            <h3 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem;">Ready to Drive Results Together?</h3>
+            <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">Let's discuss how I can help grow your business.</p>
+            ${data.email ? `<a href="mailto:${data.email}" class="btn btn-light btn-lg" style="font-size: 1.1rem; padding: 15px 40px;">
+                <i class="fas fa-envelope me-2"></i>Start the Conversation
+            </a>` : ''}
+            <div style="margin-top: 3rem;">
+                <p style="opacity: 0.8; margin: 0;">&copy; ${new Date().getFullYear()} ${data.name} - Marketing Portfolio</p>
+                <small style="opacity: 0.6;">Powered by <a href="${getFrontendUrl()}" target="_blank" style="color: rgba(255,255,255,0.8);">Portfolio Generator</a></small>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
     `;
@@ -5040,9 +5150,8 @@ function generateTemplate6HTML(data, meta) {
 
 // Start the server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-    console.log(`📱 Frontend: ${getFrontendUrl()}`);
-    console.log(`🔗 Backend: ${getBaseUrl()}`);
-    console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+app.listen(PORT, () => {
+    console.log('ðŸš€ Server running on port ' + PORT);
+    console.log('ðŸ“Š Backend URL: http://localhost:' + PORT);
+    console.log('ðŸŒ Environment: ' + (process.env.NODE_ENV || 'development'));
 });
