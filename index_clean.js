@@ -144,7 +144,7 @@ app.get("/api/health", async (req, res, next) => {
         status: "Portfolio Generator Backend is running!",
         timestamp: new Date().toISOString(),
         environment: process.env.NODE_ENV || 'development',
-        port: process.env.PORT || 5001,
+        port: process.env.PORT || 5000,
         cors_origin: req.headers.origin
     });
 });
@@ -155,28 +155,6 @@ app.post("/api/test-upload", upload.single('testFile'), (req, res) => {
         message: "Test upload endpoint working",
         file: req.file ? "File received" : "No file",
         headers: req.headers
-    });
-});
-
-// Debug endpoint to check frontend connectivity
-app.get("/api/debug", (req, res) => {
-    res.json({
-        message: "Backend API is accessible!",
-        timestamp: new Date().toISOString(),
-        origin: req.headers.origin,
-        userAgent: req.headers['user-agent'],
-        method: req.method,
-        cors_headers_present: !!req.headers.origin
-    });
-});
-
-// Test POST endpoint to check form data
-app.post("/api/test-post", (req, res) => {
-    res.json({
-        message: "POST request successful",
-        body: req.body,
-        headers: Object.keys(req.headers),
-        contentType: req.headers['content-type']
     });
 });
 
@@ -4873,7 +4851,7 @@ function generateTemplate5HTML(data, meta) {
 </body>
 </html>
     `;
-                                }
+}
 
 function generateTemplate6HTML(data, meta) {
     return `
@@ -4920,6 +4898,11 @@ function generateTemplate6HTML(data, meta) {
             100% { background-position: 0% 50%; }
         }
         
+        @keyframes countUp {
+            0% { opacity: 0; transform: scale(0.5); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
         .float-animation {
             animation: float 6s ease-in-out infinite;
         }
@@ -4943,25 +4926,29 @@ function generateTemplate6HTML(data, meta) {
             background-color: rgba(255,255,255,0.95) !important;
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(0,0,0,0.1);
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
         }
         
         .navbar-brand {
+            color: #667eea !important;
             font-weight: bold;
             font-size: 1.5rem;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
         
         .nav-link {
+            color: #666 !important;
             font-weight: 500;
-            color: #333 !important;
-            transition: all 0.3s ease;
+            margin: 0 0.5rem;
+            text-transform: capitalize;
+            transition: color 0.3s ease;
         }
         
         .nav-link:hover {
             color: #667eea !important;
-            transform: translateY(-2px);
         }
         
         /* HERO SECTION */
@@ -4969,28 +4956,30 @@ function generateTemplate6HTML(data, meta) {
             min-height: 100vh;
             position: relative;
             overflow: hidden;
+            padding-top: 100px;
         }
         
-        .hero-bg-shape {
+        .floating-element {
             position: absolute;
             border-radius: 50%;
-            opacity: 0.1;
+            z-index: 1;
         }
         
-        .hero-bg-shape:nth-child(1) {
-            top: 10%;
+        .floating-1 {
+            top: 20%;
             left: 10%;
-            width: 200px;
-            height: 200px;
-            animation: float 8s ease-in-out infinite;
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.2);
+            animation: pulse 4s ease-in-out infinite;
         }
         
-        .hero-bg-shape:nth-child(2) {
+        .floating-2 {
             top: 60%;
             right: 15%;
             width: 150px;
             height: 150px;
-            background: linear-gradient(45deg, #f093fb, #f5576c);
+            background: rgba(255,255,255,0.1);
             animation: float 6s ease-in-out infinite;
         }
         
@@ -5007,6 +4996,7 @@ function generateTemplate6HTML(data, meta) {
         .hero-title {
             font-size: 3.5rem;
             font-weight: bold;
+            background: linear-gradient(45deg, #667eea, #764ba2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 1rem;
@@ -5072,6 +5062,7 @@ function generateTemplate6HTML(data, meta) {
         }
         
         .btn-marketing.primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
             box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
         }
         
@@ -5096,187 +5087,57 @@ function generateTemplate6HTML(data, meta) {
             text-decoration: none;
         }
         
-        /* SECTIONS */
-        .section {
-            padding: 80px 0;
-        }
-        
-        .section-title {
-            font-size: 2.5rem;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 3rem;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        /* TIMELINE STYLES FOR EDUCATION & INTERNSHIPS */
-        .timeline {
-            position: relative;
-            padding-left: 2rem;
-        }
-        
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 1rem;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: linear-gradient(to bottom, #667eea, #764ba2);
-        }
-        
-        .timeline-item {
-            position: relative;
-            margin-bottom: 2rem;
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-left: 2rem;
-        }
-        
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -3rem;
-            top: 2rem;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            border: 3px solid white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
-        }
-        
-        .timeline-title {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-        
-        .timeline-company {
-            font-size: 1.1rem;
+        .btn-marketing.outline {
+            background: transparent;
+            border: 2px solid #667eea;
             color: #667eea;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
+            box-shadow: none;
         }
         
-        .timeline-date {
-            color: #999;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
+        .btn-marketing.outline:hover {
+            background: #667eea;
+            color: white;
+            text-decoration: none;
         }
         
-        .timeline-description {
-            color: #666;
-            line-height: 1.6;
+        /* SOCIAL LINKS */
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .social-link {
+            color: rgba(255,255,255,0.8);
+            font-size: 2rem;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 50%;
+            backdrop-filter: blur(10px);
+            text-decoration: none;
+              }
+        
+        .social-link:hover {
+            color: white;
+            transform: scale(1.1);
+            text-decoration: none;
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="#home">${data.name}</a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#education">Education</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#internships">Internships</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section id="home" class="hero-section gradient-bg d-flex align-items-center">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-12 text-center">
-                    <div class="hero-card">
-                        <h1 class="hero-title">${data.name}</h1>
-                        <h2 class="hero-subtitle">${data.title}</h2>
-                        <p class="hero-text">${data.about || 'Passionate professional with expertise in various fields.'}</p>
-                        ${data.email ? `<a href="mailto:${data.email}" class="btn-marketing primary">
-                            <i class="fas fa-envelope me-2"></i>Get In Touch
-                        </a>` : ''}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Education Section -->
-    ${data.education && data.education.length > 0 ? `
-    <section id="education" class="section" style="background-color: #f8f9fa;">
-        <div class="container">
-            <h2 class="section-title">Education</h2>
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="timeline">
-                        ${data.education.map(edu => `
-                            <div class="timeline-item">
-                                <h4 class="timeline-title">${edu.degree}</h4>
-                                <div class="timeline-company">${edu.institution}</div>
-                                <div class="timeline-date">${edu.year || (edu.startDate + ' - ' + (edu.endDate || 'Present'))}</div>
-                                ${edu.description ? `<p class="timeline-description">${edu.description}</p>` : ''}
-                                ${edu.gpa ? `<p class="timeline-description"><strong>GPA:</strong> ${edu.gpa}</p>` : ''}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    ` : ''}
-
-    <!-- Internships Section -->
-    ${data.internships && data.internships.length > 0 ? `
-    <section id="internships" class="section">
-        <div class="container">
-            <h2 class="section-title">Internships & Experience</h2>
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="timeline">
-                        ${data.internships.map(internship => `
-                            <div class="timeline-item">
-                                <h4 class="timeline-title">${internship.position}</h4>
-                                <div class="timeline-company">${internship.company}</div>
-                                <div class="timeline-date">${internship.duration || (internship.startDate + ' - ' + (internship.endDate || 'Present'))}</div>
-                                ${internship.description ? `<p class="timeline-description">${internship.description}</p>` : ''}
-                                ${internship.achievements && internship.achievements.length > 0 ? `
-                                    <ul class="timeline-description">
-                                        ${internship.achievements.map(achievement => `<li>${achievement}</li>`).join('')}
-                                    </ul>
-                                ` : ''}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    ` : ''}
-
     <!-- Contact Section -->
-    <section id="contact" class="section gradient-bg" style="color: white;">
+    <section id="contact" class="gradient-bg text-center" style="padding: 60px 0; color: white;">
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8 text-center">
-                    <h2 class="section-title" style="color: white;">Let's Work Together</h2>
-                    <p style="font-size: 1.1rem; margin-bottom: 2rem;">Ready to connect? Let's discuss opportunities.</p>
-                    
-                    ${data.email ? `<a href="mailto:${data.email}" class="btn-marketing primary" style="font-size: 1.1rem; padding: 15px 40px;">
-                        <i class="fas fa-envelope me-2"></i>Get In Touch
-                    </a>` : ''}
-                    
-                    <div style="margin-top: 3rem;">
-                        <p style="margin: 0; opacity: 0.8;">&copy; ${new Date().getFullYear()} ${data.name}</p>
-                        <small style="opacity: 0.6;">Powered by <a href="${getFrontendUrl()}" target="_blank" style="color: rgba(255,255,255,0.8);">Portfolio Generator</a></small>
-                    </div>
-                </div>
+            <h3 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem;">Ready to Drive Results Together?</h3>
+            <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">Let's discuss how I can help grow your business.</p>
+            ${data.email ? `<a href="mailto:${data.email}" class="btn btn-light btn-lg" style="font-size: 1.1rem; padding: 15px 40px;">
+                <i class="fas fa-envelope me-2"></i>Start the Conversation
+            </a>` : ''}
+            <div style="margin-top: 3rem;">
+                <p style="opacity: 0.8; margin: 0;">&copy; ${new Date().getFullYear()} ${data.name} - Marketing Portfolio</p>
+                <small style="opacity: 0.6;">Powered by <a href="${getFrontendUrl()}" target="_blank" style="color: rgba(255,255,255,0.8);">Portfolio Generator</a></small>
             </div>
         </div>
     </section>
@@ -5290,7 +5151,7 @@ function generateTemplate6HTML(data, meta) {
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log('🚀 Server running on port ' + PORT);
-    console.log('📊 Backend URL: http://localhost:' + PORT);
-    console.log('🌍 Environment: ' + (process.env.NODE_ENV || 'development'));
+    console.log('ðŸš€ Server running on port ' + PORT);
+    console.log('ðŸ“Š Backend URL: http://localhost:' + PORT);
+    console.log('ðŸŒ Environment: ' + (process.env.NODE_ENV || 'development'));
 });

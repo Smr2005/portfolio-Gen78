@@ -1,4 +1,4 @@
-const express = require("express");
+﻿const express = require("express");
 const passport = require("passport");
 const keys = require("./config/keys");
 const cookieSession = require("cookie-session");
@@ -52,11 +52,11 @@ mongoose.connect(process.env.MONGO_URI, {
     socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
 })
 .then(() => {
-    console.log("✅ Connected to MongoDB successfully");
+    console.log("âœ… Connected to MongoDB successfully");
 })
 .catch((error) => {
-    console.error("❌ MongoDB connection error:", error.message);
-    console.log("⚠️  Server will continue without database connection");
+    console.error("âŒ MongoDB connection error:", error.message);
+    console.log("âš ï¸  Server will continue without database connection");
     // Don't exit, continue without database for now
 });
 
@@ -144,7 +144,7 @@ app.get("/api/health", async (req, res, next) => {
         status: "Portfolio Generator Backend is running!",
         timestamp: new Date().toISOString(),
         environment: process.env.NODE_ENV || 'development',
-        port: process.env.PORT || 5001,
+        port: process.env.PORT || 5000,
         cors_origin: req.headers.origin
     });
 });
@@ -155,28 +155,6 @@ app.post("/api/test-upload", upload.single('testFile'), (req, res) => {
         message: "Test upload endpoint working",
         file: req.file ? "File received" : "No file",
         headers: req.headers
-    });
-});
-
-// Debug endpoint to check frontend connectivity
-app.get("/api/debug", (req, res) => {
-    res.json({
-        message: "Backend API is accessible!",
-        timestamp: new Date().toISOString(),
-        origin: req.headers.origin,
-        userAgent: req.headers['user-agent'],
-        method: req.method,
-        cors_headers_present: !!req.headers.origin
-    });
-});
-
-// Test POST endpoint to check form data
-app.post("/api/test-post", (req, res) => {
-    res.json({
-        message: "POST request successful",
-        body: req.body,
-        headers: Object.keys(req.headers),
-        contentType: req.headers['content-type']
     });
 });
 
@@ -765,9 +743,9 @@ function generateTemplate1HTML(data, meta) {
                         </div>
                         <!-- Social Links -->
                         <div style="display: flex; gap: 1rem;">
-                            ${data.linkedin ? `<a href="${data.linkedin}" target="_blank" rel="noopener noreferrer" style="color: white; font-size: 1.5rem; opacity: 0.8; text-decoration: none;">💼</a>` : ''}
-                            ${data.github ? `<a href="${data.github}" target="_blank" rel="noopener noreferrer" style="color: white; font-size: 1.5rem; opacity: 0.8; text-decoration: none;">🔗</a>` : ''}
-                            ${data.website ? `<a href="${data.website}" target="_blank" rel="noopener noreferrer" style="color: white; font-size: 1.5rem; opacity: 0.8; text-decoration: none;">🌐</a>` : ''}
+                            ${data.linkedin ? `<a href="${data.linkedin}" target="_blank" rel="noopener noreferrer" style="color: white; font-size: 1.5rem; opacity: 0.8; text-decoration: none;">ðŸ’¼</a>` : ''}
+                            ${data.github ? `<a href="${data.github}" target="_blank" rel="noopener noreferrer" style="color: white; font-size: 1.5rem; opacity: 0.8; text-decoration: none;">ðŸ”—</a>` : ''}
+                            ${data.website ? `<a href="${data.website}" target="_blank" rel="noopener noreferrer" style="color: white; font-size: 1.5rem; opacity: 0.8; text-decoration: none;">ðŸŒ</a>` : ''}
                         </div>
                     </div>
                 </div>
@@ -805,7 +783,7 @@ function generateTemplate1HTML(data, meta) {
                             font-size: 1.2rem;
                             animation: float3d 4s ease-in-out infinite;
                         ">
-                            ✓
+                            âœ“
                         </div>
                         ` : ''}
                     </div>
@@ -846,7 +824,7 @@ function generateTemplate1HTML(data, meta) {
                         <div class="card card-3d">
                             <div class="card-body">
                                 <h5 class="card-title" style="color: #667eea; font-weight: 700;">${exp.position}</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">${exp.company} • ${exp.duration}</h6>
+                                <h6 class="card-subtitle mb-2 text-muted">${exp.company} â€¢ ${exp.duration}</h6>
                                 ${exp.location ? `<p class="text-muted"><i class="fas fa-map-marker-alt"></i> ${exp.location}</p>` : ''}
                                 ${exp.description ? `<p class="card-text">${exp.description}</p>` : ''}
                                 ${exp.achievements && exp.achievements.length > 0 ? `
@@ -907,7 +885,7 @@ function generateTemplate1HTML(data, meta) {
                                     </div>
                                 ` : ''}
                                 <div>
-                                    ${project.demo ? `<a href="${project.demo}" target="_blank" class="btn btn-primary btn-sm me-2" style="background: linear-gradient(90deg, #667eea, #764ba2); border: none; border-radius: 20px;">🚀 Live Demo</a>` : ''}
+                                    ${project.demo ? `<a href="${project.demo}" target="_blank" class="btn btn-primary btn-sm me-2" style="background: linear-gradient(90deg, #667eea, #764ba2); border: none; border-radius: 20px;">ðŸš€ Live Demo</a>` : ''}
                                     ${project.github ? `<a href="${project.github}" target="_blank" class="btn btn-outline-secondary btn-sm" style="border-radius: 20px;"><i class="fab fa-github"></i> Code</a>` : ''}
                                 </div>
                             </div>
@@ -930,7 +908,7 @@ function generateTemplate1HTML(data, meta) {
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">${edu.degree} ${edu.field ? 'in ' + edu.field : ''}</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">${edu.institution} • ${edu.duration}</h6>
+                                <h6 class="card-subtitle mb-2 text-muted">${edu.institution} â€¢ ${edu.duration}</h6>
                                 ${edu.location ? `<p class="text-muted"><i class="fas fa-map-marker-alt"></i> ${edu.location}</p>` : ''}
                                 ${edu.gpa ? `<p class="text-muted">GPA: ${edu.gpa}</p>` : ''}
                                 ${edu.description ? `<p class="card-text">${edu.description}</p>` : ''}
@@ -983,7 +961,7 @@ function generateTemplate1HTML(data, meta) {
                                     <i class="fas fa-rocket fa-2x text-primary me-3"></i>
                                     <div>
                                         <h5 class="card-title mb-1">${internship.position}</h5>
-                                        <h6 class="card-subtitle text-muted">${internship.company} • ${internship.duration}</h6>
+                                        <h6 class="card-subtitle text-muted">${internship.company} â€¢ ${internship.duration}</h6>
                                     </div>
                                 </div>
                                 ${internship.location ? `<p class="text-muted"><i class="fas fa-map-marker-alt"></i> ${internship.location}</p>` : ''}
@@ -1575,13 +1553,13 @@ function generateTemplate2HTML(data, meta) {
                         <h2 class="hero-title">${data.title}</h2>
                         <p class="hero-description">${data.about || 'Creative professional passionate about innovative design and user experience.'}</p>
                         <div class="hero-buttons">
-                            <a href="#portfolio" class="btn-primary">🎨 View Portfolio</a>
-                            <a href="#contact" class="btn-secondary">💬 Let's Talk</a>
+                            <a href="#portfolio" class="btn-primary">ðŸŽ¨ View Portfolio</a>
+                            <a href="#contact" class="btn-secondary">ðŸ’¬ Let's Talk</a>
                         </div>
                         <div class="social-icons">
-                            <a href="#" class="social-icon">🎨</a>
-                            <a href="#" class="social-icon">🏀</a>
-                            <a href="#" class="social-icon">💼</a>
+                            <a href="#" class="social-icon">ðŸŽ¨</a>
+                            <a href="#" class="social-icon">ðŸ€</a>
+                            <a href="#" class="social-icon">ðŸ’¼</a>
                         </div>
                     </div>
                 </div>
@@ -1589,7 +1567,7 @@ function generateTemplate2HTML(data, meta) {
                     <div class="profile-container">
                         <div class="profile-floating"></div>
                         ${data.profileImage ? `<img src="${data.profileImage}" alt="${data.name}" class="profile-img">` : ''}
-                        <div class="status-badge">✓</div>
+                        <div class="status-badge">âœ“</div>
                     </div>
                 </div>
             </div>
@@ -1637,7 +1615,7 @@ function generateTemplate2HTML(data, meta) {
                                     </div>
                                 ` : ''}
                                 <div class="d-flex gap-2">
-                                    ${project.demo ? `<a href="${project.demo}" target="_blank" class="btn" style="background: linear-gradient(45deg, #ff6b6b, #4ecdc4); color: white; border: none; border-radius: 25px; padding: 10px 25px; font-weight: 600;">🚀 View Live</a>` : ''}
+                                    ${project.demo ? `<a href="${project.demo}" target="_blank" class="btn" style="background: linear-gradient(45deg, #ff6b6b, #4ecdc4); color: white; border: none; border-radius: 25px; padding: 10px 25px; font-weight: 600;">ðŸš€ View Live</a>` : ''}
                                     ${project.github ? `<a href="${project.github}" target="_blank" class="btn btn-outline-secondary" style="border-radius: 25px; padding: 10px 25px; font-weight: 600;"><i class="fab fa-github"></i> Code</a>` : ''}
                                 </div>
                             </div>
@@ -1660,7 +1638,7 @@ function generateTemplate2HTML(data, meta) {
                         <div class="col-md-8">
                             <h4 class="fw-bold">${exp.position}</h4>
                             <h5 class="text-primary">${exp.company}</h5>
-                            <p class="text-muted">${exp.duration} • ${exp.location || ''}</p>
+                            <p class="text-muted">${exp.duration} â€¢ ${exp.location || ''}</p>
                             <p>${exp.description}</p>
                         </div>
                     </div>
@@ -1681,7 +1659,7 @@ function generateTemplate2HTML(data, meta) {
                         <div class="col-md-8">
                             <h4 class="fw-bold">${internship.position}</h4>
                             <h5 class="text-primary">${internship.company}</h5>
-                            <p class="text-muted">${internship.duration} • ${internship.location || ''}</p>
+                            <p class="text-muted">${internship.duration} â€¢ ${internship.location || ''}</p>
                             <p>${internship.description}</p>
                             ${internship.achievements && internship.achievements.length > 0 ? `
                                 <ul class="mt-3">
@@ -1732,7 +1710,7 @@ function generateTemplate2HTML(data, meta) {
                         <div class="col-md-8">
                             <h4 class="fw-bold">${edu.degree}</h4>
                             <h5 class="text-primary">${edu.institution}</h5>
-                            <p class="text-muted">${edu.duration} ${edu.gpa ? `• GPA: ${edu.gpa}` : ''}</p>
+                            <p class="text-muted">${edu.duration} ${edu.gpa ? `â€¢ GPA: ${edu.gpa}` : ''}</p>
                             ${edu.description ? `<p>${edu.description}</p>` : ''}
                         </div>
                     </div>
@@ -1916,7 +1894,7 @@ function generateTemplate3HTML(data, meta) {
         }
         
         .achievement-item::before {
-            content: '✓';
+            content: 'âœ“';
             position: absolute;
             left: -2px;
             top: 50%;
@@ -2135,8 +2113,8 @@ function generateTemplate3HTML(data, meta) {
                         </div>
                         <!-- Professional Links -->
                         <div style="display: flex; gap: 1.5rem;">
-                            ${data.linkedin ? `<a href="${data.linkedin}" target="_blank" rel="noopener noreferrer" style="color: #64b5f6; font-size: 1.5rem; opacity: 0.8; text-decoration: none;">💼</a>` : ''}
-                            ${data.website ? `<a href="${data.website}" target="_blank" rel="noopener noreferrer" style="color: #64b5f6; font-size: 1.5rem; opacity: 0.8; text-decoration: none;">🌐</a>` : ''}
+                            ${data.linkedin ? `<a href="${data.linkedin}" target="_blank" rel="noopener noreferrer" style="color: #64b5f6; font-size: 1.5rem; opacity: 0.8; text-decoration: none;">ðŸ’¼</a>` : ''}
+                            ${data.website ? `<a href="${data.website}" target="_blank" rel="noopener noreferrer" style="color: #64b5f6; font-size: 1.5rem; opacity: 0.8; text-decoration: none;">ðŸŒ</a>` : ''}
                         </div>
                     </div>
                 </div>
@@ -2186,7 +2164,7 @@ function generateTemplate3HTML(data, meta) {
                             animation: businessFloat 4s ease-in-out infinite reverse;
                             z-index: 3;
                         ">
-                            ✓
+                            âœ“
                         </div>
                         ` : ''}
                     </div>
@@ -2205,7 +2183,7 @@ function generateTemplate3HTML(data, meta) {
                         <div class="col-md-9">
                             <h4 class="fw-bold text-primary">${exp.position}</h4>
                             <h5>${exp.company}</h5>
-                            <p class="text-muted">${exp.duration} • ${exp.location || ''}</p>
+                            <p class="text-muted">${exp.duration} â€¢ ${exp.location || ''}</p>
                             <p>${exp.description}</p>
                             ${exp.achievements && exp.achievements.length > 0 ? `
                                 <div class="mt-3">
@@ -2233,7 +2211,7 @@ function generateTemplate3HTML(data, meta) {
                         <div class="col-md-9">
                             <h4 class="fw-bold text-primary">${internship.position}</h4>
                             <h5>${internship.company}</h5>
-                            <p class="text-muted">${internship.duration} • ${internship.location || ''}</p>
+                            <p class="text-muted">${internship.duration} â€¢ ${internship.location || ''}</p>
                             <p>${internship.description}</p>
                             ${internship.achievements && internship.achievements.length > 0 ? `
                                 <div class="mt-3">
@@ -2257,7 +2235,7 @@ function generateTemplate3HTML(data, meta) {
                                 font-size: 2rem;
                                 animation: businessFloat 6s ease-in-out infinite;
                             ">
-                                🚀
+                                ðŸš€
                             </div>
                         </div>
                     </div>
@@ -2277,7 +2255,7 @@ function generateTemplate3HTML(data, meta) {
                         <div class="col-md-9">
                             <h4 class="fw-bold text-primary">${edu.degree}</h4>
                             <h5>${edu.institution || edu.school}</h5>
-                            <p class="text-muted">${edu.duration} ${edu.location ? `• ${edu.location}` : ''}</p>
+                            <p class="text-muted">${edu.duration} ${edu.location ? `â€¢ ${edu.location}` : ''}</p>
                             ${edu.gpa ? `<p><strong>GPA:</strong> ${edu.gpa}</p>` : ''}
                             ${edu.description ? `<p>${edu.description}</p>` : ''}
                             ${edu.honors ? `<p><strong>Honors:</strong> ${edu.honors}</p>` : ''}
@@ -2305,7 +2283,7 @@ function generateTemplate3HTML(data, meta) {
                                 font-size: 2rem;
                                 animation: businessFloat 6s ease-in-out infinite;
                             ">
-                                🎓
+                                ðŸŽ“
                             </div>
                         </div>
                     </div>
@@ -2335,7 +2313,7 @@ function generateTemplate3HTML(data, meta) {
                                 font-size: 1.5rem;
                                 animation: businessFloat 6s ease-in-out infinite;
                             ">
-                                🏆
+                                ðŸ†
                             </div>
                             <h5 class="fw-bold">${cert.name}</h5>
                             <p class="text-muted">${cert.issuer}</p>
@@ -2399,7 +2377,7 @@ function generateTemplate3HTML(data, meta) {
                                     font-size: 3rem;
                                     animation: businessFloat 6s ease-in-out infinite;
                                 ">
-                                    💼
+                                    ðŸ’¼
                                 </div>
                             `}
                             <h5 class="fw-bold">${project.title}</h5>
@@ -2979,7 +2957,7 @@ function generateTemplate4HTML(data, meta) {
                         color: white;
                         font-size: 0.8rem;
                     ">
-                        ✓
+                        âœ“
                     </div>
                 </div>
 
@@ -3040,7 +3018,7 @@ function generateTemplate4HTML(data, meta) {
                         font-size: 0.9rem;
                         color: #666666;
                     ">
-                        <span>📧</span>
+                        <span>ðŸ“§</span>
                         <a href="mailto:${data.email}" style="
                             color: #666666;
                             text-decoration: none;
@@ -3055,7 +3033,7 @@ function generateTemplate4HTML(data, meta) {
                         font-size: 0.9rem;
                         color: #666666;
                     ">
-                        <span>📞</span>
+                        <span>ðŸ“ž</span>
                         <a href="tel:${data.phone}" style="
                             color: #666666;
                             text-decoration: none;
@@ -3070,7 +3048,7 @@ function generateTemplate4HTML(data, meta) {
                         font-size: 0.9rem;
                         color: #666666;
                     ">
-                        <span>📍</span>
+                        <span>ðŸ“</span>
                         <span>${data.location}</span>
                     </div>
                     ` : ''}
@@ -3930,7 +3908,7 @@ function generateTemplate4HTML(data, meta) {
                         justify-content: center;
                         margin: 0 auto 1.5rem auto;
                         font-size: 1.5rem;
-                    ">🏆</div>
+                    ">ðŸ†</div>
                     
                     <h4 style="
                         font-size: 1.2rem;
@@ -4483,7 +4461,7 @@ function generateTemplate5HTML(data, meta) {
                 ${data.name ? data.name.split(' ')[0].toLowerCase() : 'developer'}@portfolio:~$
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border: 1px solid #30363d;">
-                <span style="color: #58a6ff;">☰</span>
+                <span style="color: #58a6ff;">â˜°</span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
@@ -4873,7 +4851,7 @@ function generateTemplate5HTML(data, meta) {
 </body>
 </html>
     `;
-                                }
+}
 
 function generateTemplate6HTML(data, meta) {
     return `
@@ -4920,6 +4898,11 @@ function generateTemplate6HTML(data, meta) {
             100% { background-position: 0% 50%; }
         }
         
+        @keyframes countUp {
+            0% { opacity: 0; transform: scale(0.5); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
         .float-animation {
             animation: float 6s ease-in-out infinite;
         }
@@ -4943,25 +4926,29 @@ function generateTemplate6HTML(data, meta) {
             background-color: rgba(255,255,255,0.95) !important;
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(0,0,0,0.1);
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
         }
         
         .navbar-brand {
+            color: #667eea !important;
             font-weight: bold;
             font-size: 1.5rem;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
         
         .nav-link {
+            color: #666 !important;
             font-weight: 500;
-            color: #333 !important;
-            transition: all 0.3s ease;
+            margin: 0 0.5rem;
+            text-transform: capitalize;
+            transition: color 0.3s ease;
         }
         
         .nav-link:hover {
             color: #667eea !important;
-            transform: translateY(-2px);
         }
         
         /* HERO SECTION */
@@ -4969,28 +4956,30 @@ function generateTemplate6HTML(data, meta) {
             min-height: 100vh;
             position: relative;
             overflow: hidden;
+            padding-top: 100px;
         }
         
-        .hero-bg-shape {
+        .floating-element {
             position: absolute;
             border-radius: 50%;
-            opacity: 0.1;
+            z-index: 1;
         }
         
-        .hero-bg-shape:nth-child(1) {
-            top: 10%;
+        .floating-1 {
+            top: 20%;
             left: 10%;
-            width: 200px;
-            height: 200px;
-            animation: float 8s ease-in-out infinite;
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.2);
+            animation: pulse 4s ease-in-out infinite;
         }
         
-        .hero-bg-shape:nth-child(2) {
+        .floating-2 {
             top: 60%;
             right: 15%;
             width: 150px;
             height: 150px;
-            background: linear-gradient(45deg, #f093fb, #f5576c);
+            background: rgba(255,255,255,0.1);
             animation: float 6s ease-in-out infinite;
         }
         
@@ -5007,6 +4996,7 @@ function generateTemplate6HTML(data, meta) {
         .hero-title {
             font-size: 3.5rem;
             font-weight: bold;
+            background: linear-gradient(45deg, #667eea, #764ba2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 1rem;
@@ -5072,6 +5062,7 @@ function generateTemplate6HTML(data, meta) {
         }
         
         .btn-marketing.primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
             box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
         }
         
@@ -5096,187 +5087,48 @@ function generateTemplate6HTML(data, meta) {
             text-decoration: none;
         }
         
-        /* SECTIONS */
-        .section {
-            padding: 80px 0;
-        }
-        
-        .section-title {
-            font-size: 2.5rem;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 3rem;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        /* TIMELINE STYLES FOR EDUCATION & INTERNSHIPS */
-        .timeline {
-            position: relative;
-            padding-left: 2rem;
-        }
-        
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 1rem;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: linear-gradient(to bottom, #667eea, #764ba2);
-        }
-        
-        .timeline-item {
-            position: relative;
-            margin-bottom: 2rem;
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-left: 2rem;
-        }
-        
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -3rem;
-            top: 2rem;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            border: 3px solid white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
-        }
-        
-        .timeline-title {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-        
-        .timeline-company {
-            font-size: 1.1rem;
+        .btn-marketing.outline {
+            background: transparent;
+            border: 2px solid #667eea;
             color: #667eea;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
+            box-shadow: none;
         }
         
-        .timeline-date {
-            color: #999;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
+        .btn-marketing.outline:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+            text-decoration: none;
         }
         
-        .timeline-description {
-            color: #666;
-            line-height: 1.6;
+        .social-link {
+            color: rgba(255,255,255,0.8);
+            font-size: 1.5rem;
+            margin: 0 15px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .social-link:hover {
+            color: white;
+            transform: scale(1.1);
+            text-decoration: none;
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="#home">${data.name}</a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#education">Education</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#internships">Internships</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section id="home" class="hero-section gradient-bg d-flex align-items-center">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-12 text-center">
-                    <div class="hero-card">
-                        <h1 class="hero-title">${data.name}</h1>
-                        <h2 class="hero-subtitle">${data.title}</h2>
-                        <p class="hero-text">${data.about || 'Passionate professional with expertise in various fields.'}</p>
-                        ${data.email ? `<a href="mailto:${data.email}" class="btn-marketing primary">
-                            <i class="fas fa-envelope me-2"></i>Get In Touch
-                        </a>` : ''}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Education Section -->
-    ${data.education && data.education.length > 0 ? `
-    <section id="education" class="section" style="background-color: #f8f9fa;">
-        <div class="container">
-            <h2 class="section-title">Education</h2>
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="timeline">
-                        ${data.education.map(edu => `
-                            <div class="timeline-item">
-                                <h4 class="timeline-title">${edu.degree}</h4>
-                                <div class="timeline-company">${edu.institution}</div>
-                                <div class="timeline-date">${edu.year || (edu.startDate + ' - ' + (edu.endDate || 'Present'))}</div>
-                                ${edu.description ? `<p class="timeline-description">${edu.description}</p>` : ''}
-                                ${edu.gpa ? `<p class="timeline-description"><strong>GPA:</strong> ${edu.gpa}</p>` : ''}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    ` : ''}
-
-    <!-- Internships Section -->
-    ${data.internships && data.internships.length > 0 ? `
-    <section id="internships" class="section">
-        <div class="container">
-            <h2 class="section-title">Internships & Experience</h2>
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="timeline">
-                        ${data.internships.map(internship => `
-                            <div class="timeline-item">
-                                <h4 class="timeline-title">${internship.position}</h4>
-                                <div class="timeline-company">${internship.company}</div>
-                                <div class="timeline-date">${internship.duration || (internship.startDate + ' - ' + (internship.endDate || 'Present'))}</div>
-                                ${internship.description ? `<p class="timeline-description">${internship.description}</p>` : ''}
-                                ${internship.achievements && internship.achievements.length > 0 ? `
-                                    <ul class="timeline-description">
-                                        ${internship.achievements.map(achievement => `<li>${achievement}</li>`).join('')}
-                                    </ul>
-                                ` : ''}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    ` : ''}
-
     <!-- Contact Section -->
-    <section id="contact" class="section gradient-bg" style="color: white;">
+    <section id="contact" class="gradient-bg text-center" style="padding: 60px 0; color: white;">
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8 text-center">
-                    <h2 class="section-title" style="color: white;">Let's Work Together</h2>
-                    <p style="font-size: 1.1rem; margin-bottom: 2rem;">Ready to connect? Let's discuss opportunities.</p>
-                    
-                    ${data.email ? `<a href="mailto:${data.email}" class="btn-marketing primary" style="font-size: 1.1rem; padding: 15px 40px;">
-                        <i class="fas fa-envelope me-2"></i>Get In Touch
-                    </a>` : ''}
-                    
-                    <div style="margin-top: 3rem;">
-                        <p style="margin: 0; opacity: 0.8;">&copy; ${new Date().getFullYear()} ${data.name}</p>
-                        <small style="opacity: 0.6;">Powered by <a href="${getFrontendUrl()}" target="_blank" style="color: rgba(255,255,255,0.8);">Portfolio Generator</a></small>
-                    </div>
-                </div>
+            <h3 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem;">Ready to Drive Results Together?</h3>
+            <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">Let's discuss how I can help grow your business.</p>
+            ${data.email ? `<a href="mailto:${data.email}" class="btn btn-light btn-lg" style="font-size: 1.1rem; padding: 15px 40px;">
+                <i class="fas fa-envelope me-2"></i>Start the Conversation
+            </a>` : ''}
+            <div style="margin-top: 3rem;">
+                <p style="opacity: 0.8; margin: 0;">&copy; ${new Date().getFullYear()} ${data.name} - Marketing Portfolio</p>
+                <small style="opacity: 0.6;">Powered by <a href="${getFrontendUrl()}" target="_blank" style="color: rgba(255,255,255,0.8);">Portfolio Generator</a></small>
             </div>
         </div>
     </section>
@@ -5288,9 +5140,32 @@ function generateTemplate6HTML(data, meta) {
 }
 
 // Start the server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
     console.log('🚀 Server running on port ' + PORT);
     console.log('📊 Backend URL: http://localhost:' + PORT);
     console.log('🌍 Environment: ' + (process.env.NODE_ENV || 'development'));
 });
+        
+        .btn-marketing.outline:hover {
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+        }
+        
+        /* SOCIAL LINKS */
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .social-link {
+            color: rgba(255,255,255,0.8);
+            font-size: 2rem;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 50%;
+            backdr

@@ -384,7 +384,19 @@ function EnhancedBuilder() {
         return;
       }
 
-      const response = await fetch('/api/portfolio/save', {
+      // Get API base URL
+      const getApiUrl = () => {
+        if (process.env.REACT_APP_API_URL) {
+          return process.env.REACT_APP_API_URL;
+        }
+        if (process.env.NODE_ENV === 'production') {
+          return window.location.origin;
+        }
+        return 'http://localhost:5000';
+      };
+      const API_BASE_URL = getApiUrl();
+      
+      const response = await fetch(`${API_BASE_URL}/api/portfolio/save`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -460,7 +472,18 @@ function EnhancedBuilder() {
       console.log('✅ Current data saved successfully. Now publishing...');
 
       // Now publish the freshly saved data
-      const response = await fetch('/api/portfolio/publish', {
+      const getApiUrl = () => {
+        if (process.env.REACT_APP_API_URL) {
+          return process.env.REACT_APP_API_URL;
+        }
+        if (process.env.NODE_ENV === 'production') {
+          return window.location.origin;
+        }
+        return 'http://localhost:5000';
+      };
+      const API_BASE_URL = getApiUrl();
+      
+      const response = await fetch(`${API_BASE_URL}/api/portfolio/publish`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

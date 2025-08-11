@@ -24,6 +24,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start:legacy": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts start",
     "build": "cross-env GENERATE_SOURCEMAP=false react-scripts build",
     "build:legacy": "cross-env NODE_OPTIONS=--openssl-legacy-provider GENERATE_SOURCEMAP=false react-scripts build",
     "test": "react-scripts test",
