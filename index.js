@@ -1565,6 +1565,24 @@ function generateTemplate2HTML(data, meta) {
     </style>
 </head>
 <body>
+    <!-- Fixed Navigation -->
+    <nav style="position: fixed; top: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,107,107,0.2); z-index: 1000; padding: 1rem 0;">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div style="font-size: 1.8rem; font-weight: 700; background: linear-gradient(45deg, #ff6b6b, #feca57); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    ${data.name}
+                </div>
+                <div style="display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;">
+                    <a href="#about" style="color: #2c3e50; text-decoration: none; font-weight: 500;">About</a>
+                    <a href="#experience" style="color: #2c3e50; text-decoration: none; font-weight: 500;">Experience</a>
+                    <a href="#portfolio" style="color: #2c3e50; text-decoration: none; font-weight: 500;">Portfolio</a>
+                    <a href="#skills" style="color: #2c3e50; text-decoration: none; font-weight: 500;">Skills</a>
+                    <a href="#contact" style="color: #2c3e50; text-decoration: none; font-weight: 500;">Contact</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
     <!-- Creative Hero Section - EXACT MATCH TO REACT -->
     <section class="hero-section">
         <!-- Animated Background Shapes -->
@@ -5116,8 +5134,4 @@ function generateTemplate6HTML(data, meta) {
             -webkit-text-fill-color: transparent;
         }
         
-        /* TIMELINE STYLES FOR EDUCATION & INTERNSHIPS */
-        .timeline {
-            position: relative;
-            padding-left: 2rem;
-       
+        /* TIMELINE STYLES FOR EDUCATION & INTERNSH
