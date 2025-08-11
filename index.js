@@ -1838,6 +1838,15 @@ function generateTemplate2HTML(data, meta) {
     `;
 }
 
+// Start the server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📱 Frontend: ${getFrontendUrl()}`);
+    console.log(`🔗 Backend: ${getBaseUrl()}`);
+    console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+});
+
 function generateTemplate3HTML(data, meta) {
     return `
 <!DOCTYPE html>
@@ -5019,217 +5028,21 @@ function generateTemplate6HTML(data, meta) {
             background-size: 400% 400%;
             animation: gradient 15s ease infinite;
         }
-        
-        /* NAVBAR */
-        .navbar {
-            background-color: rgba(255,255,255,0.95) !important;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0,0,0,0.1);
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-        }
-        
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.5rem;
-        }
-        
-        .nav-link {
-            color: #333 !important;
-            font-weight: 500;
-            margin: 0 15px;
-        }
-        
-        .nav-link:hover {
-            color: #667eea !important;
-        }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="#">${data.name}</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <div class="navbar-nav ms-auto">
-                    <a class="nav-link" href="#about">About</a>
-                    <a class="nav-link" href="#experience">Experience</a>
-                    <a class="nav-link" href="#projects">Projects</a>
-                    <a class="nav-link" href="#contact">Contact</a>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="gradient-bg" style="min-height: 100vh; display: flex; align-items: center; padding-top: 80px;">
-        <div class="container text-center text-white">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    ${data.profileImage ? `<img src="${data.profileImage}" alt="${data.name}" class="float-animation" style="width: 200px; height: 200px; border-radius: 50%; object-fit: cover; margin-bottom: 2rem; border: 5px solid white; box-shadow: 0 15px 35px rgba(0,0,0,0.3);">` : ''}
-                    <h1 class="slide-up" style="font-size: 3.5rem; font-weight: 800; margin-bottom: 1rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">${data.name}</h1>
-                    <h2 class="slide-up" style="font-size: 1.8rem; margin-bottom: 2rem; font-weight: 300; opacity: 0.9;">${data.title || 'Creative Professional'}</h2>
-                    <p class="slide-up" style="font-size: 1.2rem; margin-bottom: 3rem; line-height: 1.6; opacity: 0.8; max-width: 600px; margin-left: auto; margin-right: auto;">${data.about || 'Passionate about creating beautiful, functional, and user-friendly digital experiences.'}</p>
-                    <div class="slide-up" style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                        <a href="#projects" class="pulse-animation" style="background: rgba(255,255,255,0.2); color: white; padding: 15px 30px; border-radius: 50px; text-decoration: none; border: 2px solid white; backdrop-filter: blur(10px); transition: all 0.3s ease; font-weight: 600;">View Work</a>
-                        <a href="#contact" style="background: white; color: #667eea; padding: 15px 30px; border-radius: 50px; text-decoration: none; border: 2px solid white; transition: all 0.3s ease; font-weight: 600;">Get In Touch</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" style="padding: 100px 0; background: white;">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8 text-center">
-                    <h2 style="font-size: 2.5rem; margin-bottom: 3rem; color: #333; font-weight: 700;">About Me</h2>
-                    <p style="font-size: 1.1rem; line-height: 1.8; color: #666; margin-bottom: 0;">${data.about || 'I am a passionate creative professional who loves bringing ideas to life through innovative design and technology. With a keen eye for detail and a commitment to excellence, I strive to create experiences that not only look great but also provide real value to users.'}</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Experience Section -->
-    ${data.experience && data.experience.length > 0 ? `
-    <section id="experience" style="padding: 100px 0; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
-        <div class="container">
-            <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 4rem; color: #333; font-weight: 700;">Experience</h2>
-            <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    ${data.experience.map((exp, index) => `
-                    <div style="background: white; padding: 2.5rem; margin-bottom: 2rem; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-left: 5px solid #667eea; position: relative; overflow: hidden;">
-                        <div style="position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: linear-gradient(45deg, #667eea, #764ba2); border-radius: 50%; opacity: 0.1;"></div>
-                        <h4 style="color: #333; font-weight: 700; margin-bottom: 0.5rem; font-size: 1.4rem;">${exp.position}</h4>
-                        <h5 style="color: #667eea; margin-bottom: 0.5rem; font-size: 1.1rem; font-weight: 600;">${exp.company}</h5>
-                        <p style="color: #888; margin-bottom: 1rem; font-size: 0.95rem;">${exp.duration} • ${exp.location || ''}</p>
-                        <p style="color: #555; line-height: 1.6; margin-bottom: 1rem;">${exp.description}</p>
-                        ${exp.achievements && exp.achievements.length > 0 ? `
-                        <ul style="color: #666; margin: 0; padding-left: 1.5rem;">
-                            ${exp.achievements.map(achievement => `<li style="margin-bottom: 0.5rem; line-height: 1.5;">${achievement}</li>`).join('')}
-                        </ul>
-                        ` : ''}
-                    </div>
-                    `).join('')}
-                </div>
-            </div>
-        </div>
-    </section>
-    ` : ''}
-
-    <!-- Projects Section -->
-    ${data.projects && data.projects.length > 0 ? `
-    <section id="projects" style="padding: 100px 0; background: white;">
-        <div class="container">
-            <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 4rem; color: #333; font-weight: 700;">Featured Work</h2>
-            <div class="row">
-                ${data.projects.map((project, index) => `
-                <div class="col-lg-6 mb-5">
-                    <div style="background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.1); transition: all 0.3s ease; height: 100%; position: relative;" onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 25px 50px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 15px 35px rgba(0,0,0,0.1)'">
-                        ${project.image ? `<img src="${project.image}" alt="${project.title}" style="width: 100%; height: 280px; object-fit: cover;">` : `<div style="width: 100%; height: 280px; background: linear-gradient(45deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">📱</div>`}
-                        <div style="padding: 2rem;">
-                            <h4 style="color: #333; margin-bottom: 1rem; font-weight: 700; font-size: 1.3rem;">${project.title}</h4>
-                            <p style="color: #666; line-height: 1.6; margin-bottom: 1.5rem; font-size: 0.95rem;">${project.description}</p>
-                            ${project.tech && project.tech.length > 0 ? `
-                            <div style="margin-bottom: 1.5rem;">
-                                ${(typeof project.tech === 'string' ? project.tech.split(',') : project.tech).map(tech => `<span style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; margin-right: 0.5rem; margin-bottom: 0.5rem; display: inline-block; font-weight: 500;">${tech.trim()}</span>`).join('')}
-                            </div>
-                            ` : ''}
-                            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                                ${project.demo ? `<a href="${project.demo}" target="_blank" style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; padding: 0.8rem 1.5rem; border-radius: 25px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; font-size: 0.9rem;">Live Demo</a>` : ''}
-                                ${project.github ? `<a href="${project.github}" target="_blank" style="background: transparent; color: #667eea; padding: 0.8rem 1.5rem; border: 2px solid #667eea; border-radius: 25px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; font-size: 0.9rem;">GitHub</a>` : ''}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                `).join('')}
-            </div>
-        </div>
-    </section>
-    ` : ''}
-
-    <!-- Contact Section -->
-    <section id="contact" class="gradient-bg" style="padding: 100px 0;">
-        <div class="container text-center text-white">
-            <h2 style="font-size: 2.5rem; margin-bottom: 2rem; font-weight: 700;">Let's Work Together</h2>
-            <p style="font-size: 1.2rem; margin-bottom: 3rem; opacity: 0.9; max-width: 600px; margin-left: auto; margin-right: auto;">Ready to bring your ideas to life? I'm always excited to work on new projects and collaborate with amazing people.</p>
-            ${data.email ? `
-            <a href="mailto:${data.email}" style="background: rgba(255,255,255,0.2); color: white; padding: 18px 40px; border-radius: 50px; text-decoration: none; border: 2px solid white; backdrop-filter: blur(10px); font-weight: 600; font-size: 1.1rem; transition: all 0.3s ease;" onmouseover="this.style.background='white'; this.style.color='#667eea';" onmouseout="this.style.background='rgba(255,255,255,0.2)'; this.style.color='white';">Start a Conversation</a>
-            ` : ''}
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer style="background: #2c3e50; color: white; text-align: center; padding: 3rem 0;">
-        <div class="container">
-            <p style="margin-bottom: 1rem; font-size: 1.1rem;">&copy; ${new Date().getFullYear()} ${data.name}. All rights reserved.</p>
-            <small style="opacity: 0.7;">Crafted with ❤️ • Powered by <a href="${getFrontendUrl()}" target="_blank" style="color: #667eea; text-decoration: none;">Portfolio Generator</a></small>
-        </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    const offsetTop = target.offsetTop - 80;
-                    window.scrollTo({
-                        top: offsetTop,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-
-        // Navbar background change on scroll
-        window.addEventListener('scroll', function() {
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 50) {
-                navbar.style.backgroundColor = 'rgba(255,255,255,0.98)';
-                navbar.style.boxShadow = '0 4px 30px rgba(0,0,0,0.15)';
-            } else {
-                navbar.style.backgroundColor = 'rgba(255,255,255,0.95)';
-                navbar.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
-            }
-        });
-
-        // Add entrance animations on scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver(function(entries) {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        // Observe all sections
-        document.querySelectorAll('section').forEach(section => {
-            section.style.opacity = '0.3';
-            section.style.transform = 'translateY(30px)';
-            section.style.transition = 'all 0.6s ease';
-            observer.observe(section);
-        });
-
-        // Reset first section (hero) to be visible immediately
-        const heroSection = document.querySelector('section');
-        if (heroSection) {
-            heroSection.style.opacity = '1';
-            heroSection.style.transform = 'translateY(0)';
-        }
-    </script>
+    <h1>Template 5</h1>
+    <p>Portfolio content here</p>
 </body>
 </html>
     `;
 }
+
+// Start the server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📱 Frontend: ${getFrontendUrl()}`);
+    console.log(`🔗 Backend: ${getBaseUrl()}`);
+    console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+});
