@@ -147,10 +147,10 @@ const AboutDevelopers = () => {
           name: "D. Vishnu Vardhan",
           role: "DevOps Engineer & Cloud Specialist",
           description: "☁️ Dedicated DevOps engineer passionate about cloud infrastructure and seamless deployment processes. I believe in automation, scalability, and reliable systems that support great applications. 🚀 Always working to optimize performance and ensure smooth user experiences through robust deployment strategies.",
-          github: "#",
+          github: "https://github.com/Vishnu278434",
           portfolio: "#",
           email: "devathavishnuvardhan1013@gmail.com",
-          image: "",
+          image: "https://avatars.githubusercontent.com/u/218926729?v=4",
           skills: ["Cloud Deployment", "DevOps", "CI/CD", "Server Management", "Infrastructure", "Automation", "Monitoring", "Docker", "AWS"],
           contributions: [
             "Designed and implemented cloud deployment architecture",
