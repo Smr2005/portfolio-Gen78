@@ -465,9 +465,9 @@ router.post("/publish", verifyAccessToken, async (req, res) => {
     const publishedUrl = `${baseUrl}/portfolio/${portfolio.slug}`;
     const reactPublishedUrl = `${frontendUrl}/p/${portfolio.slug}`;
     
-    // Send publication success email
+    // Send publication success email with universal SSR URL
     try {
-      await sendPublicationEmail(user, portfolio, reactPublishedUrl);
+      await sendPublicationEmail(user, portfolio, publishedUrl);
       console.log("Publication email sent to:", user.email);
     } catch (emailError) {
       console.error("Failed to send publication email:", emailError);
@@ -478,8 +478,9 @@ router.post("/publish", verifyAccessToken, async (req, res) => {
     
     res.json({
       message: "Portfolio published successfully!",
-      publishedUrl, // legacy static HTML
-      reactPublishedUrl, // React-rendered version (matches preview exactly)
+      // Use SSR URL first so frontend shares universally accessible link
+      publishedUrl,
+      reactPublishedUrl,
       slug: portfolio.slug
     });
     
