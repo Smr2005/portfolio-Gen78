@@ -3370,5 +3370,4 @@ function generateTemplate4HTML(data, meta) {
         background-color: white;
     ">
         <div style="
-            max-width: 1200px;
-            margin: 0 au
+       
