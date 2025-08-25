@@ -205,12 +205,6 @@ if (process.env.NODE_ENV === 'production' || process.env.PORT) {
             next();
         }
     });
-
-    // Redirect old React route to universal SSR URL so links work everywhere
-    app.get('/p/:slug', (req, res) => {
-        const { slug } = req.params;
-        return res.redirect(302, `/portfolio/${slug}`);
-    });
 }
 
 // Public route to serve published portfolios as HTML
@@ -332,27 +326,26 @@ function generatePortfolioHTML(portfolio) {
 }
 
 function generateTemplate1HTML(data, meta) {
-    
-    return `
+    const html = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>${meta.title || data.name + ' - Portfolio'}</title>
-    <meta name="description" content="${meta.description || 'Portfolio of ' + data.name}">
-    <meta name="keywords" content="${meta.keywords ? meta.keywords.join(', ') : ''}">
+    <title>${(meta && meta.title) || data.name + ' - Portfolio'}</title>
+    <meta name="description" content="${(meta && meta.description) || 'Portfolio of ' + data.name}">
+    <meta name="keywords" content="${(meta && meta.keywords) ? meta.keywords.join(', ') : ''}">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="${meta.title || data.name + ' - Portfolio'}">
-    <meta property="og:description" content="${meta.description || 'Portfolio of ' + data.name}">
+    <meta property="og:title" content="${(meta && meta.title) || data.name + ' - Portfolio'}">
+    <meta property="og:description" content="${(meta && meta.description) || 'Portfolio of ' + data.name}">
     <meta property="og:image" content="${data.profileImage || ''}">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="${meta.title || data.name + ' - Portfolio'}">
-    <meta property="twitter:description" content="${meta.description || 'Portfolio of ' + data.name}">
+    <meta property="twitter:title" content="${(meta && meta.title) || data.name + ' - Portfolio'}">
+    <meta property="twitter:description" content="${(meta && meta.description) || 'Portfolio of ' + data.name}">
     <meta property="twitter:image" content="${data.profileImage || ''}">
     
     <!-- Bootstrap CSS -->
@@ -378,159 +371,1491 @@ function generateTemplate1HTML(data, meta) {
             0% { transform: rotateY(0deg) rotateX(0deg); }
             100% { transform: rotateY(360deg) rotateX(360deg); }
         }
-        
-        @keyframes slideIn3d {
-            0% { transform: translateX(-100px) rotateY(-90deg); opacity: 0; }
-            100% { transform: translateX(0) rotateY(0deg); opacity: 1; }
-        }
-        
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.3); }
-            50% { box-shadow: 0 0 40px rgba(102, 126, 234, 0.6); }
-        }
-        
-        .portfolio-header { 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-            color: white; 
-            padding: 80px 0;
-            position: relative;
-            overflow: hidden;
-        }
-        
+        /* NAVBAR STYLES */
         .navbar {
             background: rgba(30, 41, 59, 0.95) !important;
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
         
-        .portfolio-header::before {
-            content: '';
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: white !important;
+        }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.8) !important;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: white !important;
+        }
+        
+        /* HERO SECTION - EXACT MATCH TO REACT */
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            color: white;
+            padding-top: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-bg-element {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
-            animation: shimmer 3s ease-in-out infinite;
-        }
-        
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-        
-        .profile-img { 
-            width: 150px; 
-            height: 150px; 
-            border-radius: 0 !important; 
-            border: 5px solid white;
-            animation: float3d 6s ease-in-out infinite;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            animation: float3d 8s ease-in-out infinite;
             transform-style: preserve-3d;
-            transition: all 0.3s ease;
-            object-fit: cover;
         }
         
-        .profile-img:hover {
-            animation-play-state: paused;
-            transform: scale(1.1) rotateY(15deg);
-            border-color: #ffd700;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        .hero-bg-element.small {
+            bottom: 20%;
+            right: 15%;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+            animation: float3d 6s ease-in-out infinite reverse;
         }
         
         .profile-3d {
-            animation: float3d 6s ease-in-out infinite;
-            transform-style: preserve-3d;
-        }
-        
-        .section-title { 
-            color: #333; 
-            margin-bottom: 30px; 
-            font-weight: 700;
-            animation: slideIn3d 1s ease-out;
+            width: 350px;
+            height: 350px;
+            margin: 0 auto;
             position: relative;
         }
         
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50px;
-            height: 3px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            border-radius: 2px;
+        .profile-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 8px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            transform: translateZ(20px);
         }
         
-        .skill-item { 
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 15px; 
-            border-radius: 15px; 
-            margin-bottom: 15px;
+        .profile-status {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: #10b981;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            border: 4px solid white;
+            animation: float3d 4s ease-in-out infinite;
+        }
+        
+        .btn-hero {
+            font-weight: 600;
+            padding: 12px 30px;
+            border-radius: 25px;
+            margin-right: 1rem;
+            margin-bottom: 1rem;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-hero.primary {
+            background-color: white;
+            color: #667eea;
+        }
+        
+        .btn-hero.outline {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .btn-hero:hover {
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .social-links a:hover {
+            opacity: 1;
+            text-decoration: none;
+        }
+        
+        /* ABOUT SECTION */
+        .about-section {
+            padding: 100px 0;
+            background-color: white;
+        }
+        
+        .section-title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .section-underline {
+            width: 60px;
+            height: 4px;
+            background: #667eea;
+            margin: 0 auto 3rem auto;
+        }
+        
+        .card-3d { 
+            border: none; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border-radius: 20px;
+            transition: all 0.3s ease;
             transform-style: preserve-3d;
+        }
+        
+        .card-3d:hover { 
+            transform: rotateY(10deg) rotateX(5deg) translateZ(20px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+        }
+        
+        .about-text {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: #64748b;
+            text-align: center;
+        }
+        
+        .stats-item {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .stats-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stats-text {
+            font-weight: 600;
+            color: #1e293b;
+        }
+        
+        /* EXPERIENCE SECTION */
+        .experience-section {
+            padding: 100px 0;
+            background-color: #f8fafc;
+        }
+        
+        .experience-card {
+            border: none; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .experience-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .experience-title {
+            color: #1e293b;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .experience-company {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .experience-description {
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .experience-badge {
+            background: #667eea;
+            color: white;
+            font-size: 0.9rem;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        /* SKILLS SECTION */
+        .skills-section {
+            padding: 100px 0;
+            background-color: white;
+        }
+        
+        .skill-item {
+        @keyframes slideIn3d {
+            0% { transform: translateX(-100px) rotateY(-90deg); opacity: 0; }
+            100% { transform: translateX(0) rotateY(0deg); opacity: 1; }
+        }
+        
+        /* NAVBAR STYLES */
+        .navbar {
+            background: rgba(30, 41, 59, 0.95) !important;
+            backdrop-filter: blur(1order-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: white !important;
+        }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.8) !important;
+            font-weight: 500;
+            transition: color 0.3s easeY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            border-left-color: #764ba2;
+        }
+        
+        .skill-name {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+        
+        .skill-level {
+#667eea;
+            font-size            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        
+        .nav-link:hover {
+            color: white !important;
+        }
+        
+        /* HERO SECTION - EXACT MATCH TO REACT */
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            color: white;
+            padding-top: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-bg-element {
+            position: absolute;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            animation: float3d 8s ease-in-out infinite;
+            transform-style: preserve-3d;
+        }
+        
+        .hero-bg-element.small {
+            bottom: 20%;
+            right: 15%;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+            animation: float3d 6s ease-in-out infinite reverse;
+        }
+        
+        .profile-3d {
+            width: 350px;
+            height: 350px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .profile-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 8px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            transform: translateZ(20px);
+        }
+        }
+        
+        /* PROJECTS SECTION */
+        .projects-section {
+            padding: 100px 0;
+            background-color: #f8fafc;
+        }
+        
+        .project-card {
+            border: none; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            transition: all 0.3s ease;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .project-card:hover { 
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        }
+        
+        .project-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .project-title {
+            color: #1e293b;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .project-description {
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tech-badge {
+            background: #e0e7ff;
+            color: #667eea;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin: 0.25rem;
+            display: inline-block;
+        }
+        
+        .project-links {
+            margin-top: 1rem;
+        }
+        
+        .project-link {
+            color: #667eea;
+            font-weight: 600;
+            text-decoration: none;
+            margin-right: 1rem;
+        }
+        
+        .project-link:hover {
+            color: #764ba2;
+            text-decoration: none;
+        }
+        
+        /* CONTACT SECTION */
+        .contact-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+        
+        .contact-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .contact-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+        
+        .contact-item {
+            text-align: center;
+        }
+        
+        .contact-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .contact-text {
+            font-weight: 600;
+        }
+        
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 768px) {
+            .hero-section {
+                text-align: center;
+                padding-top: 100px;
+            }
+            
+            .profile-3d {
+                width: 250px;
+                height: 250px;
+                margin-bottom: 2rem;
+            }
+            
+            .section-title {
+                font-size: 2.5rem;
+            }
+            
+            .contact-title {
+                font-size: 2.5rem;
+            }
+            
+            .contact-info {
+                gap: 2rem;
+            }
+            
+            .btn-hero {
+                display: block;
+                margin-bottom: 1rem;
+            }
+            
+            .card-3d:hover { 
+                transform: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .contact-title {
+                font-size: 2rem;
+            }
+            
+            .profile-3d {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .about-text {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Enhanced Navigation - EXACT MATCH TO REACT -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">${data.name}</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#experience">Experience</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#skills">Skills</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                    ${data.resume ? `
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light btn-sm ms-2" href="${data.resume}" target="_blank">
+                            Download Resume
+                        </a>
+                    </li>` : ''}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Enhanced Hero Section - EXACT MATCH TO REACT -->
+    <section class="hero-section">
+        <!-- 3D Background Elements -->
+        <div class="hero-bg-element" style="top: 20%; left: 10%; width: 100px; height: 100px;"></div>
+        <div class="hero-bg-element small"></div>
+
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div style="animation: slideIn3d 1s ease-out">
+                        <h1 style="font-size: 3.5rem; font-weight: 700; margin-bottom: 1rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+                            Hi, I'm ${data.name}
+                        </h1>
+                        <h2 style="font-size: 1.8rem; margin-bottom: 2rem; opacity: 0.9; font-weight: 400;">
+                            ${data.title || 'Professional Developer'}
+                        </h2>
+                        <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.8; line-height: 1.6;">
+                            ${data.about || 'Passionate developer creating amazing digital experiences'}
+                        </p>
+                        <div style="margin-bottom: 2rem;">
+                            <a href="#projects" class="btn-hero primary">View My Work</a>
+                            <a href="#contact" class="btn-hero outline">Get In Touch</a>
+                        </div>
+                        <!-- Social Links -->
+                        <div class="social-links">
+                            ${data.linkedin ? `<a href="${data.linkedin}" target="_blank">💼</a>` : ''}
+                            ${data.github ? `<a href="${data.github}" target="_blank">🔗</a>` : ''}
+                            ${data.website ? `<a href="${data.website}" target="_blank">🌐</a>` : ''}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 text-center">
+                    <div class="profile-3d">
+                        <img src="${data.profileImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face'}" 
+                             alt="${data.name}" class="profile-img">
+                        <div class="profile-status">✓</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section - EXACT MATCH TO REACT -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="text-center mb-5">
+                        <h2 class="section-title">About Me</h2>
+                        <div class="section-underline"></div>
+                    </div>
+                    <div class="card card-3d">
+                        <div class="card-body" style="padding: 3rem;">
+                            <p class="about-text">
+                                ${data.about || 'Passionate developer with expertise in creating scalable web applications using modern technologies.'}
+                            </p>
+                            <div class="row mt-4 text-center">
+                                <div class="col-md-3 stats-item">
+                                    <div class="stats-icon">📍</div>
+                                    <div class="stats-text">${data.location || 'Remote'}</div>
+                                </div>
+                                <div class="col-md-3 stats-item">
+                                    <div class="stats-icon">💼</div>
+                                    <div class="stats-text">5+ Years</div>
+                                </div>
+                                <div class="col-md-3 stats-item">
+                                    <div class="stats-icon">🏆</div>
+                                    <div class="stats-text">50+ Projects</div>
+                                </div>
+                                <div class="col-md-3 stats-item">
+                                    <div class="stats-icon">⭐</div>
+                                    <div class="stats-text">Top Rated</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section - EXACT MATCH TO REACT -->
+    <section id="experience" class="experience-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Professional Experience</h2>
+                <div class="section-underline"></div>
+            </div>
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    ${data.experience && data.experience.length > 0 ? data.experience.map(exp => `
+                    <div class="card experience-card">
+                        <div class="card-body" style="padding: 2.5rem;">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h4 class="experience-title">${exp.position}</h4>
+                                    <h5 class="experience-company">${exp.company} • ${exp.location || ''}</h5>
+                                    <p class="experience-description">${exp.description}</p>
+                                    ${exp.achievements ? `
+                                    <div>
+                                        <h6 style="color: #1e293b; font-weight: 600; margin-bottom: 1rem;">Key Achievements:</h6>
+                                        <ul style="color: #64748b;">
+                                            ${exp.achievements.map(achievement => `<li style="margin-bottom: 0.5rem;">${achievement}</li>`).join('')}
+                                        </ul>
+                                    </div>` : ''}
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <span class="experience-badge">${exp.duration}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    `).join('') : `
+                    <div class="card experience-card">
+                        <div class="card-body text-center" style="padding: 3rem;">
+                            <h4>Experience section will be displayed here</h4>
+                            <p class="text-muted">Add your professional experience to showcase your career journey</p>
+                        </div>
+                    </div>
+                    `}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section - EXACT MATCH TO REACT -->
+    <section id="skills" class="skills-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Skills & Expertise</h2>
+                <div class="section-underline"></div>
+            </div>
+            <div class="row">
+                ${data.skills && data.skills.length > 0 ? 
+                    (Array.isArray(data.skills) && typeof data.skills[0] === 'object' ? data.skills : 
+                     data.skills.filter(skill => skill.trim()).map((skill, index) => ({
+                         name: skill.trim(),
+                         level: 75 + (index % 4) * 5,
+                         category: index % 4 === 0 ? 'Frontend' : 
+                                   index % 4 === 1 ? 'Backend' : 
+                                   index % 4 === 2 ? 'Database' : 'DevOps'
+                     }))
+                    ).map(skill => `
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="skill-item">
+                            <div class="skill-name">${skill.name}</div>
+                            <div class="skill-level">${skill.category} • ${skill.level}%</div>
+                            <div class="progress">
+                                <div class="progress-bar" style="width: ${skill.level}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    `).join('') : `
+                    <div class="col-12 text-center">
+                        <div class="card">
+                            <div class="card-body" style="padding: 3rem;">
+                                <h4>Skills will be displayed here</h4>
+                                <p class="text-muted">Add your technical skills to showcase your expertise</p>
+                            </div>
+                        </div>
+                    </div>
+                `}
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section - EXACT MATCH TO REACT -->
+    <section id="projects" class="projects-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Featured Projects</h2>
+                <div class="section-underline"></div>
+            </div>
+            <div class="row">
+                ${data.projects && data.projects.length > 0 ? data.projects.map(project => `
+                <div class="col-lg-6 mb-4">
+                    <div class="card project-card">
+                        ${project.image ? `<img src="${project.image}" alt="${project.title}" class="project-img">` : ''}
+                        <div class="card-body" style="padding: 2rem;">
+                            <h4 class="project-title">${project.title}</h4>
+                            <p class="project-description">${project.description}</p>
+                            <div class="mb-3">
+                                ${project.tech ? (Array.isArray(project.tech) ? project.tech : project.tech.split(',').map(t => t.trim())).map(tech => `
+                                    <span class="tech-badge">${tech}</span>
+                                `).join('') : ''}
+                            </div>
+                            <div class="project-links">
+                                ${project.liveLink ? `<a href="${project.liveLink}" target="_blank" class="project-link">🌐 Live Demo</a>` : ''}
+                                ${project.githubLink ? `<a href="${project.githubLink}" target="_blank" class="project-link">💻 Code</a>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `).join('') : `
+                <div class="col-12 text-center">
+                    <div class="card">
+                        <div class="card-body" style="padding: 3rem;">
+                            <h4>Projects will be displayed here</h4>
+                            <p class="text-muted">Add your projects to showcase your work</p>
+                        </div>
+                    </div>
+                </div>
+                `}
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section - EXACT MATCH TO REACT -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <h2 class="contact-title">Let's Work Together</h2>
+            <p class="contact-subtitle">Ready to bring your ideas to life? Let's connect and create something amazing!</p>
+            
+            <div class="contact-info">
+                ${data.email ? `
+                <div class="contact-item">
+                    <span class="contact-icon">📧</span>
+                    <div class="contact-text">${data.email}</div>
+                </div>` : ''}
+                ${data.phone ? `
+                <div class="contact-item">
+                    <span class="contact-icon">📱</span>
+                    <div class="contact-text">${data.phone}</div>
+                </div>` : ''}
+                ${data.location ? `
+                <div class="contact-item">
+                    <span class="contact-icon">📍</span>
+                    <div class="contact-text">${data.location}</div>
+                </div>` : ''}
+            </div>
+
+            ${data.email ? `
+            <a href="mailto:${data.email}" class="btn-hero primary" style="font-size: 1.1rem; padding: 15px 40px;">
+                Start a Project
+            </a>` : ''}
+
+            <div style="margin-top: 3rem; opacity: 0.8;">
+                <p>&copy; ${new Date().getFullYear()} ${data.name}. All rights reserved.</p>
+                <small style="opacity: 0.6;">
+                    Powered by <a href="${getFrontendUrl()}" target="_blank" style="color: rgba(255,255,255,0.8);">Portfolio Generator</a>
+                </small>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Smooth scrolling and animations -->
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Animate progress bars on scroll
+        const observeProgressBars = () => {
+            const progressBars = document.querySelectorAll('.progress-bar');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const progressBar = entry.target;
+                        const width = progressBar.style.width;
+                        progressBar.style.width = '0%';
+                        setTimeout(() => {
+                            progressBar.style.width = width;
+                        }, 100);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            progressBars.forEach(bar => observer.observe(bar));
+        };
+
+        document.addEventListener('DOMContentLoaded', observeProgressBars);
+    </script>
+</body>
+</html>
+        .profile-status {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: #10b981;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            border: 4px solid white;
+            animation: float3d 4s ease-in-out infinite;
+        }
+        
+        .btn-hero {
+            font-weight: 600;
+            padding: 12px 30px;
+            border-radius: 25px;
+            margin-right: 1rem;
+            margin-bottom: 1rem;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-hero.primary {
+            background-color: white;
+            color: #667eea;
+        }
+        
+        .btn-hero.outline {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .btn-hero:hover {
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .social-links a:hover {
+            opacity: 1;
+            text-decoration: none;
+        }
+        
+        /* ABOUT SECTION */
+        .about-section {
+            padding: 100px 0;
+            background-color: white;
+        }
+        
+        .section-title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .section-underline {
+            width: 60px;
+            height: 4px;
+            background: #667eea;
+            margin: 0 auto 3rem auto;
+        }
+        
+        .card-3d { 
+            border: none; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .card-3d:hover { 
+            transform: rotateY(10deg) rotateX(5deg) translateZ(20px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+        }
+        
+        .about-text {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: #64748b;
+            text-align: center;
+        }
+        
+        .stats-item {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .stats-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stats-text {
+            font-weight: 600;
+            color: #1e293b;
+        }
+        
+        /* EXPERIENCE SECTION */
+        .experience-section {
+            padding: 100px 0;
+            background-color: #f8fafc;
+        }
+        
+        .experience-card {
+            border: none; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .experience-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .experience-title {
+            color: #1e293b;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .experience-company {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .experience-description {
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .experience-badge {
+            background: #667eea;
+            color: white;
+            font-size: 0.9rem;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        /* SKILLS SECTION */
+        .skills-section {
+            padding: 100px 0;
+            background-color: white;
+        }
+        
+        .skill-item {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 1.5rem; 
+            border-radius: 15px; 
+            margin-bottom: 1.5rem;
             transition: all 0.3s ease;
             border-left: 4px solid #667eea;
         }
         
         .skill-item:hover {
-            transform: translateZ(10px) rotateX(5deg);
-            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
             border-left-color: #764ba2;
+        }
+        
+        .skill-name {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+        
+        .skill-level {
+            color: #667eea;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
         }
         
         .progress {
             height: 8px;
             border-radius: 4px;
-            overflow: hidden;
             background: #e9ecef;
+            overflow: hidden;
         }
         
         .progress-bar {
             background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
             transition: width 2s ease-in-out;
-            animation: progressFill 2s ease-in-out;
         }
         
-        .skill-bar-3d {
-            transform-style: preserve-3d;
-            transition: transform 0.3s ease;
-        }
-        
-        .skill-bar-3d:hover {
-            transform: translateZ(10px) rotateX(5deg);
-        }
-        
-        @keyframes progressFill {
-            0% { width: 0% !important; }
-        }
-        
-        .card-3d { 
-            border: none; 
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1); 
-            transition: all 0.3s ease;
-            transform-style: preserve-3d;
-            border-radius: 15px;
-            overflow: hidden;
-        }
-        
-        .card-3d:hover { 
-            transform: rotateY(10deg) rotateX(5deg) translateZ(20px);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        /* PROJECTS SECTION */
+        .projects-section {
+            padding: 100px 0;
+            background-color: #f8fafc;
         }
         
         .project-card {
             border: none; 
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1); 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform-style: preserve-3d;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            transition: all 0.3s ease;
             border-radius: 15px;
             overflow: hidden;
-            position: relative;
+            margin-bottom: 2rem;
         }
         
-        .project-card::before {
-            content: '';
+        .project-card:hover { 
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        }
+        
+        .project-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .project-title {
+            color: #1e293b;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .project-description {
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tech-badge {
+            background: #e0e7ff;
+            color: #667eea;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin: 0.25rem;
+            display: inline-block;
+        }
+        
+        .project-links {
+            margin-top: 1rem;
+        }
+        
+        .project-link {
+            color: #667eea;
+            font-weight: 600;
+            text-decoration: none;
+            margin-right: 1rem;
+        }
+        
+        .project-link:hover {
+            color: #764ba2;
+            text-decoration: none;
+        }
+        
+        /* CONTACT SECTION */
+        .contact-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+        
+        .contact-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .contact-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+        
+        .contact-item {
+            text-align: center;
+        }
+        
+        .contact-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .contact-text {
+            font-weight: 600;
+        }
+        
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 768px) {
+            .hero-section {
+                text-align: center;
+                padding-top: 100px;
+            }
+            
+            .profile-3d {
+                width: 250px;
+                height: 250px;
+                margin-bottom: 2rem;
+            }
+            
+            .section-title {
+                font-size: 2.5rem;
+            }
+            
+            .contact-title {
+                font-size: 2.5rem;
+            }
+            
+            .contact-info {
+                gap: 2rem;
+            }
+            
+            .btn-hero {
+                display: block;
+                margin-bottom: 1rem;
+            }
+            
+            .card-3d:hover { 
+                transform: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .contact-title {
+                font-size: 2rem;
+            }
+            
+            .profile-3d {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .about-text {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Enhanced Navigation - EXACT MATCH TO REACT -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">${data.name}</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#experience">Experience</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#skills">Skills</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                    ${data.resume ? `
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light btn-sm ms-2" href="${data.resume}" target="_blank">
+                            Download Resume
+                        </a>
+                    </li>` : ''}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Enhanced Hero Section - EXACT MATCH TO REACT -->
+    <section class="hero-section">
+        <!-- 3D Background Elements -->
+        <div class="hero-bg-element" style="top: 20%; left: 10%; width: 100px; height: 100px;"></div>
+        <div class="hero-bg-element small"></div>
+
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div style="animation: slideIn3d 1s ease-out">
+                        <h1 style="font-size: 3.5rem; font-weight: 700; margin-bottom: 1rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+                            Hi, I'm ${data.name}
+                        </h1>
+                        <h2 style="font-size: 1.8rem; margin-bottom: 2rem; opacity: 0.9; font-weight: 400;">
+                            ${data.title || 'Professional Developer'}
+                        </h2>
+                        <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.8; line-height: 1.6;">
+                            ${data.about || 'Passionate developer creating amazing digital experiences'}
+                        </p>
+                        <div style="margin-bottom: 2rem;">
+                            <a href="#projects" class="btn-hero primary">View My Work</a>
+                            <a href="#contact" class="btn-hero outline">Get In Touch</a>
+                        </div>
+                        <!-- Social Links -->
+                        <div class="social-links">
+                            ${data.linkedin ? `<a href="${data.linkedin}" target="_blank">💼</a>` : ''}
+                            ${data.github ? `<a href="${data.github}" target="_blank">🔗</a>` : ''}
+                            ${data.website ? `<a href="${data.website}" target="_blank">🌐</a>` : ''}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 text-center">
+                    <div class="profile-3d">
+                        <img src="${data.profileImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face'}" 
+                             alt="${data.name}" class="profile-img">
+                        <div class="profile-status">✓</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section - EXACT MATCH TO REACT -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="text-center mb-5">
+                        <h2 class="section-title">About Me</h2>
+                        <div class="section-underline"></div>
+                    </div>
+                    <div class="card card-3d">
+                        <div class="card-body" style="padding: 3rem;">
+                            <p class="about-text">
+                                ${data.about || 'Passionate developer with expertise in creating scalable web applications using modern technologies.'}
+                            </p>
+                            <div class="row mt-4 text-center">
+                                <div class="col-md-3 stats-item">
+                                    <div class="stats-icon">📍</div>
+                                    <div class="stats-text">${data.location || 'Remote'}</div>
+                                </div>
+                                <div class="col-md-3 stats-item">
+                                    <div class="stats-icon">💼</div>
+                                    <div class="stats-text">5+ Years</div>
+                                </div>
+                                <div class="col-md-3 stats-item">
+                                    <div class="stats-icon">🏆</div>
+                                    <div class="stats-text">50+ Projects</div>
+                                </div>
+                                <div class="col-md-3 stats-item">
+                                    <div class="stats-icon">⭐</div>
+                                    <div class="stats-text">Top Rated</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section - EXACT MATCH TO REACT -->
+    <section id="experience" class="experience-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Professional Experience</h2>
+                <div class="section-underline"></div>
+            </div>
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    ${data.experience && data.experience.length > 0 ? data.experience.map(exp => `
+                    <div class="card experience-card">
+                        <div class="card-body" style="padding: 2.5rem;">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h4 class="experience-title">${exp.position}</h4>
+                                    <h5 class="experience-company">${exp.company} • ${exp.location || ''}</h5>
+                                    <p class="experience-description">${exp.description}</p>
+                                    ${exp.achievements ? `
+                                    <div>
+                                        <h6 style="color: #1e293b; font-weight: 600; margin-bottom: 1rem;">Key Achievements:</h6>
+                                        <ul style="color: #64748b;">
+                                            ${exp.achievements.map(achievement => `<li style="margin-bottom: 0.5rem;">${achievement}</li>`).join('')}
+                                        </ul>
+                                    </div>` : ''}
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <span class="experience-badge">${exp.duration}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    `).join('') : `
+                    <div class="card experience-card">
+                        <div class="card-body text-center" style="padding: 3rem;">
+                            <h4>Experience section will be displayed here</h4>
+                            <p class="text-muted">Add your professional experience to showcase your career journey</p>
+                        </div>
+                    </div>
+                    `}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section - EXACT MATCH TO REACT -->
+    <section id="skills" class="skills-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Skills & Expertise</h2>
+                <div class="section-underline"></div>
+            </div>
+            <div class="row">
+                ${data.skills && data.skills.length > 0 ? 
+                    (Array.isArray(data.skills) && typeof data.skills[0] === 'object' ? data.skills : 
+                     data.skills.filter(skill => skill.trim()).map((skill, index) => ({
+                         name: skill.trim(),
+                         level: 75 + (index % 4) * 5,
+                         category: index % 4 === 0 ? 'Frontend' : 
+                                   index % 4 === 1 ? 'Backend' : 
+                                   index % 4 === 2 ? 'Database' : 'DevOps'
+                     }))
+                    ).map(skill => `
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="skill-item">
+                            <div class="skill-name">${skill.name}</div>
+                            <div class="skill-level">${skill.category} • ${skill.level}%</div>
+                            <div class="progress">
+                                <div class="progress-bar" style="width: ${skill.level}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    `).join('') : `
+                    <div class="col-12 text-center">
+                        <div class="card">
+                            <div class="card-body" style="padding: 3rem;">
+                                <h4>Skills will be displayed here</h4>
+                                <p class="text-muted">Add your technical skills to showcase your expertise</p>
+                            </div>
+                        </div>
+                    </div>
+                `}
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section - EXACT MATCH TO REACT -->
+    <section id="projects" class="projects-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Featured Projects</h2>
+                <div class="section-underline"></div>
+            </div>
+            <div class="row">
+                ${data.projects && data.projects.length > 0 ? data.projects.map(project => `
+                <div class="col-lg-6 mb-4">
+                    <div class="card project-card">
+                        ${project.image ? `<img src="${project.image}" alt="${project.title}" class="project-img">` : ''}
+                        <div class="card-body" style="padding: 2rem;">
+                            <h4 class="project-title">${project.title}</h4>
+                            <p class="project-description">${project.description}</p>
+                            <div class="mb-3">
+                                ${project.tech ? (Array.isArray(project.tech) ? project.tech : project.tech.split(',').map(t => t.trim())).map(tech => `
+                                    <span class="tech-badge">${tech}</span>
+                                `).join('') : ''}
+                            </div>
+                            <div class="project-links">
+                                ${project.liveLink ? `<a href="${project.liveLink}" target="_blank" class="project-link">🌐 Live Demo</a>` : ''}
+                                ${project.githubLink ? `<a href="${project.githubLink}" target="_blank" class="project-link">💻 Code</a>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `).join('') : `
+                <div class="col-12 text-center">
+                    <div class="card">
+                        <div class="card-body" style="padding: 3rem;">
+                            <h4>Projects will be displayed here</h4>
+                            <p class="text-muted">Add your projects to showcase your work</p>
+                        </div>
+                    </div>
+                </div>
+                `}
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section - EXACT MATCH TO REACT -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <h2 class="contact-title">Let's Work Together</h2>
+            <p class="contact-subtitle">Ready to bring your ideas to life? Let's connect and create something amazing!</p>
+            
+            <div class="contact-info">
+                ${data.email ? `
+                <div class="contact-item">
+                    <span class="contact-icon">📧</span>
+                    <div class="contact-text">${data.email}</div>
+                </div>` : ''}
+                ${data.phone ? `
+                <div class="contact-item">
+                    <span class="contact-icon">📱</span>
+                    <div class="contact-text">${data.phone}</div>
+                </div>` : ''}
+                ${data.location ? `
+                <div class="contact-item">
+                    <span class="contact-icon">📍</span>
+                    <div class="contact-text">${data.location}</div>
+                </div>` : ''}
+            </div>
+
+            ${data.email ? `
+            <a href="mailto:${data.email}" class="btn-hero primary" style="font-size: 1.1rem; padding: 15px 40px;">
+                Start a Project
+            </a>` : ''}
+
+            <div style="margin-top: 3rem; opacity: 0.8;">
+                <p>&copy; ${new Date().getFullYear()} ${data.name}. All rights reserved.</p>
+                <small style="opacity: 0.6;">
+                    Powered by <a href="${getFrontendUrl()}" target="_blank" style="color: rgba(255,255,255,0.8);">Portfolio Generator</a>
+                </small>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Smooth scrolling and animations -->
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Animate progress bars on scroll
+        const observeProgressBars = () => {
+            const progressBars = document.querySelectorAll('.progress-bar');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const progressBar = entry.target;
+                        const width = progressBar.style.width;
+                        progressBar.style.width = '0%';
+                        setTimeout(() => {
+                            progressBar.style.width = width;
+                        }, 100);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            progressBars.forEach(bar => observer.observe(bar));
+        };
+
+        document.addEventListener('DOMContentLoaded', observeProgressBars);
+    </script>
+</body>
+</html>
             position: absolute;
             top: 0;
             left: 0;
@@ -1038,6 +2363,7 @@ function generateTemplate1HTML(data, meta) {
 </body>
 </html>
     `;
+    return html;
 }
 
 function generateTemplate2HTML(data, meta) {
@@ -3370,4 +4696,483 @@ function generateTemplate4HTML(data, meta) {
         background-color: white;
     ">
         <div style="
-       
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
+        ">
+            <h2 style="
+                font-size: 2.5rem;
+                font-weight: 400;
+                color: #000000;
+                margin-bottom: 2rem;
+                letter-spacing: -1px;
+            ">
+                Selected Work
+            </h2>
+            <div style="
+                width: 60px;
+                height: 1px;
+                background: #000000;
+                margin: 2rem auto 4rem auto;
+            "></div>
+            
+            <!-- Project Grid -->
+            <div style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 3rem;
+                margin-top: 4rem;
+            ">
+                ${data.projects.map(project => `
+                <div style="
+                    text-align: left;
+                    background: #fafafa;
+                    padding: 0;
+                    border: 1px solid #f0f0f0;
+                    transition: all 0.3s ease;
+                    overflow: hidden;
+                ">
+                    ${project.image ? `
+                    <div style="
+                        width: 100%;
+                        height: 250px;
+                        background-image: url('${project.image}');
+                        background-size: cover;
+                        background-position: center;
+                        margin-bottom: 2rem;
+                    "></div>
+                    ` : ''}
+                    
+                    <div style="padding: 2rem;">
+                        <h3 style="
+                            font-size: 1.3rem;
+                            font-weight: 600;
+                            color: #000000;
+                            margin-bottom: 1rem;
+                        ">${project.title || project.name || 'Project'}</h3>
+                        
+                        <p style="
+                            font-size: 1rem;
+                            font-weight: 300;
+                            line-height: 1.6;
+                            color: #666666;
+                            margin-bottom: 1.5rem;
+                        ">${project.description || ''}</p>
+                        
+                        ${project.tech && project.tech.length > 0 ? `
+                        <div style="
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 0.5rem;
+                            margin-bottom: 1.5rem;
+                        ">
+                            ${project.tech.map(tech => `
+                            <span style="
+                                font-size: 0.8rem;
+                                font-weight: 300;
+                                color: #888888;
+                                background: #f8f8f8;
+                                padding: 0.3rem 0.8rem;
+                                border-radius: 0;
+                                text-transform: uppercase;
+                                letter-spacing: 0.5px;
+                            ">${tech}</span>
+                            `).join('')}
+                        </div>
+                        ` : ''}
+                        
+                        <div style="
+                            display: flex;
+                            gap: 1rem;
+                        ">
+                            ${project.demo || project.liveLink ? `
+                            <a href="${project.demo || project.liveLink}" target="_blank" style="
+                                color: #000000;
+                                text-decoration: none;
+                                font-size: 0.8rem;
+                                font-weight: 400;
+                                text-transform: uppercase;
+                                letter-spacing: 1px;
+                                border-bottom: 1px solid #000000;
+                                padding-bottom: 2px;
+                                transition: all 0.3s ease;
+                            ">View Live</a>
+                            ` : ''}
+                            
+                            ${project.github || project.source ? `
+                            <a href="${project.github || project.source}" target="_blank" style="
+                                color: #666666;
+                                text-decoration: none;
+                                font-size: 0.8rem;
+                                font-weight: 400;
+                                text-transform: uppercase;
+                                letter-spacing: 1px;
+                                border-bottom: 1px solid #666666;
+                                padding-bottom: 2px;
+                                transition: all 0.3s ease;
+                            ">View Code</a>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+                `).join('')}
+            </div>
+        </div>
+    </section>
+    ` : ''}
+
+    <!-- Education Section -->
+    ${data.education && data.education.length > 0 ? `
+    <section style="
+        padding: 120px 0;
+        background-color: #fafafa;
+    ">
+        <div style="
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        ">
+            <h2 style="
+                font-size: 2.5rem;
+                font-weight: 400;
+                color: #000000;
+                margin-bottom: 2rem;
+                letter-spacing: -1px;
+                text-align: center;
+            ">Education</h2>
+            <div style="
+                width: 60px;
+                height: 1px;
+                background: #000000;
+                margin: 2rem auto 4rem auto;
+            "></div>
+            
+            ${data.education.map(edu => `
+            <div style="
+                margin-bottom: 3rem;
+                padding: 3rem;
+                background: white;
+                border: 1px solid #f0f0f0;
+                transition: all 0.3s ease;
+            ">
+                <div style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    margin-bottom: 1.5rem;
+                    flex-wrap: wrap;
+                    gap: 1rem;
+                ">
+                    <div>
+                        <h3 style="
+                            font-size: 1.4rem;
+                            font-weight: 600;
+                            color: #000000;
+                            margin-bottom: 0.5rem;
+                        ">${edu.degree || edu.institution || 'Education'}</h3>
+                        <h4 style="
+                            font-size: 1.1rem;
+                            font-weight: 300;
+                            color: #666666;
+                            margin-bottom: 0.5rem;
+                        ">${edu.school || edu.institution || ''}</h4>
+                        ${edu.location ? `
+                        <p style="
+                            font-size: 0.9rem;
+                            color: #999999;
+                            margin: 0;
+                        ">${edu.location}</p>
+                        ` : ''}
+                    </div>
+                    <div style="
+                        text-align: right;
+                        font-size: 0.9rem;
+                        color: #666666;
+                        font-weight: 300;
+                    ">
+                        ${edu.duration || ''}
+                    </div>
+                </div>
+                
+                ${edu.fieldOfStudy ? `
+                <p style="
+                    font-size: 0.9rem;
+                    color: #888888;
+                    margin-bottom: 1rem;
+                    font-weight: 300;
+                ">Field of Study: ${edu.fieldOfStudy}</p>
+                ` : ''}
+                
+                ${edu.gpa ? `
+                <p style="
+                    font-size: 0.9rem;
+                    color: #888888;
+                    margin-bottom: 1rem;
+                    font-weight: 300;
+                ">GPA: ${edu.gpa}</p>
+                ` : ''}
+                
+                ${edu.description ? `
+                <p style="
+                    font-size: 1rem;
+                    font-weight: 300;
+                    line-height: 1.6;
+                    color: #555555;
+                    margin: 0;
+                ">${edu.description}</p>
+                ` : ''}
+            </div>
+            `).join('')}
+        </div>
+    </section>
+    ` : ''}
+
+
+
+    <!-- Projects Section -->
+    ${data.projects && data.projects.length > 0 ? `
+    <section id="work" style="
+        padding: 120px 0;
+        background-color: white;
+    ">
+        <div style="
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
+        ">
+            <h2 style="
+                font-size: 2.5rem;
+                font-weight: 400;
+                color: #000000;
+                margin-bottom: 2rem;
+                letter-spacing: -1px;
+            ">
+                Selected Work
+            </h2>
+            <div style="
+                width: 60px;
+                height: 1px;
+                background: #000000;
+                margin: 2rem auto 4rem auto;
+            "></div>
+            
+            <!-- Project Grid -->
+            <div style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 3rem;
+                margin-top: 4rem;
+            ">
+                ${data.projects.map(project => `
+                <div style="
+                    text-align: left;
+                    border: 1px solid #f0f0f0;
+                    transition: all 0.3s ease;
+                    padding: 0;
+                    background: white;
+                ">
+                    ${project.image ? `
+                    <div style="
+                        width: 100%;
+                        height: 250px;
+                        overflow: hidden;
+                        background: #f8f8f8;
+                    ">
+                        <img src="${project.image}" alt="${project.title}" style="
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                            transition: transform 0.3s ease;
+                        ">
+                    </div>
+                    ` : ''}
+                    <div style="padding: 2rem;">
+                        <h3 style="
+                            font-size: 1.3rem;
+                            font-weight: 600;
+                            color: #000000;
+                            margin-bottom: 1rem;
+                            letter-spacing: -0.5px;
+                        ">${project.title}</h3>
+                        <p style="
+                            font-size: 0.95rem;
+                            font-weight: 300;
+                            color: #666666;
+                            line-height: 1.6;
+                            margin-bottom: 1.5rem;
+                        ">${project.description}</p>
+                        ${project.technologies ? `
+                        <div style="
+                            margin-bottom: 1.5rem;
+                        ">
+                            <div style="
+                                display: flex;
+                                flex-wrap: wrap;
+                                gap: 0.5rem;
+                            ">
+                                ${Array.isArray(project.technologies) ? project.technologies.map(tech => `
+                                <span style="
+                                    font-size: 0.75rem;
+                                    color: #666666;
+                                    background: #f8f8f8;
+                                    padding: 0.3rem 0.8rem;
+                                    border-radius: 2px;
+                                    font-weight: 400;
+                                    text-transform: uppercase;
+                                    letter-spacing: 0.5px;
+                                ">${tech}</span>
+                                `).join('') : `<span style="color: #666666; font-size: 0.9rem;">${project.technologies}</span>`}
+                            </div>
+                        </div>
+                        ` : ''}
+                        <div style="display: flex; gap: 1rem;">
+                            ${project.liveLink || project.demo ? `
+                            <a href="${project.liveLink || project.demo}" target="_blank" style="
+                                color: #000000;
+                                text-decoration: none;
+                                font-size: 0.8rem;
+                                font-weight: 400;
+                                text-transform: uppercase;
+                                letter-spacing: 1px;
+                                border-bottom: 1px solid #000000;
+                                padding-bottom: 2px;
+                                transition: all 0.3s ease;
+                            ">Live Demo</a>
+                            ` : ''}
+                            ${project.github ? `
+                            <a href="${project.github}" target="_blank" style="
+                                color: #000000;
+                                text-decoration: none;
+                                font-size: 0.8rem;
+                                font-weight: 400;
+                                text-transform: uppercase;
+                                letter-spacing: 1px;
+                                border-bottom: 1px solid #000000;
+                                padding-bottom: 2px;
+                                transition: all 0.3s ease;
+                            ">GitHub</a>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+                `).join('')}
+            </div>
+        </div>
+    </section>
+    ` : ''}
+
+
+
+    <!-- Internships Section -->
+    ${(data.internships && Array.isArray(data.internships) && data.internships.length > 0) || (data.internship && Array.isArray(data.internship) && data.internship.length > 0) ? `
+    <section style="
+        padding: 120px 0;
+        background-color: white;
+    ">
+        <div style="
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        ">
+            <h2 style="
+                font-size: 2.5rem;
+                font-weight: 400;
+                color: #000000;
+                margin-bottom: 2rem;
+                letter-spacing: -1px;
+                text-align: center;
+            ">Internships</h2>
+            <div style="
+                width: 60px;
+                height: 1px;
+                background: #000000;
+                margin: 2rem auto 4rem auto;
+            "></div>
+            
+            ${(data.internships || data.internship).map(internship => `
+            <div style="
+                margin-bottom: 4rem;
+                padding: 3rem;
+                border: 1px solid #f0f0f0;
+                background: #fafafa;
+                transition: all 0.3s ease;
+            ">
+                <div style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    margin-bottom: 2rem;
+                    flex-wrap: wrap;
+                    gap: 1rem;
+                ">
+                    <div>
+                        <h3 style="
+                            font-size: 1.5rem;
+                            font-weight: 600;
+                            color: #000000;
+                            margin-bottom: 0.5rem;
+                        ">${internship.position || internship.role || 'Position'}</h3>
+                        <h4 style="
+                            font-size: 1.2rem;
+                            font-weight: 300;
+                            color: #666666;
+                            margin-bottom: 0.5rem;
+                        ">${internship.company || internship.organization || 'Company'}</h4>
+                        ${internship.location ? `
+                        <p style="
+                            font-size: 0.9rem;
+                            color: #999999;
+                            margin: 0;
+                        ">${internship.location}</p>
+                        ` : ''}
+                    </div>
+                    <div style="
+                        text-align: right;
+                        font-size: 0.9rem;
+                        color: #666666;
+                        font-weight: 300;
+                    ">
+                        ${internship.duration || ''}
+                    </div>
+                </div>
+                
+                ${internship.description ? `
+                <p style="
+                    font-size: 1rem;
+                    font-weight: 300;
+                    line-height: 1.6;
+                    color: #555555;
+                    margin-bottom: 2rem;
+                ">${internship.description}</p>
+                ` : ''}
+                
+                ${internship.achievements && internship.achievements.length > 0 ? `
+                <div>
+                    <h6 style="
+                        font-size: 0.9rem;
+                        font-weight: 500;
+                        color: #000000;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        margin-bottom: 1rem;
+                    ">Key Achievements</h6>
+                    <div style="
+                        display: grid;
+                        gap: 0.5rem;
+                    ">
+                        ${internship.achievements.map(achievement => `
+                        <div style="
+                            font-size: 0.95rem;
+                            color: #666666;
+                            padding-left: 1rem;
+                            position: relative;
+                        ">
+                            <span style="
+                                position: absolute;
+                                left: 0;
+                                top: 0.2rem;
+                                width: 4px;
+                                height: 4px;
+                   
