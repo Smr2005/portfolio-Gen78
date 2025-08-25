@@ -206,9 +206,10 @@ if (process.env.NODE_ENV === 'production' || process.env.PORT) {
         }
     });
 
-    // SPA fallback for React Router deep links (e.g., /p/:slug)
+    // Redirect old React route to universal SSR URL so links work everywhere
     app.get('/p/:slug', (req, res) => {
-        res.sendFile(path.join(buildPath, 'index.html'));
+        const { slug } = req.params;
+        return res.redirect(302, `/portfolio/${slug}`);
     });
 }
 
@@ -3370,11 +3371,4 @@ function generateTemplate4HTML(data, meta) {
     ">
         <div style="
             max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            text-align: center;
-        ">
-            <h2 style="
-                font-size: 2.5rem;
-                font-weight: 400;
- 
+            margin: 0 au
