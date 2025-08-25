@@ -67,9 +67,9 @@ const PortfolioDashboard = () => {
       const data = await response.json();
 
       if (response.ok) {
-        const reactUrl = data.reactPublishedUrl || `${window.location.origin}/p/${data.slug}`;
-        try { if (navigator.clipboard && reactUrl) { navigator.clipboard.writeText(reactUrl); } } catch (e) { /* ignore */ }
-        setSuccess(`Portfolio published successfully! React URL (matches preview): ${reactUrl}`);
+        const shareUrl = data.publishedUrl || data.reactPublishedUrl || `${window.location.origin}/portfolio/${data.slug}`;
+        try { if (navigator.clipboard && shareUrl) { navigator.clipboard.writeText(shareUrl); } } catch (e) { /* ignore */ }
+        setSuccess(`Portfolio published successfully! Share URL: ${shareUrl}`);
         fetchPortfolio(); // Refresh portfolio data
       } else {
         setError(data.error || 'Failed to publish portfolio');
@@ -256,7 +256,7 @@ const PortfolioDashboard = () => {
             <Card.Body>
               <div className="d-flex align-items-center">
                 <code className="me-3">
-                  {window.location.origin}/p/{portfolio.slug}
+                  {window.location.origin}/portfolio/{portfolio.slug}
                 </code>
                 <Button 
                   variant="outline-secondary" 
@@ -271,7 +271,7 @@ const PortfolioDashboard = () => {
                   <Button 
                     variant="outline-primary" 
                     size="sm"
-                    onClick={() => window.open(`${window.location.origin}/p/${portfolio.slug}`, '_blank')}
+                    onClick={() => window.open(`${window.location.origin}/portfolio/${portfolio.slug}`, '_blank')}
                   >
                     View Live Portfolio
                   </Button>
@@ -356,7 +356,7 @@ const PortfolioDashboard = () => {
               <Form.Label>Custom URL</Form.Label>
               <div className="input-group">
                 <span className="input-group-text">
-                  {window.location.origin}/p/
+                  {window.location.origin}/portfolio/
                 </span>
                 <Form.Control
                   type="text"
