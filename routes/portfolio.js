@@ -13,6 +13,15 @@ function getBaseUrl(req) {
            : `${req.protocol}://${req.get('host')}`);
 }
 
+// Helper function to generate correct frontend URL for React routes
+function getFrontendUrl(req) {
+  // Prefer explicit FRONTEND_URL; fallback to same origin in production or localhost:3000 in dev
+  if (process.env.FRONTEND_URL) return process.env.FRONTEND_URL;
+  return (process.env.NODE_ENV === 'production' || process.env.PORT)
+    ? 'https://portfolio-gen-i1bg.onrender.com'
+    : 'http://localhost:3000';
+}
+
 // Helper function to ensure data URLs are properly formatted (files are now stored as base64 data URLs)
 function ensureDataUrls(data) {
   // Files are now stored as data URLs (data:image/jpeg;base64,xxx), no conversion needed
@@ -404,6 +413,7 @@ router.post("/save", verifyAccessToken, async (req, res) => {
     }
     
     const baseUrl = getBaseUrl(req);
+    const frontendUrl = getFrontendUrl(req);
     
     res.json({
       message: "Portfolio saved successfully",
@@ -412,7 +422,8 @@ router.post("/save", verifyAccessToken, async (req, res) => {
         slug: portfolio.slug,
         templateId: portfolio.templateId,
         isPublished: portfolio.isPublished,
-        publishedUrl: portfolio.isPublished ? `${baseUrl}/portfolio/${portfolio.slug}` : null
+        publishedUrl: portfolio.isPublished ? `${baseUrl}/portfolio/${portfolio.slug}` : null,
+        reactPublishedUrl: portfolio.isPublished ? `${frontendUrl}/p/${portfolio.slug}` : null
       }
     });
     
@@ -450,22 +461,25 @@ router.post("/publish", verifyAccessToken, async (req, res) => {
     await portfolio.save();
     
     const baseUrl = getBaseUrl(req);
+    const frontendUrl = getFrontendUrl(req);
     const publishedUrl = `${baseUrl}/portfolio/${portfolio.slug}`;
+    const reactPublishedUrl = `${frontendUrl}/p/${portfolio.slug}`;
     
     // Send publication success email
     try {
-      await sendPublicationEmail(user, portfolio, publishedUrl);
+      await sendPublicationEmail(user, portfolio, reactPublishedUrl);
       console.log("Publication email sent to:", user.email);
     } catch (emailError) {
       console.error("Failed to send publication email:", emailError);
       // Don't fail the request if email fails
     }
     
-    console.log("Portfolio published:", publishedUrl);
+    console.log("Portfolio published:", { publishedUrl, reactPublishedUrl });
     
     res.json({
-      message: "Portfolio published successfully! Check your email for the published link.",
-      publishedUrl,
+      message: "Portfolio published successfully!",
+      publishedUrl, // legacy static HTML
+      reactPublishedUrl, // React-rendered version (matches preview exactly)
       slug: portfolio.slug
     });
     

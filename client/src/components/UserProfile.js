@@ -332,7 +332,7 @@ const UserProfile = () => {
                                       variant="outline-info" 
                                       size="sm" 
                                       className="me-1"
-                                      onClick={() => window.open(`/portfolio/${portfolio.slug}`, '_blank')}
+                                      onClick={() => window.open(`/p/${portfolio.slug}`, '_blank')}
                                     >
                                       View
                                     </Button>

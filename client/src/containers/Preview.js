@@ -55,21 +55,24 @@ function Preview() {
   const template = templateData[templateId] || templateData.template1;
 
   const renderTemplate = () => {
+    // Preview should reflect current builder data if available in history state
+    const userData = history.location.state?.userData || null;
+    const props = { isPreview: true, userData };
     switch(templateId) {
       case 'template1':
-        return <Template1 isPreview={true} />;
+        return <Template1 {...props} />;
       case 'template2':
-        return <Template2 isPreview={true} />;
+        return <Template2 {...props} />;
       case 'template3':
-        return <Template3 isPreview={true} />;
+        return <Template3 {...props} />;
       case 'template4':
-        return <Template4 isPreview={true} />;
+        return <Template4 {...props} />;
       case 'template5':
-        return <Template5 isPreview={true} />;
+        return <Template5 {...props} />;
       case 'template6':
-        return <Template6 isPreview={true} />;
+        return <Template6 {...props} />;
       default:
-        return <Template1 isPreview={true} />;
+        return <Template1 {...props} />;
     }
   };
 

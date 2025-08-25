@@ -67,7 +67,9 @@ const PortfolioDashboard = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setSuccess(`Portfolio published successfully! Your portfolio is now live at: ${data.publishedUrl}`);
+        const reactUrl = data.reactPublishedUrl || `${window.location.origin}/p/${data.slug}`;
+        try { if (navigator.clipboard && reactUrl) { navigator.clipboard.writeText(reactUrl); } } catch (e) { /* ignore */ }
+        setSuccess(`Portfolio published successfully! React URL (matches preview): ${reactUrl}`);
         fetchPortfolio(); // Refresh portfolio data
       } else {
         setError(data.error || 'Failed to publish portfolio');
@@ -254,7 +256,7 @@ const PortfolioDashboard = () => {
             <Card.Body>
               <div className="d-flex align-items-center">
                 <code className="me-3">
-                  {window.location.origin.replace(':3000', ':5000')}/portfolio/{portfolio.slug}
+                  {window.location.origin}/p/{portfolio.slug}
                 </code>
                 <Button 
                   variant="outline-secondary" 
@@ -269,7 +271,7 @@ const PortfolioDashboard = () => {
                   <Button 
                     variant="outline-primary" 
                     size="sm"
-                    onClick={() => window.open(`${window.location.origin.replace(':3000', ':5000')}/portfolio/${portfolio.slug}`, '_blank')}
+                    onClick={() => window.open(`${window.location.origin}/p/${portfolio.slug}`, '_blank')}
                   >
                     View Live Portfolio
                   </Button>
@@ -354,7 +356,7 @@ const PortfolioDashboard = () => {
               <Form.Label>Custom URL</Form.Label>
               <div className="input-group">
                 <span className="input-group-text">
-                  {window.location.origin.replace(':3000', ':5000')}/portfolio/
+                  {window.location.origin}/p/
                 </span>
                 <Form.Control
                   type="text"

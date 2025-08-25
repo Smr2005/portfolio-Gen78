@@ -269,12 +269,14 @@ function Builder() {
       const data = await response.json();
 
       if (response.ok) {
-        setPublishedUrl(data.publishedUrl);
+        const reactUrl = data.reactPublishedUrl || `${window.location.origin}/p/${data.slug}`;
+        setPublishedUrl(reactUrl);
+        try { if (navigator.clipboard && reactUrl) { navigator.clipboard.writeText(reactUrl); } } catch (e) { /* ignore */ }
         setSaved(true); // Show save confirmation
         setTimeout(() => setSaved(false), 3000);
         
-alert(`🎉 Published! View at: ${data.publishedUrl}`);
-        console.log('🎉 Portfolio published successfully:', data.publishedUrl);
+alert(`🎉 Published! View at: ${reactUrl}`);
+        console.log('🎉 Portfolio published successfully:', reactUrl);
       } else {
         setError(data.error || 'Failed to publish portfolio');
       }

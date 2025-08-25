@@ -605,7 +605,10 @@ function WorkingBuilder() {
 
       if (response.ok) {
         setPublished(true);
-        setPublishedUrl(data.publishedUrl);
+        const reactUrl = data.reactPublishedUrl || `${window.location.origin}/p/${data.slug}`;
+        const legacyUrl = data.publishedUrl;
+        setPublishedUrl(reactUrl);
+        try { if (navigator.clipboard && reactUrl) { navigator.clipboard.writeText(reactUrl); } } catch (e) { /* ignore */ }
         setTimeout(() => setPublished(false), 5000);
       } else {
         const errorMsg = typeof data.error === 'string' ? data.error : data.error?.message || data.message || 'Failed to publish portfolio';
@@ -687,7 +690,8 @@ function WorkingBuilder() {
           <Alert variant="success">
             <h5>🎉 Portfolio Published Successfully!</h5>
             <p>Your portfolio is now live and accessible to everyone!</p>
-            <p><strong>Published URL:</strong> <a href={publishedUrl} target="_blank" rel="noopener noreferrer">{publishedUrl}</a></p>
+            <p><strong>React URL (matches preview):</strong> <a href={publishedUrl} target="_blank" rel="noopener noreferrer">{publishedUrl}</a></p>
+            <p><small>Link copied to clipboard for easy sharing. 📋</small></p>
             <p><small>📧 A detailed email with your portfolio link and sharing options has been sent to your email address.</small></p>
           </Alert>
         )}
