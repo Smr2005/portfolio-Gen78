@@ -423,7 +423,7 @@ router.post("/save", verifyAccessToken, async (req, res) => {
         templateId: portfolio.templateId,
         isPublished: portfolio.isPublished,
         publishedUrl: portfolio.isPublished ? `${baseUrl}/portfolio/${portfolio.slug}` : null,
-        reactPublishedUrl: portfolio.isPublished ? `${frontendUrl}/p/${portfolio.slug}` : null
+        reactPublishedUrl: portfolio.isPublished ? `${frontendUrl}/portfolio/${portfolio.slug}` : null
       }
     });
     
@@ -463,7 +463,7 @@ router.post("/publish", verifyAccessToken, async (req, res) => {
     const baseUrl = getBaseUrl(req);
     const frontendUrl = getFrontendUrl(req);
     const publishedUrl = `${baseUrl}/portfolio/${portfolio.slug}`;
-    const reactPublishedUrl = `${frontendUrl}/p/${portfolio.slug}`;
+    const reactPublishedUrl = `${frontendUrl}/portfolio/${portfolio.slug}`;
     
     // Send publication success email with universal SSR URL
     try {
