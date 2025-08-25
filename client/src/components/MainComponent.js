@@ -42,7 +42,7 @@ function Main (){
                 <Route exact path="/preview/:templateId" component={Preview} />
                 <Route exact path="/builder" component={TestBuilder} />
                 <Route exact path="/full-builder" component={WorkingBuilder} />
-                <Route exact path="/p/:slug" component={require('../containers/PublishedViewer').default} />
+                <Route exact path="/portfolio/:slug" component={require('../containers/PublishedViewer').default} />
                 <Route exact path="/dashboard" component={PortfolioDashboard} />
                 <Route exact path="/admin" component={AdminPanel} />
                 <Route exact path="/profile" component={UserProfileClean} />

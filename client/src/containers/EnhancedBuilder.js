@@ -493,7 +493,7 @@ function EnhancedBuilder() {
       const data = await response.json();
 
       if (response.ok) {
-        const reactUrl = data.reactPublishedUrl || `${window.location.origin}/p/${data.slug}`;
+        const reactUrl = data.publishedUrl || `${window.location.origin}/portfolio/${data.slug}`;
         setPublishedUrl(reactUrl);
         try { if (navigator.clipboard && reactUrl) { navigator.clipboard.writeText(reactUrl); } } catch (e) { /* ignore */ }
         setSaved(true); // Show save confirmation too
