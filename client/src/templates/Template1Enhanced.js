@@ -751,6 +751,13 @@ function Template1({ isPreview = false, userData = null }) {
                   height: '100%'
                 }}>
                   <Card.Body style={{ padding: '2rem', textAlign: 'center' }}>
+                    {cert.image && (
+                      <img
+                        src={cert.image}
+                        alt={cert.name}
+                        style={{ width: '100%', height: '120px', objectFit: 'contain', background: '#f8fafc', borderRadius: '10px', marginBottom: '1rem' }}
+                      />
+                    )}
                     <div style={{
                       width: '80px',
                       height: '80px',
@@ -789,15 +796,18 @@ function Template1({ isPreview = false, userData = null }) {
                     <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '1rem' }}>
                       Valid until: {cert.validUntil}
                     </div>
-                    <Button 
-                      variant="outline-primary"
-                      size="sm"
-                      href={cert.verifyLink}
-                      target="_blank"
-                      style={{ borderRadius: '20px' }}
-                    >
-                      Verify Certificate
-                    </Button>
+                    {(cert.verifyLink || cert.url) && (
+                      <Button 
+                        variant="outline-primary"
+                        size="sm"
+                        href={cert.verifyLink || cert.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ borderRadius: '20px' }}
+                      >
+                        Verify Certificate
+                      </Button>
+                    )}
                   </Card.Body>
                 </Card>
               </Col>

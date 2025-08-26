@@ -1586,6 +1586,13 @@ function Template2({ isPreview = false, userData = null }) {
                   }}
                 >
                   <Card.Body style={{ padding: '2.5rem', textAlign: 'center' }}>
+                    {cert.image && (
+                      <img
+                        src={cert.image}
+                        alt={cert.name}
+                        style={{ width: '100%', height: '140px', objectFit: 'contain', background: '#fafafa', borderRadius: '12px', marginBottom: '1rem' }}
+                      />
+                    )}
                     <div style={{
                       fontSize: '4rem',
                       marginBottom: '1.5rem',

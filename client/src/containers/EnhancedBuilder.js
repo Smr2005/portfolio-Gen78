@@ -445,8 +445,9 @@ function EnhancedBuilder() {
       // CRITICAL FIX: Save current data BEFORE publishing to ensure preview matches published version
       console.log('🔄 Auto-saving current data before publishing...');
       
-      // Save current data first
-      const saveResponse = await fetch('/api/portfolio/save', {
+      // Save current data first (use correct API base and payload shape)
+      const API_BASE_URL_SAVE = process.env.REACT_APP_API_URL || (process.env.NODE_ENV === 'production' ? window.location.origin : 'http://localhost:5000');
+      const saveResponse = await fetch(`${API_BASE_URL_SAVE}/api/portfolio/save`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -454,7 +455,7 @@ function EnhancedBuilder() {
         },
         body: JSON.stringify({
           templateId,
-          userData,
+          data: userData, // backend expects 'data'
           meta: {
             title: `${userData.name} - Portfolio`,
             description: userData.about || `Portfolio of ${userData.name}`,
