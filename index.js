@@ -266,7 +266,6 @@ app.get("/portfolio/:slug", async (req, res) => {
         `);
     }
 });
-
 // Utility function to get the correct base URL
 function getBaseUrl() {
     return process.env.BACKEND_URL || 
@@ -304,49 +303,11 @@ function generatePortfolioHTML(portfolio) {
     if (process.env.NODE_ENV === 'production' || process.env.PORT) {
         data = ensureDataUrls(data);
     }
-
-    // Normalize data to match React Template behavior
-    try {
-        // Normalize skills: convert ["React", ...] => [{ name, level, category }, ...]
-        if (Array.isArray(data.skills) && data.skills.length > 0 && typeof data.skills[0] === 'string') {
-            data.skills = data.skills
-                .filter((s) => !!s && String(s).trim())
-                .map((skill, index) => ({
-                    name: String(skill).trim(),
-                    level: 75 + (index % 4) * 5, // 75, 80, 85, 90
-                    category:
-                        index % 4 === 0
-                            ? 'Frontend'
-                            : index % 4 === 1
-                            ? 'Backend'
-                            : index % 4 === 2
-                            ? 'Database'
-                            : 'DevOps',
-                }));
-        }
-
-        // Normalize projects: ensure tech is an array
-        if (Array.isArray(data.projects)) {
-            data.projects = data.projects.map((project) => ({
-                ...project,
-                tech: Array.isArray(project?.tech)
-                    ? project.tech
-                    : project?.tech
-                    ? String(project.tech)
-                          .split(',')
-                          .map((t) => t.trim())
-                          .filter(Boolean)
-                    : [],
-            }));
-        }
-    } catch (e) {
-        console.warn('Portfolio data normalization failed:', e?.message);
-    }
     
     // Generate HTML based on template ID
     switch(templateId) {
         case 'template1':
-            return generateTemplate1HTML_CLEAN(data, meta);
+            return generateTemplate1HTML(data, meta);
         case 'template2':
             return generateTemplate2HTML(data, meta);
         case 'template3':
@@ -359,513 +320,130 @@ function generatePortfolioHTML(portfolio) {
         case 'template6':
             return generateTemplate6HTML(data, meta);
         default:
-            return generateTemplate1HTML_CLEAN(data, meta);
+            return generateTemplate1HTML(data, meta);
     }
 }
 
-function generateTemplate1HTML_CLEAN(data, meta) {
-    return `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>${meta?.title || data.name + ' - Portfolio'}</title>
-  <meta name="description" content="${meta?.description || 'Portfolio of ' + data.name}" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
-  <style>
-    body{font-family:'Inter','Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#f8fafc;overflow-x:hidden}
-    .navbar{background:rgba(30,41,59,.95)!important;backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.1)}
-    .card-3d{border:none;box-shadow:0 20px 40px rgba(0,0,0,.1);border-radius:20px;overflow:hidden}
-    @keyframes float3d{0%,100%{transform:translateY(0) rotateX(0) rotateY(0)}25%{transform:translateY(-10px) rotateX(5deg) rotateY(5deg)}50%{transform:translateY(-20px) rotateX(0) rotateY(10deg)}75%{transform:translateY(-10px) rotateX(-5deg) rotateY(5deg)}}
-    @keyframes slideIn3d{0%{transform:translateX(-100px) rotateY(-90deg);opacity:0}100%{transform:translateX(0) rotateY(0);opacity:1}}
-  </style>
-</head>
-<body>
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-    <div class="container">
-      <a class="navbar-brand fw-bold" style="font-size:1.5rem">${data.name}</a>
-      <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#nav"><span class="navbar-toggler-icon"></span></button>
-      <div id="nav" class="collapse navbar-collapse">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-          <li class="nav-item"><a class="nav-link" href="#experience">Experience</a></li>
-          <li class="nav-item"><a class="nav-link" href="#skills">Skills</a></li>
-          <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
-          <li class="nav-item"><a class="nav-link" href="#certifications">Certifications</a></li>
-          <li class="nav-item"><a class="nav-link" href="#education">Education</a></li>
-          <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-  <!-- About/Hero -->
-  <section id="about" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;align-items:center;color:#fff;padding-top:80px;position:relative;overflow:hidden">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-md-6">
-          <div style="animation:slideIn3d 1s ease-out">
-            <h1 style="font-size:3.5rem;font-weight:700;margin-bottom:1rem;text-shadow:2px 2px 4px rgba(0,0,0,.3)">Hi, I'm ${data.name}</h1>
-            <h2 style="font-size:1.8rem;margin-bottom:2rem;opacity:.9;font-weight:400">${data.title || ''}</h2>
-            <p style="font-size:1.2rem;margin-bottom:2rem;opacity:.85;line-height:1.6">${data.about || ''}</p>
-            <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2rem">
-              <a href="#projects" class="btn btn-light btn-lg" style="border-radius:25px;padding:12px 30px;font-weight:600">View My Work</a>
-              <a href="#contact" class="btn btn-outline-light btn-lg" style="border-radius:25px;padding:12px 30px;font-weight:600">Get In Touch</a>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 text-center">
-          ${data.profileImage ? `<img src="${data.profileImage}" alt="${data.name}" style="width:350px;height:350px;border-radius:50%;object-fit:cover;border:8px solid rgba(255,255,255,.2);box-shadow:0 20px 40px rgba(0,0,0,.3);animation:float3d 6s ease-in-out infinite"/>` : ''}
-        </div>
-      </div>
-    </div>
-  </section>
-
-  ${Array.isArray(data.skills)&&data.skills.length?`
-  <!-- Skills -->
-  <section id="skills" class="py-5">
-    <div class="container">
-      <h2 class="text-center" style="font-weight:700;color:#1e293b;margin-bottom:30px">Skills</h2>
-      <div class="row">
-        ${data.skills.map(s=>`
-          <div class="col-md-4 mb-3">
-            <div class="card p-3 card-3d">
-              <h5>${s.name}</h5>
-              <div class="progress">
-                <div class="progress-bar" style="width:${s.level}%">${s.level}%</div>
-              </div>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-  </section>`:''}
-
-  ${Array.isArray(data.experience)&&data.experience.length?`
-  <!-- Experience -->
-  <section id="experience" class="py-5 bg-light">
-    <div class="container">
-      <h2 class="text-center" style="font-weight:700;color:#1e293b;margin-bottom:30px">Experience</h2>
-      ${data.experience.map(exp=>`
-        <div class="row mb-4">
-          <div class="col-12">
-            <div class="card card-3d">
-              <div class="card-body">
-                <h5 class="card-title" style="color:#667eea;font-weight:700">${exp.position}</h5>
-                <h6 class="card-subtitle mb-2 text-muted">${exp.company} • ${exp.duration}</h6>
-                ${exp.location?`<p class="text-muted">${exp.location}</p>`:''}
-                ${exp.description?`<p class="card-text">${exp.description}</p>`:''}
-                ${Array.isArray(exp.achievements)&&exp.achievements.length?`<ul style="list-style:none;padding-left:0">${exp.achievements.map(a=>`<li style=\"padding:5px 0;color:#555\">${a}</li>`).join('')}</ul>`:''}
-              </div>
-            </div>
-          </div>
-        </div>`).join('')}
-    </div>
-  </section>`:''}
-
-  ${Array.isArray(data.projects)&&data.projects.length?`
-  <!-- Projects -->
-  <section id="projects" class="py-5">
-    <div class="container">
-      <h2 class="text-center" style="font-weight:700;color:#1e293b;margin-bottom:30px">Featured Projects</h2>
-      <div class="row">
-        ${data.projects.map(p=>`
-          <div class="col-md-6 mb-4">
-            <div class="card card-3d h-100">
-              ${p.image?`<img src="${p.image}" class="card-img-top" alt="${p.title}" style="height:250px;object-fit:cover"/>`:''}
-              <div class="card-body" style="padding:2rem">
-                <h5 class="card-title" style="font-weight:700;color:#1e293b">${p.title}</h5>
-                <p class="card-text" style="color:#64748b">${p.description||''}</p>
-                ${Array.isArray(p.tech)&&p.tech.length?`<div class="mb-3">${p.tech.map(t=>`<span class=\"badge me-1\" style=\"background:#e2e8f0;color:#475569;border-radius:15px;padding:5px 10px\">${t}</span>`).join('')}</div>`:''}
-                <div>
-                  ${(p.demo||p.liveLink)?`<a href="${p.demo||p.liveLink}" target="_blank" class="btn btn-primary btn-sm me-2" style="background:linear-gradient(135deg,#667eea,#764ba2);border:none;border-radius:20px">🚀 Live Demo</a>`:''}
-                  ${(p.github||p.githubLink)?`<a href="${p.github||p.githubLink}" target="_blank" class="btn btn-outline-secondary btn-sm" style="border-radius:20px">📂 Code</a>`:''}
-                </div>
-              </div>
-            </div>
-          </div>`).join('')}
-      </div>
-    </div>
-  </section>`:''}
-
-  ${Array.isArray(data.certifications)&&data.certifications.length?`
-  <!-- Certifications -->
-  <section id="certifications" class="py-5">
-    <div class="container">
-      <h2 class="text-center" style="font-weight:700;color:#1e293b;margin-bottom:30px">Certifications & Credentials</h2>
-      <div class="row">
-        ${data.certifications.map(c=>`
-          <div class="col-md-6 mb-4">
-            <div class="card h-100 card-3d">
-              <div class="card-body text-center">
-                <div class="mb-3" style="font-size:2rem">🏆</div>
-                <h5 class="card-title" style="font-weight:700">${c.name}</h5>
-                <h6 class="card-subtitle mb-2 text-muted">${c.issuer}</h6>
-                ${c.date?`<p class="text-muted">${c.date}</p>`:''}
-                ${(c.verifyLink||c.url)?`<a href="${c.verifyLink||c.url}" target="_blank" class="btn btn-outline-primary btn-sm" style="border-radius:20px">View Certificate</a>`:''}
-              </div>
-            </div>
-          </div>`).join('')}
-      </div>
-    </div>
-  </section>`:''}
-
-  ${Array.isArray(data.education)&&data.education.length?`
-  <!-- Education -->
-  <section id="education" class="py-5 bg-light">
-    <div class="container">
-      <h2 class="text-center" style="font-weight:700;color:#1e293b;margin-bottom:30px">Education</h2>
-      ${data.education.map(e=>`
-        <div class="row mb-3"><div class="col-12"><div class="card"><div class="card-body">
-          <h5 class="card-title">${e.degree}${e.field?` in ${e.field}`:''}</h5>
-          <h6 class="card-subtitle mb-2 text-muted">${e.institution} • ${e.duration}</h6>
-          ${e.location?`<p class="text-muted">${e.location}</p>`:''}
-          ${e.gpa?`<p class="text-muted">GPA: ${e.gpa}</p>`:''}
-          ${e.description?`<p class="card-text">${e.description}</p>`:''}
-        </div></div></div></div>
-      `).join('')}
-    </div>
-  </section>`:''}
-
-  ${Array.isArray(data.internships)&&data.internships.length?`
-  <!-- Internships -->
-  <section id="internships" class="py-5">
-    <div class="container">
-      <h2 class="text-center" style="font-weight:700;color:#1e293b;margin-bottom:30px">Internships & Early Experience</h2>
-      ${data.internships.map(i=>`
-        <div class="row mb-4"><div class="col-12"><div class="card"><div class="card-body">
-          <h5 class="card-title" style="font-weight:700">${i.position}</h5>
-          <h6 class="card-subtitle mb-2 text-muted">${i.company} • ${i.duration}</h6>
-          ${i.location?`<p class="text-muted">${i.location}</p>`:''}
-          <p class="card-text">${i.description||''}</p>
-          ${Array.isArray(i.achievements)&&i.achievements.length?`<ul>${i.achievements.map(a=>`<li>${a}</li>`).join('')}</ul>`:''}
-        </div></div></div></div>
-      `).join('')}
-    </div>
-  </section>`:''}
-
-  <!-- Contact -->
-  <section id="contact" style="padding:100px 0;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-8 mx-auto text-center">
-          <h2 style="font-size:3rem;font-weight:700;margin-bottom:2rem">Let's Work Together</h2>
-          <p style="font-size:1.25rem;margin-bottom:2.5rem;opacity:.9">Ready to bring your ideas to life? Let's discuss your next project.</p>
-          <div style="display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;margin-bottom:2rem">
-            ${data.email?`<div style="text-align:center"><div style="font-size:2rem">📧</div><div style="font-weight:600">${data.email}</div></div>`:''}
-            ${data.phone?`<div style="text-align:center"><div style="font-size:2rem">📱</div><div style="font-weight:600">${data.phone}</div></div>`:''}
-            ${data.location?`<div style="text-align:center"><div style="font-size:2rem">📍</div><div style="font-weight:600">${data.location}</div></div>`:''}
-          </div>
-          ${data.email?`<a class="btn btn-light btn-lg" href="mailto:${data.email}" style="border-radius:30px;padding:15px 40px;font-weight:600">Start a Conversation</a>`:''}
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>`;
-}
-
+// ...existing code...
 function generateTemplate1HTML(data, meta) {
-    // DEPRECATED: kept temporarily; not used for template1 rendering
+    // Helper for badges
+    function badge(text, color = "#667eea") {
+        return `<span style="background:${color};color:white;padding:5px 15px;border-radius:20px;font-size:0.9rem;font-weight:600;margin-right:8px;">${text}</span>`;
+    }
+    // Helper for icons
+    function skillIcon(category) {
+        return category === 'Frontend' ? '🎨' :
+            category === 'Backend' ? '⚙️' :
+            category === 'Database' ? '🗄️' :
+            category === 'Cloud' ? '☁️' :
+            category === 'DevOps' ? '🚀' : '💻';
+    }
+    // Helper for project status color
+    function statusColor(status) {
+        return status === 'Live' ? '#10b981' : '#f59e0b';
+    }
+    // Helper for featured badge
+    function featuredBadge(featured) {
+        return featured ? `<div style="position:absolute;top:15px;left:15px;background:#667eea;color:white;padding:5px 15px;border-radius:20px;font-size:0.8rem;font-weight:600;">Featured</div>` : '';
+    }
+    // Helper for metrics
+    function metricsBlock(metrics) {
+        if (!metrics) return '';
+        return `<div style="background:#f1f5f9;padding:1rem;border-radius:10px;margin-bottom:1.5rem;">
+            <div style="display:flex;justify-content:space-around;text-align:center;">
+                ${Object.entries(metrics).map(([k,v])=>`
+                    <div>
+                        <div style="font-weight:700;color:#1e293b">${v}</div>
+                        <div style="font-size:0.8rem;color:#64748b;text-transform:capitalize">${k}</div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>`;
+    }
+    // Helper for progress bar
+    function progressBar(level) {
+        return `<div style="height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden;margin-bottom:1rem;">
+            <div style="width:${level}%;height:100%;background:linear-gradient(90deg,#667eea,#764ba2);"></div>
+        </div>`;
+    }
+    // Helper for 3D card
+    function card3d(content, style = '') {
+        return `<div style="border:none;box-shadow:0 10px 30px rgba(0,0,0,0.1);border-radius:15px;${style}" class="card-3d">${content}</div>`;
+    }
+    // Helper for section title
+    function sectionTitle(title) {
+        return `<div class="text-center mb-5">
+            <h2 style="font-size:3rem;font-weight:700;color:#1e293b;margin-bottom:1rem;">${title}</h2>
+            <div style="width:60px;height:4px;background:#667eea;margin:0 auto"></div>
+        </div>`;
+    }
+    // Helper for social links
+    function socialLinks(data) {
+        return `<div style="display:flex;gap:1rem;">
+            ${data.linkedin ? `<a href="${data.linkedin}" target="_blank" rel="noopener" style="color:white;font-size:1.5rem;opacity:0.8;">💼</a>` : ''}
+            ${data.github ? `<a href="${data.github}" target="_blank" rel="noopener" style="color:white;font-size:1.5rem;opacity:0.8;">🔗</a>` : ''}
+            ${data.website ? `<a href="${data.website}" target="_blank" rel="noopener" style="color:white;font-size:1.5rem;opacity:0.8;">🌐</a>` : ''}
+        </div>`;
+    }
+    // Helper for certifications
+    function certBlock(cert) {
+        return `<div style="border:none;box-shadow:0 15px 35px rgba(0,0,0,0.1);border-radius:15px;height:100%;padding:2rem;text-align:center;">
+            <div style="width:80px;height:80px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem auto;font-size:2rem;animation:float3d 5s ease-in-out infinite;">🏆</div>
+            <h5 style="color:#1e293b;font-weight:700;margin-bottom:1rem;font-size:1.1rem;">${cert.name}</h5>
+            <p style="color:#64748b;margin-bottom:1rem;">${cert.issuer}</p>
+            <div style="margin-bottom:1rem;">${badge(cert.date,'#10b981')}</div>
+            <div style="font-size:0.8rem;color:#94a3b8;margin-bottom:1rem;">Valid until: ${cert.validUntil || ''}</div>
+            ${cert.verifyLink ? `<a href="${cert.verifyLink}" target="_blank" style="display:inline-block;padding:5px 15px;border:1px solid #667eea;border-radius:20px;color:#667eea;text-decoration:none;font-size:0.9rem;">Verify Certificate</a>` : ''}
+        </div>`;
+    }
+    // Helper for education
+    function eduBlock(edu) {
+        return `<div style="border:none;box-shadow:0 15px 35px rgba(0,0,0,0.1);border-radius:15px;height:100%;padding:2rem;">
+            <div style="width:80px;height:80px;background:linear-gradient(135deg,#10b981,#059669);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem auto;font-size:2rem;animation:float3d 5s ease-in-out infinite;">🎓</div>
+            <h5 style="color:#1e293b;font-weight:700;margin-bottom:0.5rem;font-size:1.2rem;">${edu.degree}</h5>
+            <h6 style="color:#667eea;font-weight:600;margin-bottom:1rem;">${edu.institution}</h6>
+            <div style="margin-bottom:1rem;">${badge(edu.duration,'#3b82f6')}${edu.gpa ? badge('GPA: '+edu.gpa,'#10b981') : ''}</div>
+            ${edu.location ? `<p style="color:#64748b;margin-bottom:1rem;font-size:0.9rem;">📍 ${edu.location}</p>` : ''}
+            ${edu.description ? `<p style="color:#64748b;margin-bottom:1rem;">${edu.description}</p>` : ''}
+            ${edu.field ? `<p style="color:#64748b;font-size:0.9rem;"><strong>Field:</strong> ${edu.field}</p>` : ''}
+        </div>`;
+    }
+    // Helper for internship
+    function internshipBlock(intern) {
+        return `<div style="border:none;box-shadow:0 15px 35px rgba(0,0,0,0.1);border-radius:15px;height:100%;padding:2rem;">
+            <div style="width:80px;height:80px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem auto;font-size:2rem;animation:float3d 5s ease-in-out infinite;">🚀</div>
+            <h5 style="color:#1e293b;font-weight:700;margin-bottom:0.5rem;font-size:1.2rem;">${intern.position}</h5>
+            <h6 style="color:#667eea;font-weight:600;margin-bottom:1rem;">${intern.company}</h6>
+            <div style="margin-bottom:1rem;">${badge(intern.duration,'#8b5cf6')}</div>
+            ${intern.location ? `<p style="color:#64748b;margin-bottom:1rem;font-size:0.9rem;">📍 ${intern.location}</p>` : ''}
+            <p style="color:#64748b;margin-bottom:1.5rem;">${intern.description}</p>
+            ${intern.achievements && intern.achievements.length ? `<div><h6 style="color:#1e293b;font-weight:600;margin-bottom:0.5rem;">Key Achievements:</h6>
+                <ul style="color:#64748b;padding-left:1.2rem;">${intern.achievements.map(a=>`<li style="margin-bottom:0.3rem;">${a}</li>`).join('')}</ul></div>` : ''}
+        </div>`;
+    }
+
     return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>${meta.title || data.name + ' - Portfolio'}</title>
-    <meta name="description" content="${meta.description || 'Portfolio of ' + data.name}">
-    <meta name="keywords" content="${meta.keywords ? meta.keywords.join(', ') : ''}">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="${meta.title || data.name + ' - Portfolio'}">
-    <meta property="og:description" content="${meta.description || 'Portfolio of ' + data.name}">
-    <meta property="og:image" content="${data.profileImage || ''}">
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="${meta.title || data.name + ' - Portfolio'}">
-    <meta property="twitter:description" content="${meta.description || 'Portfolio of ' + data.name}">
-    <meta property="twitter:image" content="${data.profileImage || ''}">
-    
-    <!-- Bootstrap CSS -->
+    <title>${meta?.title || data.name + ' - Portfolio'}</title>
+    <meta name="description" content="${meta?.description || 'Portfolio of ' + data.name}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
     <style>
-        body { 
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: #f8fafc;
-            overflow-x: hidden;
-        }
-        
-        /* ENHANCED 3D ANIMATIONS - EXACT MATCH TO REACT TEMPLATE */
-        @keyframes float3d {
-            0%, 100% { transform: translateY(0px) rotateX(0deg) rotateY(0deg); }
-            25% { transform: translateY(-10px) rotateX(5deg) rotateY(5deg); }
-            50% { transform: translateY(-20px) rotateX(0deg) rotateY(10deg); }
-            75% { transform: translateY(-10px) rotateX(-5deg) rotateY(5deg); }
-        }
-        
-        @keyframes rotate3d {
-            0% { transform: rotateY(0deg) rotateX(0deg); }
-            100% { transform: rotateY(360deg) rotateX(360deg); }
-        }
-        
-        @keyframes slideIn3d {
-            0% { transform: translateX(-100px) rotateY(-90deg); opacity: 0; }
-            100% { transform: translateX(0) rotateY(0deg); opacity: 1; }
-        }
-        
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.3); }
-            50% { box-shadow: 0 0 40px rgba(102, 126, 234, 0.6); }
-        }
-        
-        .portfolio-header { 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-            color: white; 
-            padding: 80px 0;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .navbar {
-            background: rgba(30, 41, 59, 0.95) !important;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .portfolio-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
-            animation: shimmer 3s ease-in-out infinite;
-        }
-        
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-        
-        .profile-img { 
-            width: 150px; 
-            height: 150px; 
-            border-radius: 0 !important; 
-            border: 5px solid white;
-            animation: float3d 6s ease-in-out infinite;
-            transform-style: preserve-3d;
-            transition: all 0.3s ease;
-            object-fit: cover;
-        }
-        
-        .profile-img:hover {
-            animation-play-state: paused;
-            transform: scale(1.1) rotateY(15deg);
-            border-color: #ffd700;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
-        
-        .profile-3d {
-            animation: float3d 6s ease-in-out infinite;
-            transform-style: preserve-3d;
-        }
-        
-        .section-title { 
-            color: #333; 
-            margin-bottom: 30px; 
-            font-weight: 700;
-            animation: slideIn3d 1s ease-out;
-            position: relative;
-        }
-        
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50px;
-            height: 3px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            border-radius: 2px;
-        }
-        
-        .skill-item { 
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 15px; 
-            border-radius: 15px; 
-            margin-bottom: 15px;
-            transform-style: preserve-3d;
-            transition: all 0.3s ease;
-            border-left: 4px solid #667eea;
-        }
-        
-        .skill-item:hover {
-            transform: translateZ(10px) rotateX(5deg);
-            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
-            border-left-color: #764ba2;
-        }
-        
-        .progress {
-            height: 8px;
-            border-radius: 4px;
-            overflow: hidden;
-            background: #e9ecef;
-        }
-        
-        .progress-bar {
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            transition: width 2s ease-in-out;
-            animation: progressFill 2s ease-in-out;
-        }
-        
-        .skill-bar-3d {
-            transform-style: preserve-3d;
-            transition: transform 0.3s ease;
-        }
-        
-        .skill-bar-3d:hover {
-            transform: translateZ(10px) rotateX(5deg);
-        }
-        
-        @keyframes progressFill {
-            0% { width: 0% !important; }
-        }
-        
-        .card-3d { 
-            border: none; 
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1); 
-            transition: all 0.3s ease;
-            transform-style: preserve-3d;
-            border-radius: 15px;
-            overflow: hidden;
-        }
-        
-        .card-3d:hover { 
-            transform: rotateY(10deg) rotateX(5deg) translateZ(20px);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
-        }
-        
-        .project-card {
-            border: none; 
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1); 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform-style: preserve-3d;
-            border-radius: 15px;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .project-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, transparent, rgba(102, 126, 234, 0.05), transparent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .project-card:hover::before {
-            opacity: 1;
-        }
-        
-        .project-card:hover { 
-            transform: rotateY(8deg) rotateX(4deg) translateZ(15px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-        
-        .btn {
-            border-radius: 25px;
-            padding: 10px 25px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            transform-style: preserve-3d;
-        }
-        
-        .btn:hover {
-            transform: translateZ(5px) scale(1.05);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-        }
-        
-        .btn-outline-light:hover {
-            animation: glow 2s ease-in-out infinite;
-        }
-        
-        .footer { 
-            background: linear-gradient(135deg, #333 0%, #1a1a1a 100%);
-            color: white; 
-            padding: 40px 0; 
-            margin-top: 50px;
-            position: relative;
-        }
-        
-        .powered-by { 
-            text-align: center; 
-            padding: 20px; 
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            color: #666;
-        }
-        
-        /* MOBILE OPTIMIZATIONS */
-        @media (max-width: 768px) {
-            .card-3d:hover,
-            .project-card:hover,
-            .skill-item:hover {
-                transform: none !important;
-            }
-            
-            .profile-img {
-                animation: none;
-            }
-            
-            .profile-img:hover {
-                transform: scale(1.05);
-            }
-        }
-        
-        /* LOADING ANIMATIONS */
-        .fade-in {
-            animation: fadeIn 1s ease-in;
-        }
-        
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes float3d {
-            0%, 100% { transform: translateY(0px) rotateX(0deg) rotateY(0deg); }
-            25% { transform: translateY(-10px) rotateX(5deg) rotateY(5deg); }
-            50% { transform: translateY(-20px) rotateX(0deg) rotateY(10deg); }
-            75% { transform: translateY(-10px) rotateX(-5deg) rotateY(5deg); }
-        }
-        
-        @keyframes slideIn3d {
-            0% { transform: translateX(-100px) rotateY(-90deg); opacity: 0; }
-            100% { transform: translateX(0) rotateY(0deg); opacity: 1; }
-        }
+        body { font-family: 'Inter',sans-serif;background:#f8fafc; }
+        .card-3d { transition:transform 0.3s; }
+        .card-3d:hover { transform:rotateY(10deg) rotateX(5deg) translateZ(20px); }
+        @keyframes float3d { 0%,100%{transform:translateY(0) rotateX(0) rotateY(0);}25%{transform:translateY(-10px) rotateX(5deg) rotateY(5deg);}50%{transform:translateY(-20px) rotateX(0) rotateY(10deg);}75%{transform:translateY(-10px) rotateX(-5deg) rotateY(5deg);} }
+        @media (max-width:768px){ .card-3d:hover{transform:none;} }
     </style>
 </head>
 <body>
-    <!-- Enhanced Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background:rgba(30,41,59,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,0.1);">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="#" style="font-size: 1.5rem;">${data.name}</a>
+            <a class="navbar-brand fw-bold" href="#" style="font-size:1.5rem;">${data.name}</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -882,17 +460,178 @@ function generateTemplate1HTML(data, meta) {
         </div>
     </nav>
 
-    <!-- Contact Section -->
-    <section id="contact" class="gradient-bg text-center" style="padding: 60px 0; color: white;">
+    <!-- Hero Section -->
+    <section style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;align-items:center;color:white;padding-top:80px;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:20%;left:10%;width:100px;height:100px;background:rgba(255,255,255,0.1);border-radius:20px;animation:float3d 8s ease-in-out infinite;transform-style:preserve-3d;"></div>
+        <div style="position:absolute;bottom:20%;right:15%;width:80px;height:80px;background:rgba(255,255,255,0.08);border-radius:50%;animation:float3d 6s ease-in-out infinite reverse;"></div>
         <div class="container">
-            <h3 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem;">Ready to Drive Results Together?</h3>
-            <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">Let's discuss how I can help grow your business.</p>
-            ${data.email ? `<a href="mailto:${data.email}" class="btn-marketing primary" style="font-size: 1.1rem; padding: 15px 40px;">
-                <i class="fas fa-envelope me-2"></i>Start the Conversation
-            </a>` : ''}
-            <div style="margin-top: 3rem;">
-                <p style="opacity: 0.8; margin: 0;">&copy; ${new Date().getFullYear()} ${data.name} - Marketing Portfolio</p>
-                <small style="opacity: 0.6;">Powered by <a href="${getFrontendUrl()}" target="_blank" style="color: rgba(255,255,255,0.8);">Portfolio Generator</a></small>
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div style="animation:slideIn3d 1s ease-out;">
+                        <h1 style="font-size:3.5rem;font-weight:700;margin-bottom:1rem;text-shadow:2px 2px 4px rgba(0,0,0,0.3);">Hi, I'm ${data.name}</h1>
+                        <h2 style="font-size:1.8rem;margin-bottom:2rem;opacity:0.9;font-weight:400;">${data.title}</h2>
+                        <p style="font-size:1.2rem;margin-bottom:2rem;opacity:0.8;line-height:1.6;">${data.about}</p>
+                        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2rem;">
+                            <a href="#projects" class="btn btn-light btn-lg" style="font-weight:600;padding:12px 30px;border-radius:25px;">View My Work</a>
+                            <a href="#contact" class="btn btn-outline-light btn-lg" style="font-weight:600;padding:12px 30px;border-radius:25px;">Get In Touch</a>
+                        </div>
+                        ${socialLinks(data)}
+                    </div>
+                </div>
+                <div class="col-md-6 text-center">
+                    <div class="profile-3d" style="width:350px;height:350px;margin:0 auto;position:relative;">
+                        <img src="${data.profileImage}" alt="${data.name}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;border:8px solid rgba(255,255,255,0.2);box-shadow:0 20px 40px rgba(0,0,0,0.3);">
+                        <div style="position:absolute;bottom:20px;right:20px;background:#10b981;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:1.2rem;border:4px solid white;animation:float3d 4s ease-in-out infinite;">✓</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" style="padding:100px 0;background:white;">
+        <div class="container">
+            ${sectionTitle('About Me')}
+            ${card3d(`
+                <div style="padding:3rem;text-align:center;">
+                    <p style="font-size:1.2rem;line-height:1.8;color:#64748b;">${data.about}</p>
+                    <div class="row mt-4 text-center">
+                        <div class="col-md-3"><div style="font-size:2rem;margin-bottom:0.5rem;">📍</div><div style="font-weight:600;color:#1e293b;">${data.location}</div></div>
+                        <div class="col-md-3"><div style="font-size:2rem;margin-bottom:0.5rem;">💼</div><div style="font-weight:600;color:#1e293b;">5+ Years</div></div>
+                        <div class="col-md-3"><div style="font-size:2rem;margin-bottom:0.5rem;">🏆</div><div style="font-weight:600;color:#1e293b;">50+ Projects</div></div>
+                        <div class="col-md-3"><div style="font-size:2rem;margin-bottom:0.5rem;">⭐</div><div style="font-weight:600;color:#1e293b;">Top Rated</div></div>
+                    </div>
+                </div>
+            `)}
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience" style="padding:100px 0;background:#f8fafc;">
+        <div class="container">
+            ${sectionTitle('Professional Experience')}
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    ${(data.experience||[]).map(exp=>card3d(`
+                        <div style="padding:2.5rem;">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h4 style="color:#1e293b;font-weight:700;margin-bottom:0.5rem;">${exp.position}</h4>
+                                    <h5 style="color:#667eea;font-weight:600;margin-bottom:1rem;">${exp.company} • ${exp.location}</h5>
+                                    <p style="color:#64748b;line-height:1.6;margin-bottom:1.5rem;">${exp.description}</p>
+                                    ${exp.achievements ? `<div><h6 style="color:#1e293b;font-weight:600;margin-bottom:1rem;">Key Achievements:</h6><ul style="color:#64748b;">${exp.achievements.map(a=>`<li style="margin-bottom:0.5rem;">${a}</li>`).join('')}</ul></div>` : ''}
+                                </div>
+                                <div class="col-md-4 text-end">${badge(exp.duration)}</div>
+                            </div>
+                        </div>
+                    `,'margin-bottom:2rem;')).join('')}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" style="padding:100px 0;background:white;">
+        <div class="container">
+            ${sectionTitle('Technical Skills')}
+            <div class="row">
+                ${(data.skills||[]).map(skill=>`
+                    <div class="col-md-6 col-lg-3 mb-4">
+                        ${card3d(`
+                            <div style="text-align:center;padding:2rem;">
+                                <div style="font-size:2.5rem;margin-bottom:1rem;animation:float3d 4s ease-in-out infinite;">${skillIcon(skill.category)}</div>
+                                <h5 style="color:#1e293b;font-weight:600;margin-bottom:1rem;">${skill.name}</h5>
+                                ${progressBar(skill.level)}
+                                <small style="color:#64748b;font-weight:600;">${skill.level}% Proficiency</small>
+                                <div style="margin-top:0.5rem;font-size:0.8rem;color:#94a3b8;">${skill.category}</div>
+                            </div>
+                        `)}
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" style="padding:100px 0;background:#f8fafc;">
+        <div class="container">
+            ${sectionTitle('Featured Projects')}
+            <div class="row">
+                ${(data.projects||[]).map(project=>`
+                    <div class="col-lg-6 mb-5">
+                        <div style="border:none;box-shadow:0 20px 40px rgba(0,0,0,0.1);border-radius:20px;overflow:hidden;height:100%;position:relative;" class="card-3d">
+                            <div style="position:relative;">
+                                <img src="${project.image}" alt="${project.title}" style="width:100%;height:250px;object-fit:cover;">
+                                <div style="position:absolute;top:15px;right:15px;background:${statusColor(project.status)};color:white;padding:5px 15px;border-radius:20px;font-size:0.8rem;font-weight:600;">${project.status}</div>
+                                ${featuredBadge(project.featured)}
+                            </div>
+                            <div style="padding:2.5rem;">
+                                <div style="font-size:1.5rem;font-weight:700;color:#1e293b;margin-bottom:1rem;">${project.title}</div>
+                                <div style="color:#64748b;line-height:1.6;margin-bottom:1.5rem;">${project.description}</div>
+                                <div style="margin-bottom:1.5rem;display:flex;flex-wrap:wrap;gap:0.5rem;">
+                                    ${(Array.isArray(project.tech)?project.tech:[]).map(tech=>`<span style="background:#e2e8f0;color:#475569;font-size:0.8rem;padding:5px 10px;border-radius:15px;">${tech}</span>`).join('')}
+                                </div>
+                                ${metricsBlock(project.metrics)}
+                                <div style="display:flex;gap:1rem;">
+                                    ${(project.demo||project.liveLink)?`<a href="${project.demo||project.liveLink}" target="_blank" class="btn btn-primary" style="background:linear-gradient(135deg,#667eea,#764ba2);border:none;border-radius:25px;padding:8px 20px;font-weight:600;">🚀 Live Demo</a>`:''}
+                                    ${(project.github||project.githubLink)?`<a href="${project.github||project.githubLink}" target="_blank" class="btn btn-outline-secondary" style="border-radius:25px;padding:8px 20px;font-weight:600;">📂 Code</a>`:''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    </section>
+
+    <!-- Certifications Section -->
+    ${(data.certifications && data.certifications.length) ? `
+    <section id="certifications" style="padding:100px 0;background:white;">
+        <div class="container">
+            ${sectionTitle('Certifications & Credentials')}
+            <div class="row">
+                ${data.certifications.map(cert=>`<div class="col-md-6 col-lg-4 mb-4">${certBlock(cert)}</div>`).join('')}
+            </div>
+        </div>
+    </section>
+    ` : ''}
+
+    <!-- Education Section -->
+    <section id="education" style="padding:100px 0;background:#f8fafc;">
+        <div class="container">
+            ${sectionTitle('Education')}
+            <div class="row">
+                ${(data.education||[]).map(edu=>`<div class="col-md-6 mb-4">${eduBlock(edu)}</div>`).join('')}
+            </div>
+        </div>
+    </section>
+
+    <!-- Internships Section -->
+    ${(data.internships && data.internships.length) ? `
+    <section id="internships" style="padding:100px 0;background:white;">
+        <div class="container">
+            ${sectionTitle('Internships & Early Experience')}
+            <div class="row">
+                ${data.internships.map(intern=>`<div class="col-md-6 mb-4">${internshipBlock(intern)}</div>`).join('')}
+            </div>
+        </div>
+    </section>
+    ` : ''}
+
+    <!-- Contact Section -->
+    <section id="contact" style="padding:100px 0;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h2 style="font-size:3rem;font-weight:700;margin-bottom:2rem;">Let's Work Together</h2>
+                    <p style="font-size:1.3rem;margin-bottom:3rem;opacity:0.9;">Ready to bring your ideas to life? Let's discuss your next project.</p>
+                    <div style="display:flex;justify-content:center;gap:3rem;flex-wrap:wrap;margin-bottom:3rem;">
+                        <div class="card-3d" style="text-align:center;"><div style="font-size:2.5rem;margin-bottom:1rem;">📧</div><div style="font-weight:600;font-size:1.1rem;">${data.email}</div></div>
+                        <div class="card-3d" style="text-align:center;"><div style="font-size:2.5rem;margin-bottom:1rem;">📱</div><div style="font-weight:600;font-size:1.1rem;">${data.phone}</div></div>
+                        <div class="card-3d" style="text-align:center;"><div style="font-size:2.5rem;margin-bottom:1rem;">📍</div><div style="font-weight:600;font-size:1.1rem;">${data.location}</div></div>
+                    </div>
+                    <a href="mailto:${data.email}" class="btn btn-light btn-lg" style="font-weight:600;padding:15px 40px;border-radius:30px;font-size:1.1rem;">Start a Conversation</a>
+                </div>
             </div>
         </div>
     </section>
@@ -900,138 +639,100 @@ function generateTemplate1HTML(data, meta) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-    \`;
+    `;
 }
+// ...existing code...
+function generateTemplate2HTML(data, meta) {
+    // Helper for creative badges
+    function creativeBadge(text, color = "#ff6b6b") {
+        return `<span style="background:linear-gradient(45deg,${color},#4ecdc4);color:white;padding:7px 18px;border-radius:20px;font-size:0.9rem;font-weight:700;margin-right:8px;text-transform:uppercase;letter-spacing:1px;">${text}</span>`;
+    }
+    // Helper for skill orb
+    function skillOrb(skill) {
+        return `<span class="skill-orb" style="background:linear-gradient(45deg,#ff6b6b,#4ecdc4);">${skill.name || skill}${skill.level ? ` <span style="font-size:0.85em;opacity:0.7;">${skill.level}%</span>` : ''}</span>`;
+    }
+    // Helper for social icons
+    function socialIcons(data) {
+        return `<div class="social-icons">
+            ${data.linkedin ? `<a href="${data.linkedin}" class="social-icon" target="_blank" title="LinkedIn">💼</a>` : ''}
+            ${data.github ? `<a href="${data.github}" class="social-icon" target="_blank" title="GitHub">🐙</a>` : ''}
+            ${data.website ? `<a href="${data.website}" class="social-icon" target="_blank" title="Website">🌐</a>` : ''}
+            ${data.twitter ? `<a href="${data.twitter}" class="social-icon" target="_blank" title="Twitter">🐦</a>` : ''}
+        </div>`;
+    }
+    // Helper for project tech badges
+    function techBadges(tech) {
+        if (!tech) return '';
+        return tech.map(t => `<span class="skill-orb" style="font-size:0.85rem;padding:8px 16px;">${t}</span>`).join('');
+    }
+    // Helper for creative card
+    function creativeCard(content, style = '') {
+        return `<div class="creative-card" style="${style}">${content}</div>`;
+    }
+    // Helper for section title
+    function sectionTitle(title) {
+        return `<h2 class="section-title text-center">${title}</h2>`;
+    }
 
-      </div>
-        </div>
-    </nav>
-
-    <!-- Enhanced Hero Section with Profile Picture -->
-    <section id="about" style="
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        color: white;
-        padding-top: 80px;
-        position: relative;
-        overflow: hidden;
-    ">
-        <!-- 3D Background Elements -->
-        <div style="
-            position: absolute;
-            top: 20%;
-            left: 10%;
-            width: 100px;
-            height: 100px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 20px;
-            animation: float3d 8s ease-in-out infinite;
-            transform-style: preserve-3d;
-        "></div>
-        <div style="
-            position: absolute;
-            bottom: 20%;
-            right: 15%;
-            width: 80px;
-            height: 80px;
-            background: rgba(255,255,255,0.08);
-            border-radius: 50%;
-            animation: float3d 6s ease-in-out infinite reverse;
-        "></div>
-
+    return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>${meta?.title || data.name + ' - Creative Portfolio'}</title>
+    <meta name="description" content="${meta?.description || 'Creative Portfolio of ' + data.name}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin:0; padding:0; background:#f8fafc; }
+        .creative-header { background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57); background-size: 400% 400%; animation: gradientShift 15s ease infinite; color: white; padding: 100px 0; position: relative; overflow: hidden; }
+        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes creativeFloat { 0%,100%{transform:translateY(0) rotate(0deg) scale(1);}25%{transform:translateY(-15px) rotate(2deg) scale(1.05);}50%{transform:translateY(-25px) rotate(-1deg) scale(1.1);}75%{transform:translateY(-10px) rotate(1deg) scale(1.05);} }
+        @keyframes morphShape { 0%,100%{border-radius:50% 30% 70% 40%;transform:rotate(0deg);}25%{border-radius:30% 70% 40% 50%;transform:rotate(90deg);}50%{border-radius:70% 40% 50% 30%;transform:rotate(180deg);}75%{border-radius:40% 50% 30% 70%;transform:rotate(270deg);} }
+        .profile-img { width:180px;height:180px;border-radius:0 !important;border:6px solid white;box-shadow:0 10px 30px rgba(0,0,0,0.3);animation:morphShape 15s ease-in-out infinite;object-fit:cover; }
+        .profile-img:hover { animation-play-state:paused;transform:scale(1.2) rotateY(15deg);box-shadow:0 25px 50px rgba(0,0,0,0.4);border-color:#feca57; }
+        .creative-card { border:none;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,0.1);transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);overflow:hidden;position:relative; }
+        .creative-card:hover { transform:rotateY(15deg) rotateX(10deg) translateZ(30px) scale(1.05);box-shadow:0 30px 60px rgba(0,0,0,0.2);}
+        .skill-orb { background:linear-gradient(45deg,#ff6b6b,#4ecdc4);color:white;border:none;border-radius:50px;padding:10px 20px;margin:8px;display:inline-block;font-weight:600;animation:creativeFloat 6s ease-in-out infinite;box-shadow:0 8px 25px rgba(255,107,107,0.3);}
+        .skill-orb:hover { transform:translateZ(20px) rotateY(180deg) scale(1.2);animation-play-state:paused;box-shadow:0 15px 40px rgba(255,107,107,0.5);}
+        .project-showcase { border:none;border-radius:20px;overflow:hidden;box-shadow:0 10px 25px rgba(0,0,0,0.1);transition:all 0.5s ease;position:relative;}
+        .project-showcase:hover { transform:perspective(1000px) rotateX(10deg) rotateY(5deg) translateZ(20px) scale(1.02);box-shadow:0 25px 50px rgba(0,0,0,0.3);}
+        .section-title { color:#2c3e50;font-weight:800;margin-bottom:40px;position:relative; }
+        .section-title::after { content:'';position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);width:80px;height:4px;background:linear-gradient(45deg,#ff6b6b,#4ecdc4,#45b7d1);border-radius:2px;animation:gradientShift 3s ease infinite;background-size:200% 100%;}
+        .social-icons { display:flex;gap:1.5rem;margin-top:1.5rem; }
+        .social-icon { color:#e74c3c;font-size:1.8rem;transition:transform 0.3s;text-decoration:none; }
+        .social-icon:hover { transform:scale(1.2) rotate(10deg);color:#e74c3c;text-decoration:none; }
+        @media (max-width: 768px) {
+            .creative-card:hover,.skill-orb:hover,.project-showcase:hover { transform:none !important; }
+            .skill-orb,.profile-img { animation:none !important; }
+            .creative-card:hover { transform:translateY(-5px) !important; }
+            .profile-img:hover { transform:scale(1.1) !important; }
+            .profile-img { width:120px;height:120px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="creative-header">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-md-6">
-                    <div style="animation: slideIn3d 1s ease-out;">
-                        <h1 style="
-                            font-size: 3.5rem;
-                            font-weight: 700;
-                            margin-bottom: 1rem;
-                            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-                        ">
-                            Hi, I'm ${data.name}
-                        </h1>
-                        <h2 style="
-                            font-size: 1.8rem;
-                            margin-bottom: 2rem;
-                            opacity: 0.9;
-                            font-weight: 400;
-                        ">
-                            ${data.title}
-                        </h2>
-                        <p style="
-                            font-size: 1.2rem;
-                            margin-bottom: 2rem;
-                            opacity: 0.8;
-                            line-height: 1.6;
-                        ">
-                            ${data.about || ''}
-                        </p>
-                        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem;">
-                            <a href="#projects" class="btn btn-light btn-lg" style="
-                                font-weight: 600;
-                                padding: 12px 30px;
-                                border-radius: 25px;
-                                text-decoration: none;
-                            ">
-                                VIEW MY WORK
-                            </a>
-                            <a href="#contact" class="btn btn-outline-light btn-lg" style="
-                                font-weight: 600;
-                                padding: 12px 30px;
-                                border-radius: 25px;
-                                text-decoration: none;
-                            ">
-                                GET IN TOUCH
-                            </a>
+                <div class="col-lg-6">
+                    <div>
+                        ${creativeBadge('Creative Professional')}
+                        <h1 style="font-size:3.5rem;font-weight:800;margin-bottom:1rem;">${data.name}</h1>
+                        <h2 style="font-size:1.8rem;color:#e74c3c;margin-bottom:2rem;font-style:italic;font-weight:400;">${data.title}</h2>
+                        <p style="font-size:1.2rem;color:#34495e;line-height:1.8;margin-bottom:2.5rem;">${data.about || ''}</p>
+                        <div style="display:flex;gap:1rem;margin-bottom:2rem;flex-wrap:wrap;">
+                            <a href="#projects" class="btn btn-light" style="font-weight:600;padding:12px 30px;border-radius:25px;">🎨 View Portfolio</a>
+                            <a href="#contact" class="btn btn-outline-light" style="font-weight:600;padding:12px 30px;border-radius:25px;">💬 Let's Talk</a>
                         </div>
-                        <!-- Social Links -->
-                        <div style="display: flex; gap: 1rem;">
-                            ${data.linkedin ? `<a href="${data.linkedin}" target="_blank" rel="noopener noreferrer" style="color: white; font-size: 1.5rem; opacity: 0.8; text-decoration: none;">💼</a>` : ''}
-                            ${data.github ? `<a href="${data.github}" target="_blank" rel="noopener noreferrer" style="color: white; font-size: 1.5rem; opacity: 0.8; text-decoration: none;">🔗</a>` : ''}
-                            ${data.website ? `<a href="${data.website}" target="_blank" rel="noopener noreferrer" style="color: white; font-size: 1.5rem; opacity: 0.8; text-decoration: none;">🌐</a>` : ''}
-                        </div>
+                        ${socialIcons(data)}
                     </div>
                 </div>
-                <div class="col-md-6 text-center">
-                    <div class="profile-3d" style="
-                        width: 350px;
-                        height: 350px;
-                        margin: 0 auto;
-                        position: relative;
-                    ">
-                        ${data.profileImage ? `
-                        <img src="${data.profileImage}" alt="${data.name}" style="
-                            width: 100%;
-                            height: 100%;
-                            border-radius: 50%;
-                            object-fit: cover;
-                            border: 8px solid rgba(255,255,255,0.2);
-                            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-                            animation: float3d 6s ease-in-out infinite;
-                            transform-style: preserve-3d;
-                        ">
-                        <!-- Status Indicator -->
-                        <div style="
-                            position: absolute;
-                            bottom: 20px;
-                            right: 20px;
-                            width: 40px;
-                            height: 40px;
-                            background: #10b981;
-                            border-radius: 50%;
-                            border: 4px solid white;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            font-size: 1.2rem;
-                            animation: float3d 4s ease-in-out infinite;
-                        ">
-                            ✓
-                        </div>
-                        ` : ''}
+                <div class="col-lg-6 text-center">
+                    <div style="position:relative;display:inline-block;">
+                        ${data.profileImage ? `<img src="${data.profileImage}" alt="${data.name}" class="profile-img">` : ''}
+                        <div style="position:absolute;bottom:20px;right:20px;background:linear-gradient(45deg,#10b981,#34d399);width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:1.5rem;font-weight:bold;box-shadow:0 8px 20px rgba(16,185,129,0.3);">✓</div>
                     </div>
                 </div>
             </div>
@@ -1042,14 +743,42 @@ function generateTemplate1HTML(data, meta) {
     ${data.skills && data.skills.length > 0 ? `
     <section class="py-5">
         <div class="container">
-            <h2 class="section-title text-center">Skills</h2>
+            ${sectionTitle('Creative Skills')}
             <div class="row">
                 ${data.skills.map(skill => `
-                    <div class="col-md-4 mb-3">
-                        <div class="skill-item skill-bar-3d">
-                            <h5>${skill.name}</h5>
-                            <div class="progress">
-                                <div class="progress-bar" style="width: ${skill.level}%">${skill.level}%</div>
+                    <div class="col-md-4 mb-4">
+                        ${creativeCard(`
+                            <h5 class="mb-3" style="color:#2c3e50;font-weight:700;">${skill.name}</h5>
+                            <div class="progress mb-3" style="height:12px;border-radius:10px;background:#f8f9fa;">
+                                <div class="progress-bar" style="width:${skill.level}%;background:linear-gradient(45deg,#ff6b6b,#4ecdc4);border-radius:10px;transition:width 2s ease-in-out;"></div>
+                            </div>
+                            ${skillOrb(skill)}
+                        `, 'padding:2rem;text-align:center;')}
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    </section>
+    ` : ''}
+
+    <!-- Projects Section -->
+    ${data.projects && data.projects.length > 0 ? `
+    <section class="py-5 bg-light">
+        <div class="container">
+            ${sectionTitle('Creative Projects')}
+            <div class="row">
+                ${data.projects.map(project => `
+                    <div class="col-lg-6 mb-5">
+                        <div class="project-showcase h-100">
+                            ${project.image ? `<img src="${project.image}" class="card-img-top" style="height:250px;object-fit:cover;" alt="${project.title}">` : ''}
+                            <div class="card-body p-4">
+                                <h5 class="card-title fw-bold" style="color:#2c3e50;font-size:1.5rem;">${project.title}</h5>
+                                <p class="card-text" style="color:#555;line-height:1.6;">${project.description}</p>
+                                ${project.tech && project.tech.length > 0 ? `<div class="mb-3">${techBadges(project.tech)}</div>` : ''}
+                                <div class="d-flex gap-2">
+                                    ${project.demo || project.liveLink ? `<a href="${project.demo || project.liveLink}" target="_blank" class="btn" style="background:linear-gradient(45deg,#ff6b6b,#4ecdc4);color:white;border:none;border-radius:25px;padding:10px 25px;font-weight:600;">🚀 View Live</a>` : ''}
+                                    ${project.github || project.githubLink ? `<a href="${project.github || project.githubLink}" target="_blank" class="btn btn-outline-secondary" style="border-radius:25px;padding:10px 25px;font-weight:600;">📂 Code</a>` : ''}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1061,107 +790,51 @@ function generateTemplate1HTML(data, meta) {
 
     <!-- Experience Section -->
     ${data.experience && data.experience.length > 0 ? `
-    <section class="py-5 bg-light">
+    <section class="py-5">
         <div class="container">
-            <h2 class="section-title text-center">Experience</h2>
+            ${sectionTitle('Experience')}
             ${data.experience.map(exp => `
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <div class="card card-3d">
-                            <div class="card-body">
-                                <h5 class="card-title" style="color: #667eea; font-weight: 700;">${exp.position}</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">${exp.company} • ${exp.duration}</h6>
-                                ${exp.location ? `<p class="text-muted"><i class="fas fa-map-marker-alt"></i> ${exp.location}</p>` : ''}
-                                ${exp.description ? `<p class="card-text">${exp.description}</p>` : ''}
-                                ${exp.achievements && exp.achievements.length > 0 ? `
-                                    <ul style="list-style-type: none; padding-left: 0;">
-                                        ${exp.achievements.map(achievement => `<li style="padding: 5px 0; color: #555;"><i class="fas fa-check-circle" style="color: #667eea; margin-right: 8px;"></i>${achievement}</li>`).join('')}
-                                    </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Contact Section -->
-    <section id="contact" class="gradient-bg text-center" style="padding: 60px 0; color: white;">
-        <div class="container">
-            <h3 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem;">Ready to Drive Results Together?</h3>
-            <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">Let's discuss how I can help grow your business.</p>
-            ${data.email ? `<a href="mailto:${data.email}" class="btn-marketing primary" style="font-size: 1.1rem; padding: 15px 40px;">
-                <i class="fas fa-envelope me-2"></i>Start the Conversation
-            </a>` : ''}
-            <div style="margin-top: 3rem;">
-                <p style="opacity: 0.8; margin: 0;">&copy; ${new Date().getFullYear()} ${data.name} - Marketing Portfolio</p>
-                <small style="opacity: 0.6;">Powered by <a href="${getFrontendUrl()}" target="_blank" style="color: rgba(255,255,255,0.8);">Portfolio Generator</a></small>
-            </div>
-        </div>
-    </section>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
-    \`;
-}
-
-                          ` : ''}
-                            </div>
+                ${creativeCard(`
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h4 class="fw-bold">${exp.position}</h4>
+                            <h5 class="text-primary">${exp.company}</h5>
+                            <p class="text-muted">${exp.duration} • ${exp.location || ''}</p>
+                            <p>${exp.description}</p>
+                            ${exp.achievements && exp.achievements.length > 0 ? `
+                                <ul class="mt-3" style="color:#64748b;">
+                                    ${exp.achievements.map(achievement => `<li>${achievement}</li>`).join('')}
+                                </ul>
+                            ` : ''}
                         </div>
                     </div>
-                </div>
+                `, 'margin-bottom:2rem;padding:2rem;')}
             `).join('')}
         </div>
     </section>
     ` : ''}
 
-    <!-- Projects Section -->
-    ${data.projects && data.projects.length > 0 ? `
-    <section class="py-5">
-        <div class="container">
-            <h2 class="section-title text-center">Projects</h2>
-            <div class="row">
-                ${data.projects.map(project => `
-                    <div class="col-md-6 mb-4">
-                        <div class="card project-card h-100 fade-in">
-                            ${project.image ? `<img src="${project.image}" class="card-img-top" alt="${project.title}" style="height: 200px; object-fit: cover;">` : ''}
-                            <div class="card-body">
-                                <h5 class="card-title" style="color: #667eea; font-weight: 700;">${project.title}</h5>
-                                <p class="card-text">${project.description}</p>
-                                ${project.tech && project.tech.length > 0 ? `
-                                    <div class="mb-3">
-                                        ${project.tech.map(tech => `<span class="badge me-1" style="background: linear-gradient(90deg, #667eea, #764ba2); color: white; border-radius: 15px; padding: 5px 12px;">${tech}</span>`).join('')}
-                                    </div>
-                                ` : ''}
-                                <div>
-                                    ${project.liveLink || project.demo ? `<a href="${project.liveLink || project.demo}" target="_blank" class="btn btn-primary btn-sm me-2" style="background: linear-gradient(90deg, #667eea, #764ba2); border: none; border-radius: 20px;">🚀 Live Demo</a>` : ''}
-                                    ${project.githubLink || project.github ? `<a href="${project.githubLink || project.github}" target="_blank" class="btn btn-outline-secondary btn-sm" style="border-radius: 20px;"><i class="fab fa-github"></i> Code</a>` : ''}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-        </div>
-    </section>
-    ` : ''}
-
-    <!-- Education Section -->
-    ${data.education && data.education.length > 0 ? `
+    <!-- Internships Section -->
+    ${data.internships && data.internships.length > 0 ? `
     <section class="py-5 bg-light">
         <div class="container">
-            <h2 class="section-title text-center">Education</h2>
-            ${data.education.map(edu => `
-                <div class="row mb-3">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">${edu.degree} ${edu.field ? 'in ' + edu.field : ''}</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">${edu.institution} • ${edu.duration}</h6>
-                                ${edu.location ? `<p class="text-muted"><i class="fas fa-map-marker-alt"></i> ${edu.location}</p>` : ''}
-                                ${edu.gpa ? `<p class="text-muted">GPA: ${edu.gpa}</p>` : ''}
-                                ${edu.description ? `<p class="card-text">${edu.description}</p>` : ''}
-                            </div>
+            ${sectionTitle('Internships')}
+            ${data.internships.map(internship => `
+                ${creativeCard(`
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h4 class="fw-bold">${internship.position}</h4>
+                            <h5 class="text-primary">${internship.company}</h5>
+                            <p class="text-muted">${internship.duration} • ${internship.location || ''}</p>
+                            <p>${internship.description}</p>
+                            ${internship.achievements && internship.achievements.length > 0 ? `
+                                <ul class="mt-3" style="color:#64748b;">
+                                    ${internship.achievements.map(achievement => `<li>${achievement}</li>`).join('')}
+                                </ul>
+                            ` : ''}
                         </div>
                     </div>
-                </div>
+                `, 'margin-bottom:2rem;padding:2rem;')}
             `).join('')}
         </div>
     </section>
@@ -1171,787 +844,32 @@ function generateTemplate1HTML(data, meta) {
     ${data.certifications && data.certifications.length > 0 ? `
     <section class="py-5">
         <div class="container">
-            <h2 class="section-title text-center">Certifications</h2>
+            ${sectionTitle('Certifications')}
             <div class="row">
                 ${data.certifications.map(cert => `
-                    <div class="col-md-6 mb-4">
-                        <div class="card h-100">
-                            <div class="card-body text-center">
-                                <div class="mb-3">
-                                    <i class="fas fa-certificate fa-3x text-warning"></i>
-                                </div>
-                                <h5 class="card-title">${cert.name}</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">${cert.issuer}</h6>
-                                ${cert.date ? `<p class="text-muted"><i class="fas fa-calendar"></i> ${cert.date}</p>` : ''}
-                                ${cert.url ? `<a href="${cert.url}" target="_blank" class="btn btn-outline-primary btn-sm">View Certificate</a>` : ''}
-                            </div>
-                        </div>
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        ${creativeCard(`
+                            <div style="width:60px;height:60px;background:linear-gradient(45deg,#ff6b6b,#4ecdc4);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem auto;font-size:1.5rem;">🏆</div>
+                            <h5 class="fw-bold">${cert.name}</h5>
+                            <p class="text-muted">${cert.issuer}</p>
+                            <p class="small">${cert.date}</p>
+                            ${cert.validUntil ? `<p class="small text-success">Valid until: ${cert.validUntil}</p>` : ''}
+                            ${cert.verifyLink ? `<a href="${cert.verifyLink}" target="_blank" class="btn btn-outline-primary btn-sm">Verify</a>` : ''}
+                        `, 'padding:2rem;text-align:center;height:100%;')}
                     </div>
                 `).join('')}
             </div>
-        </div>
-    </section>
-    ` : ''}
-
-    <!-- Internships Section -->
-    ${data.internships && data.internships.length > 0 ? `
-    <section class="py-5 bg-light">
-        <div class="container">
-            <h2 class="section-title text-center">Internships & Early Experience</h2>
-            ${data.internships.map(internship => `
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex align-items-center mb-3">
-                                    <i class="fas fa-rocket fa-2x text-primary me-3"></i>
-                                    <div>
-                                        <h5 class="card-title mb-1">${internship.position}</h5>
-                                        <h6 class="card-subtitle text-muted">${internship.company} • ${internship.duration}</h6>
-                                    </div>
-                                </div>
-                                ${internship.location ? `<p class="text-muted"><i class="fas fa-map-marker-alt"></i> ${internship.location}</p>` : ''}
-                                ${internship.description ? `<p class="card-text">${internship.description}</p>` : ''}
-                                ${internship.achievements && internship.achievements.length > 0 ? `
-                                    <div>
-                                        <h6 class="fw-bold">Key Achievements:</h6>
-                                        <ul>
-                                            ${internship.achievements.map(achievement => `<li>${achievement}</li>`).join('')}
-                                        </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Contact Section -->
-    <section id="contact" class="gradient-bg text-center" style="padding: 60px 0; color: white;">
-        <div class="container">
-            <h3 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem;">Ready to Drive Results Together?</h3>
-            <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">Let's discuss how I can help grow your business.</p>
-            ${data.email ? `<a href="mailto:${data.email}" class="btn-marketing primary" style="font-size: 1.1rem; padding: 15px 40px;">
-                <i class="fas fa-envelope me-2"></i>Start the Conversation
-            </a>` : ''}
-            <div style="margin-top: 3rem;">
-                <p style="opacity: 0.8; margin: 0;">&copy; ${new Date().getFullYear()} ${data.name} - Marketing Portfolio</p>
-                <small style="opacity: 0.6;">Powered by <a href="${getFrontendUrl()}" target="_blank" style="color: rgba(255,255,255,0.8);">Portfolio Generator</a></small>
-            </div>
-        </div>
-    </section>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
-    \`;
-}
-
-                              </div>
-                                ` : ''}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `).join('')}
-        </div>
-    </section>
-    ` : ''}
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container text-center">
-            <h5>${data.name}</h5>
-            <p>${data.title}</p>
-            <div class="mb-3">
-                ${data.email ? `<a href="mailto:${data.email}" class="text-white me-3"><i class="fas fa-envelope"></i></a>` : ''}
-                ${data.linkedin ? `<a href="${data.linkedin}" target="_blank" class="text-white me-3"><i class="fab fa-linkedin"></i></a>` : ''}
-                ${data.github ? `<a href="${data.github}" target="_blank" class="text-white me-3"><i class="fab fa-github"></i></a>` : ''}
-                ${data.website ? `<a href="${data.website}" target="_blank" class="text-white"><i class="fas fa-globe"></i></a>` : ''}
-            </div>
-        </div>
-    </footer>
-
-    <!-- Powered By -->
-    <div class="powered-by">
-        <small>Powered by <a href="${getFrontendUrl()}" target="_blank">Portfolio Generator</a></small>
-    </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
-    `;
-}
-
-function generateTemplate2HTML(data, meta) {
-    return `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>${meta?.title || data.name + ' - Creative Portfolio'}</title>
-    <meta name="description" content="${meta?.description || 'Creative Portfolio of ' + data.name}">
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
-    <style>
-        body { 
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-        
-        /* ENHANCED CREATIVE ANIMATIONS - EXACT MATCH TO REACT TEMPLATE */
-        @keyframes creativeFloat {
-            0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
-            25% { transform: translateY(-15px) rotate(2deg) scale(1.05); }
-            50% { transform: translateY(-25px) rotate(-1deg) scale(1.1); }
-            75% { transform: translateY(-10px) rotate(1deg) scale(1.05); }
-        }
-        
-        @keyframes colorShift {
-            0% { filter: hue-rotate(0deg); }
-            25% { filter: hue-rotate(90deg); }
-            50% { filter: hue-rotate(180deg); }
-            75% { filter: hue-rotate(270deg); }
-            100% { filter: hue-rotate(360deg); }
-        }
-        
-        @keyframes morphShape {
-            0%, 100% { border-radius: 50% 30% 70% 40%; transform: rotate(0deg); }
-            25% { border-radius: 30% 70% 40% 50%; transform: rotate(90deg); }
-            50% { border-radius: 70% 40% 50% 30%; transform: rotate(180deg); }
-            75% { border-radius: 40% 50% 30% 70%; transform: rotate(270deg); }
-        }
-        
-        @keyframes slideInCreative {
-            0% { transform: translateX(-100px) rotateY(-45deg) scale(0.8); opacity: 0; }
-            100% { transform: translateX(0) rotateY(0deg) scale(1); opacity: 1; }
-        }
-        
-        @keyframes morphShape {
-            0%, 100% { border-radius: 50% 30% 70% 40%; transform: rotate(0deg); }
-            25% { border-radius: 30% 70% 40% 50%; transform: rotate(90deg); }
-            50% { border-radius: 70% 40% 50% 30%; transform: rotate(180deg); }
-            75% { border-radius: 40% 50% 30% 70%; transform: rotate(270deg); }
-        }
-        
-        @keyframes slideInCreative {
-            0% { transform: translateX(-100px) rotateY(-45deg) scale(0.8); opacity: 0; }
-            100% { transform: translateX(0) rotateY(0deg) scale(1); opacity: 1; }
-        }
-        
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        
-        .creative-header { 
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
-            color: white; 
-            padding: 100px 0;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .creative-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%);
-            animation: colorShift 8s linear infinite;
-        }
-        
-        .profile-img { 
-            width: 180px; 
-            height: 180px;
-            border-radius: 0 !important;
-            border: 6px solid white; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            animation: morphShape 15s ease-in-out infinite;
-            transition: all 0.3s ease;
-            transform-style: preserve-3d;
-            object-fit: cover;
-        }
-        
-        .profile-img:hover {
-            animation-play-state: paused;
-            transform: scale(1.2) rotateY(15deg);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
-            border-color: #feca57;
-        }
-        
-        .creative-card { 
-            border: none; 
-            border-radius: 20px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            overflow: hidden;
-            transform-style: preserve-3d;
-            animation: slideInCreative 1s ease-out;
-            position: relative;
-        }
-        
-        .creative-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, rgba(255, 107, 107, 0.1), rgba(78, 205, 196, 0.1));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .creative-card:hover::before {
-            opacity: 1;
-        }
-        
-        .creative-card:hover { 
-            transform: rotateY(15deg) rotateX(10deg) translateZ(30px) scale(1.05);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
-        }
-        
-        .skill-orb {
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4); 
-            color: white; 
-            border: none;
-            border-radius: 50px;
-            padding: 10px 20px;
-            margin: 8px;
-            display: inline-block;
-            font-weight: 600;
-            transform-style: preserve-3d;
-            transition: all 0.3s ease;
-            animation: creativeFloat 6s ease-in-out infinite;
-            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
-        }
-        
-        .skill-orb:hover {
-            transform: translateZ(20px) rotateY(180deg) scale(1.2);
-            animation-play-state: paused;
-            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.5);
-        }
-        
-        .project-showcase {
-            border: none; 
-            border-radius: 20px; 
-            overflow: hidden; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
-            transform-style: preserve-3d;
-            transition: all 0.5s ease;
-            position: relative;
-        }
-        
-        .project-showcase::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, rgba(255, 107, 107, 0.1), rgba(78, 205, 196, 0.1));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .project-showcase:hover::after {
-            opacity: 1;
-        }
-        
-        .project-showcase:hover { 
-            transform: perspective(1000px) rotateX(10deg) rotateY(5deg) translateZ(20px) scale(1.02);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
-        }
-        
-        .section-title { 
-            color: #2c3e50; 
-            font-weight: 800; 
-            margin-bottom: 40px; 
-            position: relative;
-            animation: slideInCreative 1s ease-out;
-        }
-        
-        .section-title::after { 
-            content: ''; 
-            position: absolute; 
-            bottom: -10px; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            width: 80px; 
-            height: 4px; 
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1); 
-            border-radius: 2px;
-            animation: gradientShift 3s ease infinite;
-            background-size: 200% 100%;
-        }
-        
-        .btn {
-            border-radius: 25px;
-            padding: 12px 30px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            transform-style: preserve-3d;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
-            transition: all 0.5s ease;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-        }
-        
-        .btn:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-        
-        .btn:hover {
-            transform: translateZ(10px) scale(1.05);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-        }
-        
-        /* MOBILE OPTIMIZATIONS */
-        @media (max-width: 768px) {
-            .creative-card:hover,
-            .skill-orb:hover,
-            .project-showcase:hover {
-                transform: none !important;
-            }
-            
-            .skill-orb,
-            .profile-img {
-                animation: none !important;
-            }
-            
-            .creative-card:hover {
-                transform: translateY(-5px) !important;
-            }
-            
-            .profile-img:hover {
-                transform: scale(1.1) !important;
-            }
-        }
-        
-        .fade-in-creative {
-            animation: slideInCreative 1s ease-out;
-        }
-        
-        /* Hero Section Styles - EXACT MATCH TO REACT */
-        .hero-section {
-            background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
-            min-height: 100vh;
-            position: relative;
-            overflow: hidden;
-            padding-top: 100px;
-        }
-        
-        .bg-shape {
-            position: absolute;
-            background: rgba(255,255,255,0.15);
-            border-radius: 50% 30% 70% 40%;
-        }
-        
-        .white-card {
-            background: rgba(255,255,255,0.95);
-            padding: 4rem;
-            border-radius: 30px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
-            backdrop-filter: blur(20px);
-            animation: slideInCreative 1.2s ease-out;
-        }
-        
-        .creative-badge {
-            display: inline-block;
-            background: linear-gradient(45deg, #ff6b6b, #feca57);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .hero-name {
-            font-size: 4rem;
-            font-weight: 800;
-            color: #2c3e50;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-            line-height: 1.1;
-        }
-        
-        .hero-title {
-            font-size: 1.8rem;
-            color: #e74c3c;
-            margin-bottom: 2rem;
-            font-style: italic;
-            font-weight: 400;
-        }
-        
-        .hero-description {
-            font-size: 1.2rem;
-            color: #34495e;
-            line-height: 1.8;
-            margin-bottom: 2.5rem;
-        }
-        
-        .hero-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(45deg, #e74c3c, #f39c12);
-            border: none;
-            padding: 15px 35px;
-            font-size: 1.1rem;
-            border-radius: 30px;
-            box-shadow: 0 8px 25px rgba(231,76,60,0.3);
-            font-weight: 600;
-            color: white;
-            text-decoration: none;
-            display: inline-block;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(231,76,60,0.4);
-            color: white;
-            text-decoration: none;
-        }
-        
-        .btn-secondary {
-            background: transparent;
-            border: 2px solid #e74c3c;
-            color: #e74c3c;
-            padding: 13px 33px;
-            font-size: 1.1rem;
-            border-radius: 30px;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-block;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-secondary:hover {
-            background: #e74c3c;
-            color: white;
-            transform: translateY(-3px);
-            text-decoration: none;
-        }
-        
-        .social-icons {
-            display: flex;
-            gap: 1.5rem;
-        }
-        
-        .social-icon {
-            color: #e74c3c;
-            font-size: 1.8rem;
-            transition: transform 0.3s ease;
-            text-decoration: none;
-        }
-        
-        .social-icon:hover {
-            transform: scale(1.2) rotate(10deg);
-            color: #e74c3c;
-            text-decoration: none;
-        }
-        
-        .profile-container {
-            position: relative;
-            width: 400px;
-            height: 400px;
-            margin: 0 auto;
-        }
-        
-        .profile-floating {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 350px;
-            height: 350px;
-            background: linear-gradient(45deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
-            border-radius: 50%;
-            animation: creativeFloat 8s ease-in-out infinite;
-        }
-        
-        .profile-img {
-            position: relative;
-            width: 300px;
-            height: 300px;
-            border-radius: 0 !important;
-            object-fit: cover;
-            border: 8px solid rgba(255,255,255,0.3);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
-            z-index: 2;
-            animation: creativeFloat 6s ease-in-out infinite reverse;
-        }
-        
-        .status-badge {
-            position: absolute;
-            bottom: 30px;
-            right: 30px;
-            background: linear-gradient(45deg, #10b981, #34d399);
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
-            box-shadow: 0 8px 20px rgba(16,185,129,0.3);
-        }
-        
-        /* Mobile Optimizations */
-        @media (max-width: 768px) {
-            .creative-card:hover,
-            .profile-floating:hover {
-                transform: none !important;
-                animation: none !important;
-            }
-            
-            .hero-section {
-                padding-top: 80px !important;
-                min-height: auto !important;
-            }
-            
-            .white-card {
-                margin: 1rem !important;
-                padding: 1.5rem !important;
-            }
-            
-            .profile-container {
-                width: 250px !important;
-                height: 250px !important;
-            }
-            
-            .profile-img {
-                width: 180px !important;
-                height: 180px !important;
-            }
-            
-            .hero-name {
-                font-size: 2rem !important;
-            }
-            
-            .hero-title {
-                font-size: 1.2rem !important;
-            }
-            
-            .hero-description {
-                font-size: 0.9rem !important;
-            }
-            
-            .hero-buttons {
-                flex-direction: column;
-            }
-            
-            .btn-primary, .btn-secondary {
-                width: 100%;
-                max-width: 300px;
-                font-size: 0.9rem !important;
-                padding: 12px 25px !important;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Creative Hero Section - EXACT MATCH TO REACT -->
-    <section class="hero-section">
-        <!-- Animated Background Shapes -->
-        <div class="bg-shape" style="top: 10%; left: 5%; width: 150px; height: 150px; animation: morphShape 8s ease-in-out infinite, colorShift 12s linear infinite;"></div>
-        <div class="bg-shape" style="top: 60%; right: 10%; width: 120px; height: 120px; animation: morphShape 6s ease-in-out infinite reverse, colorShift 10s linear infinite reverse;"></div>
-        <div class="bg-shape" style="bottom: 20%; left: 15%; width: 100px; height: 100px; animation: morphShape 10s ease-in-out infinite, colorShift 8s linear infinite;"></div>
-        
-        <div class="container h-100 d-flex align-items-center">
-            <div class="row w-100 align-items-center">
-                <div class="col-lg-6">
-                    <div class="white-card">
-                        <div class="creative-badge">Creative Professional</div>
-                        <h1 class="hero-name">${data.name}</h1>
-                        <h2 class="hero-title">${data.title}</h2>
-                        <p class="hero-description">${data.about || 'Creative professional passionate about innovative design and user experience.'}</p>
-                        <div class="hero-buttons">
-                            <a href="#portfolio" class="btn-primary">🎨 View Portfolio</a>
-                            <a href="#contact" class="btn-secondary">💬 Let's Talk</a>
-                        </div>
-                        <div class="social-icons">
-                            <a href="#" class="social-icon">🎨</a>
-                            <a href="#" class="social-icon">🏀</a>
-                            <a href="#" class="social-icon">💼</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6 text-center">
-                    <div class="profile-container">
-                        <div class="profile-floating"></div>
-                        ${data.profileImage ? `<img src="${data.profileImage}" alt="${data.name}" class="profile-img">` : ''}
-                        <div class="status-badge">✓</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Skills Section -->
-    ${data.skills && data.skills.length > 0 ? `
-    <section class="py-5">
-        <div class="container">
-            <h2 class="section-title text-center">Creative Skills</h2>
-            <div class="row">
-                ${data.skills.map(skill => `
-                    <div class="col-md-4 mb-4">
-                        <div class="creative-card p-4 text-center h-100">
-                            <h5 class="mb-3" style="color: #2c3e50; font-weight: 700;">${skill.name}</h5>
-                            <div class="progress mb-3" style="height: 12px; border-radius: 10px; background: #f8f9fa;">
-                                <div class="progress-bar" style="width: ${skill.level}%; background: linear-gradient(45deg, #ff6b6b, #4ecdc4); border-radius: 10px; transition: width 2s ease-in-out;"></div>
-                            </div>
-                            <span class="skill-orb">${skill.level}%</span>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-        </div>
-    </section>
-    ` : ''}
-
-    <!-- Projects Section -->
-    ${data.projects && data.projects.length > 0 ? `
-    <section class="py-5 bg-light">
-        <div class="container">
-            <h2 class="section-title text-center">Creative Projects</h2>
-            <div class="row">
-                ${data.projects.map(project => `
-                    <div class="col-lg-6 mb-5">
-                        <div class="project-showcase h-100">
-                            ${project.image ? `<img src="${project.image}" class="card-img-top" style="height: 250px; object-fit: cover;" alt="${project.title}">` : ''}
-                            <div class="card-body p-4">
-                                <h5 class="card-title fw-bold" style="color: #2c3e50; font-size: 1.5rem;">${project.title}</h5>
-                                <p class="card-text" style="color: #555; line-height: 1.6;">${project.description}</p>
-                                ${project.tech && project.tech.length > 0 ? `
-                                    <div class="mb-3">
-                                        ${project.tech.map(tech => `<span class="skill-orb me-2 mb-2" style="font-size: 0.85rem; padding: 8px 16px;">${tech}</span>`).join('')}
-                                    </div>
-                                ` : ''}
-                                <div class="d-flex gap-2">
-                                    ${project.demo ? `<a href="${project.demo}" target="_blank" class="btn" style="background: linear-gradient(45deg, #ff6b6b, #4ecdc4); color: white; border: none; border-radius: 25px; padding: 10px 25px; font-weight: 600;">🚀 View Live</a>` : ''}
-                                    ${project.github ? `<a href="${project.github}" target="_blank" class="btn btn-outline-secondary" style="border-radius: 25px; padding: 10px 25px; font-weight: 600;"><i class="fab fa-github"></i> Code</a>` : ''}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-        </div>
-    </section>
-    ` : ''}
-
-    <!-- Experience Section -->
-    ${data.experience && data.experience.length > 0 ? `
-    <section class="py-5">
-        <div class="container">
-            <h2 class="section-title text-center">Experience</h2>
-            ${data.experience.map(exp => `
-                <div class="creative-card mb-4 p-4">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <h4 class="fw-bold">${exp.position}</h4>
-                            <h5 class="text-primary">${exp.company}</h5>
-                            <p class="text-muted">${exp.duration} • ${exp.location || ''}</p>
-                            <p>${exp.description}</p>
-                        </div>
-                    </div>
-                </div>
-            `).join('')}
-        </div>
-    </section>
-    ` : ''}
-
-    <!-- Internships Section -->
-    ${data.internships && data.internships.length > 0 ? `
-    <section class="py-5 bg-light">
-        <div class="container">
-            <h2 class="section-title text-center">Internships</h2>
-            ${data.internships.map(internship => `
-                <div class="creative-card mb-4 p-4">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <h4 class="fw-bold">${internship.position}</h4>
-                            <h5 class="text-primary">${internship.company}</h5>
-                            <p class="text-muted">${internship.duration} • ${internship.location || ''}</p>
-                            <p>${internship.description}</p>
-                            ${internship.achievements && internship.achievements.length > 0 ? `
-                                <ul class="mt-3">
-                                    ${internship.achievements.map(achievement => `<li>${achievement}</li>`).join('')}
-                                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Contact Section -->
-    <section id="contact" class="gradient-bg text-center" style="padding: 60px 0; color: white;">
-        <div class="container">
-            <h3 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem;">Ready to Drive Results Together?</h3>
-            <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">Let's discuss how I can help grow your business.</p>
-            ${data.email ? `<a href="mailto:${data.email}" class="btn-marketing primary" style="font-size: 1.1rem; padding: 15px 40px;">
-                <i class="fas fa-envelope me-2"></i>Start the Conversation
-            </a>` : ''}
-            <div style="margin-top: 3rem;">
-                <p style="opacity: 0.8; margin: 0;">&copy; ${new Date().getFullYear()} ${data.name} - Marketing Portfolio</p>
-                <small style="opacity: 0.6;">Powered by <a href="${getFrontendUrl()}" target="_blank" style="color: rgba(255,255,255,0.8);">Portfolio Generator</a></small>
-            </div>
-        </div>
-    </section>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
-    \`;
-}
-
-                      ` : ''}
-                        </div>
-                    </div>
-                </div>
-            `).join('')}
         </div>
     </section>
     ` : ''}
 
     <!-- Education Section -->
     ${data.education && data.education.length > 0 ? `
-    <section class="py-5">
+    <section class="py-5 bg-light">
         <div class="container">
-            <h2 class="section-title text-center">Education</h2>
+            ${sectionTitle('Education')}
             ${data.education.map(edu => `
-                <div class="creative-card mb-4 p-4">
+                ${creativeCard(`
                     <div class="row">
                         <div class="col-md-8">
                             <h4 class="fw-bold">${edu.degree}</h4>
@@ -1960,26 +878,30 @@ function generateTemplate2HTML(data, meta) {
                             ${edu.description ? `<p>${edu.description}</p>` : ''}
                         </div>
                     </div>
-                </div>
+                `, 'margin-bottom:2rem;padding:2rem;')}
             `).join('')}
         </div>
     </section>
     ` : ''}
 
-    <!-- Footer -->
-    <footer class="creative-header text-center py-4">
-        <div class="container">
-            <p class="mb-0">&copy; ${new Date().getFullYear()} ${data.name}. All rights reserved.</p>
-            <small class="d-block mt-2">Powered by <a href="${getFrontendUrl()}" target="_blank" class="text-white">Portfolio Generator</a></small>
+    <!-- Contact Section -->
+    <section id="contact" class="creative-header" style="padding:60px 0;color:white;">
+        <div class="container text-center">
+            <h3 style="font-size:2.5rem;font-weight:bold;margin-bottom:1rem;">Ready to Create Together?</h3>
+            <p style="font-size:1.2rem;margin-bottom:2rem;opacity:0.9;">Let's discuss your next creative project.</p>
+            ${data.email ? `<a href="mailto:${data.email}" class="btn btn-light btn-lg" style="font-size:1.1rem;padding:15px 40px;">✉️ Start the Conversation</a>` : ''}
+            <div style="margin-top:3rem;">
+                <p style="opacity:0.8;margin:0;">&copy; ${new Date().getFullYear()} ${data.name} - Creative Portfolio</p>
+                <small style="opacity:0.6;">Powered by <a href="${typeof getFrontendUrl === 'function' ? getFrontendUrl() : '#'}" target="_blank" style="color:rgba(255,255,255,0.8);">Portfolio Generator</a></small>
+            </div>
         </div>
-    </footer>
-
+    </section>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
     `;
 }
-
+// ...existing code...
 function generateTemplate3HTML(data, meta) {
     return `
 <!DOCTYPE html>
@@ -3568,3 +2490,1836 @@ function generateTemplate4HTML(data, meta) {
                         font-weight: 500;
                         color: #000000;
                         text-transform: uppercase;
+                        letter-spacing: 1px;
+                        margin-bottom: 1rem;
+                    ">Key Achievements</h6>
+                    <div style="
+                        display: grid;
+                        gap: 0.5rem;
+                    ">
+                        ${exp.achievements.map(achievement => `
+                        <div style="
+                            font-size: 0.95rem;
+                            color: #666666;
+                            padding-left: 1rem;
+                            position: relative;
+                        ">
+                            <span style="
+                                position: absolute;
+                                left: 0;
+                                top: 0.2rem;
+                                width: 4px;
+                                height: 4px;
+                                background: #000000;
+                                border-radius: 50%;
+                            "></span>
+                            ${achievement}
+                        </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
+            </div>
+            `).join('')}
+        </div>
+    </section>
+    ` : ''}
+
+    <!-- Projects Section -->
+    ${data.projects && data.projects.length > 0 ? `
+    <section id="work" style="
+        padding: 120px 0;
+        background-color: white;
+    ">
+        <div style="
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
+        ">
+            <h2 style="
+                font-size: 2.5rem;
+                font-weight: 400;
+                color: #000000;
+                margin-bottom: 2rem;
+                letter-spacing: -1px;
+            ">
+                Selected Work
+            </h2>
+            <div style="
+                width: 60px;
+                height: 1px;
+                background: #000000;
+                margin: 2rem auto 4rem auto;
+            "></div>
+            
+            <!-- Project Grid -->
+            <div style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 3rem;
+                margin-top: 4rem;
+            ">
+                ${data.projects.map(project => `
+                <div style="
+                    text-align: left;
+                    background: #fafafa;
+                    padding: 0;
+                    border: 1px solid #f0f0f0;
+                    transition: all 0.3s ease;
+                    overflow: hidden;
+                ">
+                    ${project.image ? `
+                    <div style="
+                        width: 100%;
+                        height: 250px;
+                        background-image: url('${project.image}');
+                        background-size: cover;
+                        background-position: center;
+                        margin-bottom: 2rem;
+                    "></div>
+                    ` : ''}
+                    
+                    <div style="padding: 2rem;">
+                        <h3 style="
+                            font-size: 1.3rem;
+                            font-weight: 600;
+                            color: #000000;
+                            margin-bottom: 1rem;
+                        ">${project.title || project.name || 'Project'}</h3>
+                        
+                        <p style="
+                            font-size: 1rem;
+                            font-weight: 300;
+                            line-height: 1.6;
+                            color: #666666;
+                            margin-bottom: 1.5rem;
+                        ">${project.description || ''}</p>
+                        
+                        ${project.tech && project.tech.length > 0 ? `
+                        <div style="
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 0.5rem;
+                            margin-bottom: 1.5rem;
+                        ">
+                            ${project.tech.map(tech => `
+                            <span style="
+                                font-size: 0.8rem;
+                                font-weight: 300;
+                                color: #888888;
+                                background: #f8f8f8;
+                                padding: 0.3rem 0.8rem;
+                                border-radius: 0;
+                                text-transform: uppercase;
+                                letter-spacing: 0.5px;
+                            ">${tech}</span>
+                            `).join('')}
+                        </div>
+                        ` : ''}
+                        
+                        <div style="
+                            display: flex;
+                            gap: 1rem;
+                        ">
+                            ${project.demo || project.liveLink ? `
+                            <a href="${project.demo || project.liveLink}" target="_blank" style="
+                                color: #000000;
+                                text-decoration: none;
+                                font-size: 0.8rem;
+                                font-weight: 400;
+                                text-transform: uppercase;
+                                letter-spacing: 1px;
+                                border-bottom: 1px solid #000000;
+                                padding-bottom: 2px;
+                                transition: all 0.3s ease;
+                            ">View Live</a>
+                            ` : ''}
+                            
+                            ${project.github || project.source ? `
+                            <a href="${project.github || project.source}" target="_blank" style="
+                                color: #666666;
+                                text-decoration: none;
+                                font-size: 0.8rem;
+                                font-weight: 400;
+                                text-transform: uppercase;
+                                letter-spacing: 1px;
+                                border-bottom: 1px solid #666666;
+                                padding-bottom: 2px;
+                                transition: all 0.3s ease;
+                            ">View Code</a>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+                `).join('')}
+            </div>
+        </div>
+    </section>
+    ` : ''}
+
+    <!-- Education Section -->
+    ${data.education && data.education.length > 0 ? `
+    <section style="
+        padding: 120px 0;
+        background-color: #fafafa;
+    ">
+        <div style="
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        ">
+            <h2 style="
+                font-size: 2.5rem;
+                font-weight: 400;
+                color: #000000;
+                margin-bottom: 2rem;
+                letter-spacing: -1px;
+                text-align: center;
+            ">Education</h2>
+            <div style="
+                width: 60px;
+                height: 1px;
+                background: #000000;
+                margin: 2rem auto 4rem auto;
+            "></div>
+            
+            ${data.education.map(edu => `
+            <div style="
+                margin-bottom: 3rem;
+                padding: 3rem;
+                background: white;
+                border: 1px solid #f0f0f0;
+                transition: all 0.3s ease;
+            ">
+                <div style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    margin-bottom: 1.5rem;
+                    flex-wrap: wrap;
+                    gap: 1rem;
+                ">
+                    <div>
+                        <h3 style="
+                            font-size: 1.4rem;
+                            font-weight: 600;
+                            color: #000000;
+                            margin-bottom: 0.5rem;
+                        ">${edu.degree || edu.institution || 'Education'}</h3>
+                        <h4 style="
+                            font-size: 1.1rem;
+                            font-weight: 300;
+                            color: #666666;
+                            margin-bottom: 0.5rem;
+                        ">${edu.school || edu.institution || ''}</h4>
+                        ${edu.location ? `
+                        <p style="
+                            font-size: 0.9rem;
+                            color: #999999;
+                            margin: 0;
+                        ">${edu.location}</p>
+                        ` : ''}
+                    </div>
+                    <div style="
+                        text-align: right;
+                        font-size: 0.9rem;
+                        color: #666666;
+                        font-weight: 300;
+                    ">
+                        ${edu.duration || ''}
+                    </div>
+                </div>
+                
+                ${edu.fieldOfStudy ? `
+                <p style="
+                    font-size: 0.9rem;
+                    color: #888888;
+                    margin-bottom: 1rem;
+                    font-weight: 300;
+                ">Field of Study: ${edu.fieldOfStudy}</p>
+                ` : ''}
+                
+                ${edu.gpa ? `
+                <p style="
+                    font-size: 0.9rem;
+                    color: #888888;
+                    margin-bottom: 1rem;
+                    font-weight: 300;
+                ">GPA: ${edu.gpa}</p>
+                ` : ''}
+                
+                ${edu.description ? `
+                <p style="
+                    font-size: 1rem;
+                    font-weight: 300;
+                    line-height: 1.6;
+                    color: #555555;
+                    margin: 0;
+                ">${edu.description}</p>
+                ` : ''}
+            </div>
+            `).join('')}
+        </div>
+    </section>
+    ` : ''}
+
+
+
+    <!-- Projects Section -->
+    ${data.projects && data.projects.length > 0 ? `
+    <section id="work" style="
+        padding: 120px 0;
+        background-color: white;
+    ">
+        <div style="
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
+        ">
+            <h2 style="
+                font-size: 2.5rem;
+                font-weight: 400;
+                color: #000000;
+                margin-bottom: 2rem;
+                letter-spacing: -1px;
+            ">
+                Selected Work
+            </h2>
+            <div style="
+                width: 60px;
+                height: 1px;
+                background: #000000;
+                margin: 2rem auto 4rem auto;
+            "></div>
+            
+            <!-- Project Grid -->
+            <div style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 3rem;
+                margin-top: 4rem;
+            ">
+                ${data.projects.map(project => `
+                <div style="
+                    text-align: left;
+                    border: 1px solid #f0f0f0;
+                    transition: all 0.3s ease;
+                    padding: 0;
+                    background: white;
+                ">
+                    ${project.image ? `
+                    <div style="
+                        width: 100%;
+                        height: 250px;
+                        overflow: hidden;
+                        background: #f8f8f8;
+                    ">
+                        <img src="${project.image}" alt="${project.title}" style="
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                            transition: transform 0.3s ease;
+                        ">
+                    </div>
+                    ` : ''}
+                    <div style="padding: 2rem;">
+                        <h3 style="
+                            font-size: 1.3rem;
+                            font-weight: 600;
+                            color: #000000;
+                            margin-bottom: 1rem;
+                            letter-spacing: -0.5px;
+                        ">${project.title}</h3>
+                        <p style="
+                            font-size: 0.95rem;
+                            font-weight: 300;
+                            color: #666666;
+                            line-height: 1.6;
+                            margin-bottom: 1.5rem;
+                        ">${project.description}</p>
+                        ${project.technologies ? `
+                        <div style="
+                            margin-bottom: 1.5rem;
+                        ">
+                            <div style="
+                                display: flex;
+                                flex-wrap: wrap;
+                                gap: 0.5rem;
+                            ">
+                                ${Array.isArray(project.technologies) ? project.technologies.map(tech => `
+                                <span style="
+                                    font-size: 0.75rem;
+                                    color: #666666;
+                                    background: #f8f8f8;
+                                    padding: 0.3rem 0.8rem;
+                                    border-radius: 2px;
+                                    font-weight: 400;
+                                    text-transform: uppercase;
+                                    letter-spacing: 0.5px;
+                                ">${tech}</span>
+                                `).join('') : `<span style="color: #666666; font-size: 0.9rem;">${project.technologies}</span>`}
+                            </div>
+                        </div>
+                        ` : ''}
+                        <div style="display: flex; gap: 1rem;">
+                            ${project.liveLink || project.demo ? `
+                            <a href="${project.liveLink || project.demo}" target="_blank" style="
+                                color: #000000;
+                                text-decoration: none;
+                                font-size: 0.8rem;
+                                font-weight: 400;
+                                text-transform: uppercase;
+                                letter-spacing: 1px;
+                                border-bottom: 1px solid #000000;
+                                padding-bottom: 2px;
+                                transition: all 0.3s ease;
+                            ">Live Demo</a>
+                            ` : ''}
+                            ${project.github ? `
+                            <a href="${project.github}" target="_blank" style="
+                                color: #000000;
+                                text-decoration: none;
+                                font-size: 0.8rem;
+                                font-weight: 400;
+                                text-transform: uppercase;
+                                letter-spacing: 1px;
+                                border-bottom: 1px solid #000000;
+                                padding-bottom: 2px;
+                                transition: all 0.3s ease;
+                            ">GitHub</a>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+                `).join('')}
+            </div>
+        </div>
+    </section>
+    ` : ''}
+
+
+
+    <!-- Internships Section -->
+    ${(data.internships && Array.isArray(data.internships) && data.internships.length > 0) || (data.internship && Array.isArray(data.internship) && data.internship.length > 0) ? `
+    <section style="
+        padding: 120px 0;
+        background-color: white;
+    ">
+        <div style="
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        ">
+            <h2 style="
+                font-size: 2.5rem;
+                font-weight: 400;
+                color: #000000;
+                margin-bottom: 2rem;
+                letter-spacing: -1px;
+                text-align: center;
+            ">Internships</h2>
+            <div style="
+                width: 60px;
+                height: 1px;
+                background: #000000;
+                margin: 2rem auto 4rem auto;
+            "></div>
+            
+            ${(data.internships || data.internship).map(internship => `
+            <div style="
+                margin-bottom: 4rem;
+                padding: 3rem;
+                border: 1px solid #f0f0f0;
+                background: #fafafa;
+                transition: all 0.3s ease;
+            ">
+                <div style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    margin-bottom: 2rem;
+                    flex-wrap: wrap;
+                    gap: 1rem;
+                ">
+                    <div>
+                        <h3 style="
+                            font-size: 1.5rem;
+                            font-weight: 600;
+                            color: #000000;
+                            margin-bottom: 0.5rem;
+                        ">${internship.position || internship.role || 'Position'}</h3>
+                        <h4 style="
+                            font-size: 1.2rem;
+                            font-weight: 300;
+                            color: #666666;
+                            margin-bottom: 0.5rem;
+                        ">${internship.company || internship.organization || 'Company'}</h4>
+                        ${internship.location ? `
+                        <p style="
+                            font-size: 0.9rem;
+                            color: #999999;
+                            margin: 0;
+                        ">${internship.location}</p>
+                        ` : ''}
+                    </div>
+                    <div style="
+                        text-align: right;
+                        font-size: 0.9rem;
+                        color: #666666;
+                        font-weight: 300;
+                    ">
+                        ${internship.duration || ''}
+                    </div>
+                </div>
+                
+                ${internship.description ? `
+                <p style="
+                    font-size: 1rem;
+                    font-weight: 300;
+                    line-height: 1.6;
+                    color: #555555;
+                    margin-bottom: 2rem;
+                ">${internship.description}</p>
+                ` : ''}
+                
+                ${internship.achievements && internship.achievements.length > 0 ? `
+                <div>
+                    <h6 style="
+                        font-size: 0.9rem;
+                        font-weight: 500;
+                        color: #000000;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        margin-bottom: 1rem;
+                    ">Key Achievements</h6>
+                    <div style="
+                        display: grid;
+                        gap: 0.5rem;
+                    ">
+                        ${internship.achievements.map(achievement => `
+                        <div style="
+                            font-size: 0.95rem;
+                            color: #666666;
+                            padding-left: 1rem;
+                            position: relative;
+                        ">
+                            <span style="
+                                position: absolute;
+                                left: 0;
+                                top: 0.2rem;
+                                width: 4px;
+                                height: 4px;
+                                background: #000000;
+                                border-radius: 50%;
+                            "></span>
+                            ${achievement}
+                        </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
+            </div>
+            `).join('')}
+        </div>
+    </section>
+    ` : ''}
+
+    <!-- Certifications Section -->
+    ${data.certifications && data.certifications.length > 0 ? `
+    <section style="
+        padding: 120px 0;
+        background-color: #fafafa;
+    ">
+        <div style="
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
+        ">
+            <h2 style="
+                font-size: 2.5rem;
+                font-weight: 400;
+                color: #000000;
+                margin-bottom: 2rem;
+                letter-spacing: -1px;
+            ">Certifications</h2>
+            <div style="
+                width: 60px;
+                height: 1px;
+                background: #000000;
+                margin: 2rem auto 4rem auto;
+            "></div>
+            
+            <div style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 2rem;
+                text-align: left;
+            ">
+                ${data.certifications.map(cert => `
+                <div style="
+                    background: white;
+                    padding: 2.5rem;
+                    border: 1px solid #f0f0f0;
+                    transition: all 0.3s ease;
+                    text-align: center;
+                ">
+                    <div style="
+                        width: 60px;
+                        height: 60px;
+                        background: #f8f8f8;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        margin: 0 auto 1.5rem auto;
+                        font-size: 1.5rem;
+                    ">🏆</div>
+                    
+                    <h4 style="
+                        font-size: 1.2rem;
+                        font-weight: 600;
+                        color: #000000;
+                        margin-bottom: 0.5rem;
+                    ">${cert.name || cert.title || 'Certification'}</h4>
+                    
+                    <p style="
+                        font-size: 1rem;
+                        font-weight: 300;
+                        color: #666666;
+                        margin-bottom: 1rem;
+                    ">${cert.issuer || cert.organization || 'Issuer'}</p>
+                    
+                    ${cert.dateObtained || cert.date ? `
+                    <p style="
+                        font-size: 0.9rem;
+                        color: #888888;
+                        margin-bottom: 1.5rem;
+                        font-weight: 300;
+                    ">Obtained: ${cert.dateObtained || cert.date}</p>
+                    ` : ''}
+                    
+                    ${cert.verificationUrl || cert.verifyLink ? `
+                    <a href="${cert.verificationUrl || cert.verifyLink}" target="_blank" style="
+                        color: #000000;
+                        text-decoration: none;
+                        font-size: 0.8rem;
+                        font-weight: 400;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        border-bottom: 1px solid #000000;
+                        padding-bottom: 2px;
+                        transition: all 0.3s ease;
+                    ">Verify Certificate</a>
+                    ` : ''}
+                </div>
+                `).join('')}
+            </div>
+        </div>
+    </section>
+    ` : ''}
+
+    <!-- Contact Section -->
+    <section id="contact" style="
+        padding: 120px 0;
+        background-color: #000000;
+        color: white;
+        text-align: center;
+    ">
+        <div style="max-width: 800px; margin: 0 auto; padding: 0 20px;">
+            <h2 style="
+                font-size: 2.5rem;
+                font-weight: 100;
+                margin-bottom: 2rem;
+                letter-spacing: -1px;
+            ">
+                Let's Work Together
+            </h2>
+            <div style="
+                width: 40px;
+                height: 1px;
+                background: white;
+                margin: 2rem auto 4rem auto;
+            "></div>
+            <div style="
+                display: flex;
+                justify-content: center;
+                gap: 3rem;
+                flex-wrap: wrap;
+                margin-bottom: 3rem;
+            ">
+                ${data.email ? `
+                <div>
+                    <div style="
+                        font-size: 0.8rem;
+                        color: #999999;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        margin-bottom: 0.5rem;
+                    ">Email</div>
+                    <a href="mailto:${data.email}" style="
+                        color: white;
+                        text-decoration: none;
+                        font-weight: 300;
+                    ">${data.email}</a>
+                </div>
+                ` : ''}
+                ${data.phone ? `
+                <div>
+                    <div style="
+                        font-size: 0.8rem;
+                        color: #999999;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        margin-bottom: 0.5rem;
+                    ">Phone</div>
+                    <a href="tel:${data.phone}" style="
+                        color: white;
+                        text-decoration: none;
+                        font-weight: 300;
+                    ">${data.phone}</a>
+                </div>
+                ` : ''}
+                ${data.location ? `
+                <div>
+                    <div style="
+                        font-size: 0.8rem;
+                        color: #999999;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        margin-bottom: 0.5rem;
+                    ">Location</div>
+                    <div style="color: white; font-weight: 300;">${data.location}</div>
+                </div>
+                ` : ''}
+            </div>
+            <div style="
+                display: flex;
+                justify-content: center;
+                gap: 2rem;
+                margin-top: 3rem;
+            ">
+                ${data.linkedin ? `
+                <a href="${data.linkedin}" target="_blank" style="
+                    color: #666666;
+                    text-decoration: none;
+                    font-size: 0.9rem;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    transition: color 0.3s ease;
+                ">LinkedIn</a>
+                ` : ''}
+                ${data.behance ? `
+                <a href="${data.behance}" target="_blank" style="
+                    color: #666666;
+                    text-decoration: none;
+                    font-size: 0.9rem;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    transition: color 0.3s ease;
+                ">Behance</a>
+                ` : ''}
+                ${data.website ? `
+                <a href="${data.website}" target="_blank" style="
+                    color: #666666;
+                    text-decoration: none;
+                    font-size: 0.9rem;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    transition: color 0.3s ease;
+                ">Website</a>
+                ` : ''}
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+    
+    <!-- ENSURE SQUARE PROFILE IMAGE -->
+    <style>
+        .profile-img {
+            border-radius: 0 !important;
+        }
+    </style>
+</body>
+</html>
+    `;
+}
+
+function generateTemplate5HTML(data, meta) {
+    return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>${meta?.title || data.name + ' - Developer Portfolio'}</title>
+    <meta name="description" content="${meta?.description || 'Developer Portfolio of ' + data.name}">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Fira Code', Monaco, monospace; 
+            background-color: #0d1117;
+            color: #c9d1d9;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* TERMINAL ANIMATIONS */
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        @keyframes slideInTerminal {
+            0% { transform: translateY(20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(88, 166, 255, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(88, 166, 255, 0.6); }
+        }
+        
+        .terminal-cursor::after {
+            content: '|';
+            animation: blink 1s infinite;
+            color: #58a6ff;
+        }
+        
+        .terminal-card {
+            animation: slideInTerminal 0.8s ease-out;
+        }
+        
+        /* NAVBAR */
+        .navbar {
+            background-color: #161b22 !important;
+            border-bottom: 1px solid #30363d;
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        
+        .navbar-brand {
+            color: #58a6ff !important;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.2rem;
+        }
+        
+        .nav-link {
+            color: #7d8590 !important;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            margin: 0 0.5rem;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: #58a6ff !important;
+        }
+        
+        /* HERO SECTION */
+        .hero-section {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+            position: relative;
+            overflow: hidden;
+            padding-top: 100px;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(33, 38, 45, 0.3) 2px,
+                rgba(33, 38, 45, 0.3) 4px
+            );
+            opacity: 0.5;
+        }
+        
+        .terminal-window {
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #30363d;
+        }
+        
+        .terminal-dots {
+            display: flex;
+            gap: 8px;
+            margin-right: 1rem;
+        }
+        
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .terminal-dot:nth-child(1) { background: #ff5f56; }
+        .terminal-dot:nth-child(2) { background: #ffbd2e; }
+        .terminal-dot:nth-child(3) { background: #27ca3f; }
+        
+        .terminal-title {
+            color: #7d8590;
+            font-size: 0.9rem;
+        }
+        
+        .code-syntax {
+            font-family: 'Fira Code', monospace;
+        }
+        
+        .syntax-keyword { color: #f85149; }
+        .syntax-variable { color: #79c0ff; }
+        .syntax-operator { color: #ff7b72; }
+        .syntax-string { color: #a5d6ff; }
+        .syntax-comment { color: #7d8590; }
+        .syntax-bracket { color: #a5d6ff; }
+        
+        .profile-img { 
+            width: 200px; 
+            height: 200px; 
+            border-radius: 50%; 
+            border: 3px solid #58a6ff;
+            object-fit: cover;
+            transition: all 0.3s ease;
+        }
+        
+        .profile-img:hover {
+            border-color: #79c0ff;
+            transform: scale(1.05);
+        }
+        
+        .hero-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .btn-terminal {
+            background: #238636;
+            border: 1px solid #2ea043;
+            color: white;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-family: 'Fira Code', monospace;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .btn-terminal:hover {
+            background: #2ea043;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .btn-terminal.secondary {
+            background: #1f6feb;
+            border: 1px solid #1f6feb;
+        }
+        
+        .btn-terminal.secondary:hover {
+            background: #388bfd;
+        }
+        
+        .btn-terminal.outline {
+            background: transparent;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+        }
+        
+        .btn-terminal.outline:hover {
+            background: #30363d;
+            color: #c9d1d9;
+        }
+        
+        /* SECTIONS */
+        .section {
+            padding: 80px 0;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            color: #f0f6fc;
+            margin-bottom: 1rem;
+            font-family: 'Fira Code', monospace;
+            text-align: center;
+        }
+        
+        .section-subtitle {
+            color: #7d8590;
+            font-family: 'Fira Code', monospace;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .card-terminal {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            color: #c9d1d9;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .card-terminal:hover {
+            border-color: #58a6ff;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+        
+        .card-body {
+            padding: 2rem;
+        }
+        
+        .badge-terminal {
+            background: #1f6feb;
+            color: white;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.7rem;
+            padding: 6px 10px;
+            margin: 0.25rem;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        
+        .badge-terminal.success {
+            background: #238636;
+        }
+        
+        .badge-terminal.purple {
+            background: #7c3aed;
+        }
+        
+        .progress-terminal {
+            background: #21262d;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+        
+        .progress-bar-terminal {
+            background: linear-gradient(90deg, #58a6ff, #79c0ff);
+            height: 100%;
+            border-radius: 4px;
+            transition: width 2s ease-in-out;
+        }
+        
+        .text-terminal-primary {
+            color: #58a6ff;
+        }
+        
+        .text-terminal-secondary {
+            color: #7d8590;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .social-link {
+            color: #7d8590;
+            font-size: 1.5rem;
+            transition: color 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .social-link:hover {
+            color: #58a6ff;
+            text-decoration: none;
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .contact-item {
+            text-align: center;
+        }
+        
+        .contact-icon {
+            color: #58a6ff;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .hero-buttons {
+                flex-direction: column;
+            }
+            
+            .btn-terminal {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .contact-info {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .profile-img {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="#about">
+                ${data.name ? data.name.split(' ')[0].toLowerCase() : 'developer'}@portfolio:~$
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border: 1px solid #30363d;">
+                <span style="color: #58a6ff;">☰</span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#about">./about</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#experience">./experience</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#education">./education</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#skills">./skills</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#projects">./projects</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">./contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contact Section -->
+    <section id="contact" class="gradient-bg text-center" style="padding: 60px 0; color: white;">
+        <div class="container">
+            <h3 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem;">Ready to Drive Results Together?</h3>
+            <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">Let's discuss how I can help grow your business.</p>
+            ${data.email ? `<a href="mailto:${data.email}" class="btn-marketing primary" style="font-size: 1.1rem; padding: 15px 40px;">
+                <i class="fas fa-envelope me-2"></i>Start the Conversation
+            </a>` : ''}
+            <div style="margin-top: 3rem;">
+                <p style="opacity: 0.8; margin: 0;">&copy; ${new Date().getFullYear()} ${data.name} - Marketing Portfolio</p>
+                <small style="opacity: 0.6;">Powered by <a href="${getFrontendUrl()}" target="_blank" style="color: rgba(255,255,255,0.8);">Portfolio Generator</a></small>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+    \`;
+}
+
+      </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="about" class="hero-section">
+        <div class="container h-100 d-flex align-items-center position-relative">
+            <div class="row w-100 align-items-center">
+                <div class="col-lg-8">
+                    <div class="terminal-window">
+                        <div class="terminal-header">
+                            <div class="terminal-dots">
+                                <div class="terminal-dot"></div>
+                                <div class="terminal-dot"></div>
+                                <div class="terminal-dot"></div>
+                            </div>
+                            <span class="terminal-title">~/portfolio/developer.js</span>
+                        </div>
+                        
+                        <div class="code-syntax">
+                            <div style="margin-bottom: 0.5rem;">
+                                <span class="syntax-keyword">const</span>
+                                <span class="syntax-variable"> developer</span>
+                                <span class="syntax-operator"> =</span>
+                                <span class="syntax-bracket"> {</span>
+                            </div>
+                            <div style="margin-left: 2rem; margin-bottom: 0.5rem;">
+                                <span class="syntax-variable">name</span><span class="syntax-operator">:</span>
+                                <span class="syntax-string"> "${data.name}"</span><span class="syntax-comment">,</span>
+                            </div>
+                            <div style="margin-left: 2rem; margin-bottom: 0.5rem;">
+                                <span class="syntax-variable">role</span><span class="syntax-operator">:</span>
+                                <span class="syntax-string"> "${data.title}"</span><span class="syntax-comment">,</span>
+                            </div>
+                            <div style="margin-left: 2rem; margin-bottom: 0.5rem;">
+                                <span class="syntax-variable">location</span><span class="syntax-operator">:</span>
+                                <span class="syntax-string"> "${data.location || 'Remote'}"</span><span class="syntax-comment">,</span>
+                            </div>
+                            <div style="margin-left: 2rem; margin-bottom: 0.5rem;">
+                                <span class="syntax-variable">passion</span><span class="syntax-operator">:</span>
+                                <span class="syntax-string"> "Building scalable software solutions"</span><span class="syntax-comment">,</span>
+                            </div>
+                            <div style="margin-left: 2rem; margin-bottom: 1rem;">
+                                <span class="syntax-variable">contact</span><span class="syntax-operator">:</span>
+                                <span class="syntax-string"> () => console.log("Let's connect!")</span>
+                            </div>
+                            <div><span class="syntax-bracket">}</span></div>
+                            
+                            <div style="margin-top: 2rem;">
+                                <span class="terminal-cursor syntax-comment">console.log('Hello, World! I build amazing software.');</span>
+                            </div>
+                        </div>
+                        
+                        <div class="hero-buttons">
+                            <a href="#projects" class="btn-terminal">
+                                ./view-projects.sh
+                            </a>
+                            <button class="btn-terminal secondary" onclick="window.open('mailto:${data.email}')">
+                                cat resume.pdf
+                            </button>
+                            <a href="#contact" class="btn-terminal outline">
+                                git contact
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center">
+                    ${data.profileImage ? `
+                        <div style="background: #21262d; border: 1px solid #30363d; border-radius: 50%; padding: 2rem; display: inline-block; margin-bottom: 2rem;">
+                            <img src="${data.profileImage}" alt="${data.name}" class="profile-img">
+                        </div>
+                    ` : ''}
+                    
+                    <div class="social-links">
+                        ${data.github ? `<a href="${data.github}" target="_blank" class="social-link"><i class="fab fa-github"></i></a>` : ''}
+                        ${data.linkedin ? `<a href="${data.linkedin}" target="_blank" class="social-link"><i class="fab fa-linkedin"></i></a>` : ''}
+                        ${data.website ? `<a href="${data.website}" target="_blank" class="social-link"><i class="fas fa-globe"></i></a>` : ''}
+                    </div>
+                    
+                    <p style="color: #7d8590; font-family: 'Fira Code', monospace; font-size: 0.9rem;">
+                        ${data.about ? data.about.substring(0, 100) + '...' : 'Software Developer passionate about creating innovative solutions.'}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    ${data.experience && data.experience.length > 0 ? `
+    <section id="experience" class="section" style="background-color: #161b22; border-top: 1px solid #30363d;">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="syntax-comment">//</span> Work Experience
+            </h2>
+            <p class="section-subtitle">My professional journey in software development</p>
+            
+            <div class="row">
+                ${data.experience.map((exp, index) => `
+                    <div class="col-12 mb-4">
+                        <div class="card-terminal">
+                            <div class="card-body">
+                                <div class="row align-items-start">
+                                    <div class="col-md-8">
+                                        <h4 class="text-terminal-primary mb-2">${exp.position}</h4>
+                                        <h5 class="text-light mb-2">${exp.company}</h5>
+                                        <p class="text-terminal-secondary mb-3" style="font-size: 0.9rem;">
+                                            ${exp.duration} | ${exp.location || ''}
+                                        </p>
+                                        <p class="mb-3">${exp.description}</p>
+                                        ${exp.achievements ? `
+                                            <h6 class="text-light mb-2">Key Achievements:</h6>
+                                            <ul class="text-terminal-secondary">
+                                                ${exp.achievements.map(achievement => `<li>${achievement}</li>`).join('')}
+                                            </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contact Section -->
+    <section id="contact" class="gradient-bg text-center" style="padding: 60px 0; color: white;">
+        <div class="container">
+            <h3 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem;">Ready to Drive Results Together?</h3>
+            <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">Let's discuss how I can help grow your business.</p>
+            ${data.email ? `<a href="mailto:${data.email}" class="btn-marketing primary" style="font-size: 1.1rem; padding: 15px 40px;">
+                <i class="fas fa-envelope me-2"></i>Start the Conversation
+            </a>` : ''}
+            <div style="margin-top: 3rem;">
+                <p style="opacity: 0.8; margin: 0;">&copy; ${new Date().getFullYear()} ${data.name} - Marketing Portfolio</p>
+                <small style="opacity: 0.6;">Powered by <a href="${getFrontendUrl()}" target="_blank" style="color: rgba(255,255,255,0.8);">Portfolio Generator</a></small>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+    \`;
+}
+
+                                  ` : ''}
+                                    </div>
+                                    <div class="col-md-4 text-end">
+                                        <span class="badge-terminal ${index === 0 ? 'success' : 'badge-terminal'}">
+                                            ${index === 0 ? 'Current' : 'Previous'}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    </section>
+    ` : ''}
+
+    <!-- Education Section -->
+    ${data.education && data.education.length > 0 ? `
+    <section id="education" class="section" style="background-color: #161b22;">
+        <div class="container">
+            <h2 class="section-title">cat education.json</h2>
+            <div style="width: 80px; height: 2px; background: #58a6ff; margin: 0 auto 3rem auto; border-radius: 1px;"></div>
+            
+            <div class="row">
+                ${data.education.map((edu) => `
+                    <div class="col-md-6 mb-4">
+                        <div class="card-terminal">
+                            <div class="card-body">
+                                <h4 class="text-terminal-primary mb-2">${edu.degree || edu.title}</h4>
+                                <h5 class="text-light mb-2">${edu.institution || edu.school}</h5>
+                                <div class="text-terminal-secondary mb-3" style="font-size: 0.9rem;">
+                                    ${edu.location || ''} | ${edu.duration}
+                                </div>
+                                ${edu.gpa ? `
+                                    <div class="mb-3" style="color: #57ab5a; font-size: 0.9rem;">
+                                        GPA: ${edu.gpa}
+                                    </div>
+                                ` : ''}
+                                <div class="text-end">
+                                    <span class="badge-terminal success">Graduated</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    </section>
+    ` : ''}
+
+    <!-- Skills Section -->
+    ${data.skills && data.skills.length > 0 ? `
+    <section id="skills" class="section" style="background-color: #0d1117;">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="syntax-comment">//</span> Technical Skills
+            </h2>
+            <p class="section-subtitle">Technologies and tools I work with</p>
+            
+            <div class="row">
+                ${data.skills.map((skill) => {
+                    const skillLevel = typeof skill === 'object' ? skill.level : 85;
+                    const skillName = typeof skill === 'object' ? skill.name : skill;
+                    const skillCategory = typeof skill === 'object' ? skill.category : 'Technology';
+                    
+                    return `
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div style="background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 1.5rem; transition: all 0.3s ease; cursor: pointer;" 
+                             onmouseover="this.style.borderColor='#58a6ff'; this.style.transform='translateY(-5px)';"
+                             onmouseout="this.style.borderColor='#30363d'; this.style.transform='translateY(0)';">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 style="color: #f0f6fc; font-family: 'Fira Code', monospace; margin: 0;">
+                                    ${skillName}
+                                </h5>
+                                <span class="badge-terminal">${skillCategory}</span>
+                            </div>
+                            <div class="progress-terminal">
+                                <div class="progress-bar-terminal" style="width: ${skillLevel}%;"></div>
+                            </div>
+                            <div class="text-end mt-2 text-terminal-secondary" style="font-size: 0.8rem;">
+                                ${skillLevel}%
+                            </div>
+                        </div>
+                    </div>
+                `;
+                }).join('')}
+            </div>
+        </div>
+    </section>
+    ` : ''}
+
+    <!-- Projects Section -->
+    ${data.projects && data.projects.length > 0 ? `
+    <section id="projects" class="section" style="background-color: #161b22; border-top: 1px solid #30363d;">
+        <div class="container">
+            <h2 class="section-title">
+                <span class="syntax-comment">//</span> Featured Projects
+            </h2>
+            <p class="section-subtitle">Some of my recent work and contributions</p>
+            
+            <div class="row">
+                ${data.projects.map((project) => `
+                    <div class="col-lg-6 mb-4">
+                        <div class="card-terminal">
+                            ${project.image ? `
+                                <div style="position: relative;">
+                                    <img src="${project.image}" alt="${project.title}" 
+                                         style="width: 100%; height: 200px; object-fit: cover; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+                                    <span class="badge-terminal success" style="position: absolute; top: 10px; right: 10px;">
+                                        Live
+                                    </span>
+                                </div>
+                            ` : ''}
+                            
+                            <div class="card-body">
+                                <h4 class="text-terminal-primary mb-3">${project.title}</h4>
+                                <p class="mb-3">${project.description}</p>
+                                
+                                ${project.tech && project.tech.length > 0 ? `
+                                    <div class="mb-3">
+                                        ${(Array.isArray(project.tech) ? project.tech : project.tech.split(',').map(t => t.trim())).map(tech => 
+                                            `<span class="badge-terminal">${tech}</span>`
+                                        ).join('')}
+                                    </div>
+                                ` : ''}
+                                
+                                <div class="d-flex gap-2 flex-wrap">
+                                    ${project.demo || project.liveLink ? `
+                                        <a href="${project.demo || project.liveLink}" target="_blank" class="btn-terminal" style="flex: 1; text-align: center;">
+                                            <i class="fas fa-external-link-alt me-2"></i>Live Demo
+                                        </a>
+                                    ` : ''}
+                                    ${project.github || project.githubLink ? `
+                                        <a href="${project.github || project.githubLink}" target="_blank" class="btn-terminal outline" style="flex: 1; text-align: center;">
+                                            <i class="fab fa-github me-2"></i>Code
+                                        </a>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    </section>
+    ` : ''}
+
+    <!-- Contact Section -->
+    <section id="contact" class="section" style="background-color: #161b22; border-top: 1px solid #30363d;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div style="background: #21262d; border: 1px solid #30363d; border-radius: 8px; padding: 2rem;">
+                        <div class="terminal-header">
+                            <div class="terminal-dots">
+                                <div class="terminal-dot"></div>
+                                <div class="terminal-dot"></div>
+                                <div class="terminal-dot"></div>
+                            </div>
+                            <span class="terminal-title">~/contact/connect.sh</span>
+                        </div>
+                        
+                        <div class="text-center">
+                            <h2 class="text-terminal-primary mb-3" style="font-size: 2rem;">Let's Connect!</h2>
+                            <p class="mb-4" style="font-size: 1.1rem;">
+                                Ready to collaborate on your next project? Let's build something amazing together.
+                            </p>
+                            
+                            <div class="contact-info">
+                                ${data.email ? `
+                                    <div class="contact-item">
+                                        <i class="fas fa-envelope contact-icon"></i>
+                                        <a href="mailto:${data.email}" style="color: #c9d1d9; text-decoration: none; font-family: 'Fira Code', monospace;">
+                                            ${data.email}
+                                        </a>
+                                    </div>
+                                ` : ''}
+                                ${data.phone ? `
+                                    <div class="contact-item">
+                                        <i class="fas fa-phone contact-icon"></i>
+                                        <a href="tel:${data.phone}" style="color: #c9d1d9; text-decoration: none; font-family: 'Fira Code', monospace;">
+                                            ${data.phone}
+                                        </a>
+                                    </div>
+                                ` : ''}
+                                <div class="contact-item">
+                                    <i class="fas fa-map-marker-alt contact-icon"></i>
+                                    <span style="color: #c9d1d9; font-family: 'Fira Code', monospace;">
+                                        ${data.location || 'Remote'}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                                ${data.email ? `
+                                    <a href="mailto:${data.email}" class="btn-terminal">
+                                        <i class="fas fa-envelope me-2"></i>Send Email
+                                    </a>
+                                ` : ''}
+                                <button class="btn-terminal secondary" onclick="window.print()">
+                                    <i class="fas fa-download me-2"></i>Download Resume
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+    `;
+}
+
+function generateTemplate6HTML(data, meta) {
+    return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>${meta?.title || data.name + ' - Marketing Portfolio'}</title>
+    <meta name="description" content="${meta?.description || 'Marketing Portfolio of ' + data.name}">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* MARKETING ANIMATIONS */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+        
+        @keyframes slideInUp {
+            0% { transform: translateY(50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes countUp {
+            0% { opacity: 0; transform: scale(0.5); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .pulse-animation {
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        .slide-up {
+            animation: slideInUp 0.8s ease-out;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+        
+        /* NAVBAR */
+        .navbar {
+            background-color: rgba(255,255,255,0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        
+        .navbar-brand {
+            color: #667eea !important;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        .nav-link {
+            color: #666 !important;
+            font-weight: 500;
+            margin: 0 0.5rem;
+            text-transform: capitalize;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: #667eea !important;
+        }
+        
+        /* HERO SECTION */
+        .hero-section {
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+            padding-top: 100px;
+        }
+        
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .floating-1 {
+            top: 20%;
+            left: 10%;
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.2);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        .floating-2 {
+            top: 60%;
+            right: 15%;
+            width: 150px;
+            height: 150px;
+            background: rgba(255,255,255,0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .hero-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: #666;
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+        
+        .hero-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .hero-info span {
+            color: #667eea;
+        }
+        
+        .hero-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 2rem;
+        }
+        
+        /* PROFILE IMAGE */
+        .profile-container {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 50%;
+            padding: 2rem;
+            display: inline-block;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+        
+        .profile-img {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid #667eea;
+        }
+        
+        /* BUTTONS */
+        .btn-marketing {
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-marketing.primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-marketing.primary:hover {
+            background: linear-gradient(45deg, #5a6fd8, #6a4190);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .btn-marketing.secondary {
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.3);
+        }
+        
+        .btn-marketing.secondary:hover {
+            background: linear-gradient(45deg, #e881ea, #f3455a);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(240, 147, 251, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .btn-marketing.outline {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+            box-shadow: none;
+        }
+        
+        .btn-marketing.outline:hover {
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+        }
+        
+        /* SOCIAL LINKS */
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .social-link {
+            color: rgba(255,255,255,0.8);
+            font-size: 2rem;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 50%;
+            backdrop-filter: blur(10px);
+            text-decoration: none;
+              }
+        
+        .social-link:hover {
+            color: white;
+            transform: scale(1.1);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Contact Section -->
+    <section id="contact" class="gradient-bg text-center" style="padding: 60px 0; color: white;">
+        <div class="container">
+            <h3 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem;">Ready to Drive Results Together?</h3>
+            <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">Let's discuss how I can help grow your business.</p>
+            ${data.email ? `<a href="mailto:${data.email}" class="btn btn-light btn-lg" style="font-size: 1.1rem; padding: 15px 40px;">
+                <i class="fas fa-envelope me-2"></i>Start the Conversation
+            </a>` : ''}
+            <div style="margin-top: 3rem;">
+                <p style="opacity: 0.8; margin: 0;">&copy; ${new Date().getFullYear()} ${data.name} - Marketing Portfolio</p>
+                <small style="opacity: 0.6;">Powered by <a href="${getFrontendUrl()}" target="_blank" style="color: rgba(255,255,255,0.8);">Portfolio Generator</a></small>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+    `;
+}
+
+// Start the server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log('ðŸš€ Server running on port ' + PORT);
+    console.log('ðŸ“Š Backend URL: http://localhost:' + PORT);
+    console.log('ðŸŒ Environment: ' + (process.env.NODE_ENV || 'development'));
+});
