@@ -85,15 +85,16 @@ function Templates() {
     history.push(`/preview/${templateId}`);
   };
 
+// ...existing code...
   const templates = [
-    { id: 'template1', image: images.portfolio1, name: 'Modern Developer', component: Template1 },
-    { id: 'template2', image: images.portfolio2, name: 'Creative Designer', component: Template2 },
-    { id: 'template3', image: images.portfolio3, name: 'Business Professional', component: Template3, useLivePreview: false },
-    { id: 'template4', image: images.portfolio4, name: 'Minimalist Clean', component: Template4 },
-    { id: 'template5', image: images.portfolio2, name: 'Developer Terminal', component: Template5 },
-    { id: 'template6', image: images.portfolio1, name: 'Marketing Pro', component: Template6 }
+    { id: 'template1', image: images.portfolio1, name: 'Modern Developer', component: Template1, useLivePreview: true },
+    { id: 'template2', image: images.portfolio2, name: 'Creative Designer', component: Template2, useLivePreview: true },
+    { id: 'template3', image: images.portfolio3, name: 'Business Professional', component: Template3, useLivePreview: true },
+    { id: 'template4', image: images.portfolio4, name: 'Minimalist Clean', component: Template4, useLivePreview: true },
+    { id: 'template5', image: images.portfolio2, name: 'Developer Terminal', component: Template5, useLivePreview: true },
+    { id: 'template6', image: images.portfolio1, name: 'Marketing Pro', component: Template6, useLivePreview: true }
   ];
-
+// ...existing code...
   const renderTemplatePreview = (template) => {
     if (template.useLivePreview && template.component) {
       const TemplateComponent = template.component;
