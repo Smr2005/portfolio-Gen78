@@ -266,6 +266,7 @@ app.get("/portfolio/:slug", async (req, res) => {
         `);
     }
 });
+
 // Utility function to get the correct base URL
 function getBaseUrl() {
     return process.env.BACKEND_URL || 
@@ -324,126 +325,302 @@ function generatePortfolioHTML(portfolio) {
     }
 }
 
-// ...existing code...
 function generateTemplate1HTML(data, meta) {
-    // Helper for badges
-    function badge(text, color = "#667eea") {
-        return `<span style="background:${color};color:white;padding:5px 15px;border-radius:20px;font-size:0.9rem;font-weight:600;margin-right:8px;">${text}</span>`;
-    }
-    // Helper for icons
-    function skillIcon(category) {
-        return category === 'Frontend' ? '🎨' :
-            category === 'Backend' ? '⚙️' :
-            category === 'Database' ? '🗄️' :
-            category === 'Cloud' ? '☁️' :
-            category === 'DevOps' ? '🚀' : '💻';
-    }
-    // Helper for project status color
-    function statusColor(status) {
-        return status === 'Live' ? '#10b981' : '#f59e0b';
-    }
-    // Helper for featured badge
-    function featuredBadge(featured) {
-        return featured ? `<div style="position:absolute;top:15px;left:15px;background:#667eea;color:white;padding:5px 15px;border-radius:20px;font-size:0.8rem;font-weight:600;">Featured</div>` : '';
-    }
-    // Helper for metrics
-    function metricsBlock(metrics) {
-        if (!metrics) return '';
-        return `<div style="background:#f1f5f9;padding:1rem;border-radius:10px;margin-bottom:1.5rem;">
-            <div style="display:flex;justify-content:space-around;text-align:center;">
-                ${Object.entries(metrics).map(([k,v])=>`
-                    <div>
-                        <div style="font-weight:700;color:#1e293b">${v}</div>
-                        <div style="font-size:0.8rem;color:#64748b;text-transform:capitalize">${k}</div>
-                    </div>
-                `).join('')}
-            </div>
-        </div>`;
-    }
-    // Helper for progress bar
-    function progressBar(level) {
-        return `<div style="height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden;margin-bottom:1rem;">
-            <div style="width:${level}%;height:100%;background:linear-gradient(90deg,#667eea,#764ba2);"></div>
-        </div>`;
-    }
-    // Helper for 3D card
-    function card3d(content, style = '') {
-        return `<div style="border:none;box-shadow:0 10px 30px rgba(0,0,0,0.1);border-radius:15px;${style}" class="card-3d">${content}</div>`;
-    }
-    // Helper for section title
-    function sectionTitle(title) {
-        return `<div class="text-center mb-5">
-            <h2 style="font-size:3rem;font-weight:700;color:#1e293b;margin-bottom:1rem;">${title}</h2>
-            <div style="width:60px;height:4px;background:#667eea;margin:0 auto"></div>
-        </div>`;
-    }
-    // Helper for social links
-    function socialLinks(data) {
-        return `<div style="display:flex;gap:1rem;">
-            ${data.linkedin ? `<a href="${data.linkedin}" target="_blank" rel="noopener" style="color:white;font-size:1.5rem;opacity:0.8;">💼</a>` : ''}
-            ${data.github ? `<a href="${data.github}" target="_blank" rel="noopener" style="color:white;font-size:1.5rem;opacity:0.8;">🔗</a>` : ''}
-            ${data.website ? `<a href="${data.website}" target="_blank" rel="noopener" style="color:white;font-size:1.5rem;opacity:0.8;">🌐</a>` : ''}
-        </div>`;
-    }
-    // Helper for certifications
-    function certBlock(cert) {
-        return `<div style="border:none;box-shadow:0 15px 35px rgba(0,0,0,0.1);border-radius:15px;height:100%;padding:2rem;text-align:center;">
-            <div style="width:80px;height:80px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem auto;font-size:2rem;animation:float3d 5s ease-in-out infinite;">🏆</div>
-            <h5 style="color:#1e293b;font-weight:700;margin-bottom:1rem;font-size:1.1rem;">${cert.name}</h5>
-            <p style="color:#64748b;margin-bottom:1rem;">${cert.issuer}</p>
-            <div style="margin-bottom:1rem;">${badge(cert.date,'#10b981')}</div>
-            <div style="font-size:0.8rem;color:#94a3b8;margin-bottom:1rem;">Valid until: ${cert.validUntil || ''}</div>
-            ${cert.verifyLink ? `<a href="${cert.verifyLink}" target="_blank" style="display:inline-block;padding:5px 15px;border:1px solid #667eea;border-radius:20px;color:#667eea;text-decoration:none;font-size:0.9rem;">Verify Certificate</a>` : ''}
-        </div>`;
-    }
-    // Helper for education
-    function eduBlock(edu) {
-        return `<div style="border:none;box-shadow:0 15px 35px rgba(0,0,0,0.1);border-radius:15px;height:100%;padding:2rem;">
-            <div style="width:80px;height:80px;background:linear-gradient(135deg,#10b981,#059669);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem auto;font-size:2rem;animation:float3d 5s ease-in-out infinite;">🎓</div>
-            <h5 style="color:#1e293b;font-weight:700;margin-bottom:0.5rem;font-size:1.2rem;">${edu.degree}</h5>
-            <h6 style="color:#667eea;font-weight:600;margin-bottom:1rem;">${edu.institution}</h6>
-            <div style="margin-bottom:1rem;">${badge(edu.duration,'#3b82f6')}${edu.gpa ? badge('GPA: '+edu.gpa,'#10b981') : ''}</div>
-            ${edu.location ? `<p style="color:#64748b;margin-bottom:1rem;font-size:0.9rem;">📍 ${edu.location}</p>` : ''}
-            ${edu.description ? `<p style="color:#64748b;margin-bottom:1rem;">${edu.description}</p>` : ''}
-            ${edu.field ? `<p style="color:#64748b;font-size:0.9rem;"><strong>Field:</strong> ${edu.field}</p>` : ''}
-        </div>`;
-    }
-    // Helper for internship
-    function internshipBlock(intern) {
-        return `<div style="border:none;box-shadow:0 15px 35px rgba(0,0,0,0.1);border-radius:15px;height:100%;padding:2rem;">
-            <div style="width:80px;height:80px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem auto;font-size:2rem;animation:float3d 5s ease-in-out infinite;">🚀</div>
-            <h5 style="color:#1e293b;font-weight:700;margin-bottom:0.5rem;font-size:1.2rem;">${intern.position}</h5>
-            <h6 style="color:#667eea;font-weight:600;margin-bottom:1rem;">${intern.company}</h6>
-            <div style="margin-bottom:1rem;">${badge(intern.duration,'#8b5cf6')}</div>
-            ${intern.location ? `<p style="color:#64748b;margin-bottom:1rem;font-size:0.9rem;">📍 ${intern.location}</p>` : ''}
-            <p style="color:#64748b;margin-bottom:1.5rem;">${intern.description}</p>
-            ${intern.achievements && intern.achievements.length ? `<div><h6 style="color:#1e293b;font-weight:600;margin-bottom:0.5rem;">Key Achievements:</h6>
-                <ul style="color:#64748b;padding-left:1.2rem;">${intern.achievements.map(a=>`<li style="margin-bottom:0.3rem;">${a}</li>`).join('')}</ul></div>` : ''}
-        </div>`;
-    }
-
+    
     return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>${meta?.title || data.name + ' - Portfolio'}</title>
-    <meta name="description" content="${meta?.description || 'Portfolio of ' + data.name}">
+    <title>${meta.title || data.name + ' - Portfolio'}</title>
+    <meta name="description" content="${meta.description || 'Portfolio of ' + data.name}">
+    <meta name="keywords" content="${meta.keywords ? meta.keywords.join(', ') : ''}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="${meta.title || data.name + ' - Portfolio'}">
+    <meta property="og:description" content="${meta.description || 'Portfolio of ' + data.name}">
+    <meta property="og:image" content="${data.profileImage || ''}">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="${meta.title || data.name + ' - Portfolio'}">
+    <meta property="twitter:description" content="${meta.description || 'Portfolio of ' + data.name}">
+    <meta property="twitter:image" content="${data.profileImage || ''}">
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Inter',sans-serif;background:#f8fafc; }
-        .card-3d { transition:transform 0.3s; }
-        .card-3d:hover { transform:rotateY(10deg) rotateX(5deg) translateZ(20px); }
-        @keyframes float3d { 0%,100%{transform:translateY(0) rotateX(0) rotateY(0);}25%{transform:translateY(-10px) rotateX(5deg) rotateY(5deg);}50%{transform:translateY(-20px) rotateX(0) rotateY(10deg);}75%{transform:translateY(-10px) rotateX(-5deg) rotateY(5deg);} }
-        @media (max-width:768px){ .card-3d:hover{transform:none;} }
+        body { 
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f8fafc;
+            overflow-x: hidden;
+        }
+        
+        /* ENHANCED 3D ANIMATIONS - EXACT MATCH TO REACT TEMPLATE */
+        @keyframes float3d {
+            0%, 100% { transform: translateY(0px) rotateX(0deg) rotateY(0deg); }
+            25% { transform: translateY(-10px) rotateX(5deg) rotateY(5deg); }
+            50% { transform: translateY(-20px) rotateX(0deg) rotateY(10deg); }
+            75% { transform: translateY(-10px) rotateX(-5deg) rotateY(5deg); }
+        }
+        
+        @keyframes rotate3d {
+            0% { transform: rotateY(0deg) rotateX(0deg); }
+            100% { transform: rotateY(360deg) rotateX(360deg); }
+        }
+        
+        @keyframes slideIn3d {
+            0% { transform: translateX(-100px) rotateY(-90deg); opacity: 0; }
+            100% { transform: translateX(0) rotateY(0deg); opacity: 1; }
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(102, 126, 234, 0.6); }
+        }
+        
+        .portfolio-header { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            padding: 80px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .navbar {
+            background: rgba(30, 41, 59, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .portfolio-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .profile-img { 
+            width: 150px; 
+            height: 150px; 
+            border-radius: 0 !important; 
+            border: 5px solid white;
+            animation: float3d 6s ease-in-out infinite;
+            transform-style: preserve-3d;
+            transition: all 0.3s ease;
+            object-fit: cover;
+        }
+        
+        .profile-img:hover {
+            animation-play-state: paused;
+            transform: scale(1.1) rotateY(15deg);
+            border-color: #ffd700;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .profile-3d {
+            animation: float3d 6s ease-in-out infinite;
+            transform-style: preserve-3d;
+        }
+        
+        .section-title { 
+            color: #333; 
+            margin-bottom: 30px; 
+            font-weight: 700;
+            animation: slideIn3d 1s ease-out;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+        
+        .skill-item { 
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 15px; 
+            border-radius: 15px; 
+            margin-bottom: 15px;
+            transform-style: preserve-3d;
+            transition: all 0.3s ease;
+            border-left: 4px solid #667eea;
+        }
+        
+        .skill-item:hover {
+            transform: translateZ(10px) rotateX(5deg);
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            border-left-color: #764ba2;
+        }
+        
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            background: #e9ecef;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 2s ease-in-out;
+            animation: progressFill 2s ease-in-out;
+        }
+        
+        .skill-bar-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.3s ease;
+        }
+        
+        .skill-bar-3d:hover {
+            transform: translateZ(10px) rotateX(5deg);
+        }
+        
+        @keyframes progressFill {
+            0% { width: 0% !important; }
+        }
+        
+        .card-3d { 
+            border: none; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1); 
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .card-3d:hover { 
+            transform: rotateY(10deg) rotateX(5deg) translateZ(20px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        }
+        
+        .project-card {
+            border: none; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1); 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(102, 126, 234, 0.05), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .project-card:hover::before {
+            opacity: 1;
+        }
+        
+        .project-card:hover { 
+            transform: rotateY(8deg) rotateX(4deg) translateZ(15px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        .btn {
+            border-radius: 25px;
+            padding: 10px 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .btn:hover {
+            transform: translateZ(5px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        
+        .btn-outline-light:hover {
+            animation: glow 2s ease-in-out infinite;
+        }
+        
+        .footer { 
+            background: linear-gradient(135deg, #333 0%, #1a1a1a 100%);
+            color: white; 
+            padding: 40px 0; 
+            margin-top: 50px;
+            position: relative;
+        }
+        
+        .powered-by { 
+            text-align: center; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #666;
+        }
+        
+        /* MOBILE OPTIMIZATIONS */
+        @media (max-width: 768px) {
+            .card-3d:hover,
+            .project-card:hover,
+            .skill-item:hover {
+                transform: none !important;
+            }
+            
+            .profile-img {
+                animation: none;
+            }
+            
+            .profile-img:hover {
+                transform: scale(1.05);
+            }
+        }
+        
+        /* LOADING ANIMATIONS */
+        .fade-in {
+            animation: fadeIn 1s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes float3d {
+            0%, 100% { transform: translateY(0px) rotateX(0deg) rotateY(0deg); }
+            25% { transform: translateY(-10px) rotateX(5deg) rotateY(5deg); }
+            50% { transform: translateY(-20px) rotateX(0deg) rotateY(10deg); }
+            75% { transform: translateY(-10px) rotateX(-5deg) rotateY(5deg); }
+        }
+        
+        @keyframes slideIn3d {
+            0% { transform: translateX(-100px) rotateY(-90deg); opacity: 0; }
+            100% { transform: translateX(0) rotateY(0deg); opacity: 1; }
+        }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background:rgba(30,41,59,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,0.1);">
+    <!-- Enhanced Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="#" style="font-size:1.5rem;">${data.name}</a>
+            <a class="navbar-brand fw-bold" href="#" style="font-size: 1.5rem;">${data.name}</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -453,185 +630,23 @@ function generateTemplate1HTML(data, meta) {
                     <li class="nav-item"><a class="nav-link" href="#experience">Experience</a></li>
                     <li class="nav-item"><a class="nav-link" href="#skills">Skills</a></li>
                     <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#certifications">Certifications</a></li>
                     <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;align-items:center;color:white;padding-top:80px;position:relative;overflow:hidden;">
-        <div style="position:absolute;top:20%;left:10%;width:100px;height:100px;background:rgba(255,255,255,0.1);border-radius:20px;animation:float3d 8s ease-in-out infinite;transform-style:preserve-3d;"></div>
-        <div style="position:absolute;bottom:20%;right:15%;width:80px;height:80px;background:rgba(255,255,255,0.08);border-radius:50%;animation:float3d 6s ease-in-out infinite reverse;"></div>
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <div style="animation:slideIn3d 1s ease-out;">
-                        <h1 style="font-size:3.5rem;font-weight:700;margin-bottom:1rem;text-shadow:2px 2px 4px rgba(0,0,0,0.3);">Hi, I'm ${data.name}</h1>
-                        <h2 style="font-size:1.8rem;margin-bottom:2rem;opacity:0.9;font-weight:400;">${data.title}</h2>
-                        <p style="font-size:1.2rem;margin-bottom:2rem;opacity:0.8;line-height:1.6;">${data.about}</p>
-                        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2rem;">
-                            <a href="#projects" class="btn btn-light btn-lg" style="font-weight:600;padding:12px 30px;border-radius:25px;">View My Work</a>
-                            <a href="#contact" class="btn btn-outline-light btn-lg" style="font-weight:600;padding:12px 30px;border-radius:25px;">Get In Touch</a>
-                        </div>
-                        ${socialLinks(data)}
-                    </div>
-                </div>
-                <div class="col-md-6 text-center">
-                    <div class="profile-3d" style="width:350px;height:350px;margin:0 auto;position:relative;">
-                        <img src="${data.profileImage}" alt="${data.name}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;border:8px solid rgba(255,255,255,0.2);box-shadow:0 20px 40px rgba(0,0,0,0.3);">
-                        <div style="position:absolute;bottom:20px;right:20px;background:#10b981;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:1.2rem;border:4px solid white;animation:float3d 4s ease-in-out infinite;">✓</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" style="padding:100px 0;background:white;">
-        <div class="container">
-            ${sectionTitle('About Me')}
-            ${card3d(`
-                <div style="padding:3rem;text-align:center;">
-                    <p style="font-size:1.2rem;line-height:1.8;color:#64748b;">${data.about}</p>
-                    <div class="row mt-4 text-center">
-                        <div class="col-md-3"><div style="font-size:2rem;margin-bottom:0.5rem;">📍</div><div style="font-weight:600;color:#1e293b;">${data.location}</div></div>
-                        <div class="col-md-3"><div style="font-size:2rem;margin-bottom:0.5rem;">💼</div><div style="font-weight:600;color:#1e293b;">5+ Years</div></div>
-                        <div class="col-md-3"><div style="font-size:2rem;margin-bottom:0.5rem;">🏆</div><div style="font-weight:600;color:#1e293b;">50+ Projects</div></div>
-                        <div class="col-md-3"><div style="font-size:2rem;margin-bottom:0.5rem;">⭐</div><div style="font-weight:600;color:#1e293b;">Top Rated</div></div>
-                    </div>
-                </div>
-            `)}
-        </div>
-    </section>
-
-    <!-- Experience Section -->
-    <section id="experience" style="padding:100px 0;background:#f8fafc;">
-        <div class="container">
-            ${sectionTitle('Professional Experience')}
-            <div class="row">
-                <div class="col-lg-10 mx-auto">
-                    ${(data.experience||[]).map(exp=>card3d(`
-                        <div style="padding:2.5rem;">
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <h4 style="color:#1e293b;font-weight:700;margin-bottom:0.5rem;">${exp.position}</h4>
-                                    <h5 style="color:#667eea;font-weight:600;margin-bottom:1rem;">${exp.company} • ${exp.location}</h5>
-                                    <p style="color:#64748b;line-height:1.6;margin-bottom:1.5rem;">${exp.description}</p>
-                                    ${exp.achievements ? `<div><h6 style="color:#1e293b;font-weight:600;margin-bottom:1rem;">Key Achievements:</h6><ul style="color:#64748b;">${exp.achievements.map(a=>`<li style="margin-bottom:0.5rem;">${a}</li>`).join('')}</ul></div>` : ''}
-                                </div>
-                                <div class="col-md-4 text-end">${badge(exp.duration)}</div>
-                            </div>
-                        </div>
-                    `,'margin-bottom:2rem;')).join('')}
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Skills Section -->
-    <section id="skills" style="padding:100px 0;background:white;">
-        <div class="container">
-            ${sectionTitle('Technical Skills')}
-            <div class="row">
-                ${(data.skills||[]).map(skill=>`
-                    <div class="col-md-6 col-lg-3 mb-4">
-                        ${card3d(`
-                            <div style="text-align:center;padding:2rem;">
-                                <div style="font-size:2.5rem;margin-bottom:1rem;animation:float3d 4s ease-in-out infinite;">${skillIcon(skill.category)}</div>
-                                <h5 style="color:#1e293b;font-weight:600;margin-bottom:1rem;">${skill.name}</h5>
-                                ${progressBar(skill.level)}
-                                <small style="color:#64748b;font-weight:600;">${skill.level}% Proficiency</small>
-                                <div style="margin-top:0.5rem;font-size:0.8rem;color:#94a3b8;">${skill.category}</div>
-                            </div>
-                        `)}
-                    </div>
-                `).join('')}
-            </div>
-        </div>
-    </section>
-
-    <!-- Projects Section -->
-    <section id="projects" style="padding:100px 0;background:#f8fafc;">
-        <div class="container">
-            ${sectionTitle('Featured Projects')}
-            <div class="row">
-                ${(data.projects||[]).map(project=>`
-                    <div class="col-lg-6 mb-5">
-                        <div style="border:none;box-shadow:0 20px 40px rgba(0,0,0,0.1);border-radius:20px;overflow:hidden;height:100%;position:relative;" class="card-3d">
-                            <div style="position:relative;">
-                                <img src="${project.image}" alt="${project.title}" style="width:100%;height:250px;object-fit:cover;">
-                                <div style="position:absolute;top:15px;right:15px;background:${statusColor(project.status)};color:white;padding:5px 15px;border-radius:20px;font-size:0.8rem;font-weight:600;">${project.status}</div>
-                                ${featuredBadge(project.featured)}
-                            </div>
-                            <div style="padding:2.5rem;">
-                                <div style="font-size:1.5rem;font-weight:700;color:#1e293b;margin-bottom:1rem;">${project.title}</div>
-                                <div style="color:#64748b;line-height:1.6;margin-bottom:1.5rem;">${project.description}</div>
-                                <div style="margin-bottom:1.5rem;display:flex;flex-wrap:wrap;gap:0.5rem;">
-                                    ${(Array.isArray(project.tech)?project.tech:[]).map(tech=>`<span style="background:#e2e8f0;color:#475569;font-size:0.8rem;padding:5px 10px;border-radius:15px;">${tech}</span>`).join('')}
-                                </div>
-                                ${metricsBlock(project.metrics)}
-                                <div style="display:flex;gap:1rem;">
-                                    ${(project.demo||project.liveLink)?`<a href="${project.demo||project.liveLink}" target="_blank" class="btn btn-primary" style="background:linear-gradient(135deg,#667eea,#764ba2);border:none;border-radius:25px;padding:8px 20px;font-weight:600;">🚀 Live Demo</a>`:''}
-                                    ${(project.github||project.githubLink)?`<a href="${project.github||project.githubLink}" target="_blank" class="btn btn-outline-secondary" style="border-radius:25px;padding:8px 20px;font-weight:600;">📂 Code</a>`:''}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-        </div>
-    </section>
-
-    <!-- Certifications Section -->
-    ${(data.certifications && data.certifications.length) ? `
-    <section id="certifications" style="padding:100px 0;background:white;">
-        <div class="container">
-            ${sectionTitle('Certifications & Credentials')}
-            <div class="row">
-                ${data.certifications.map(cert=>`<div class="col-md-6 col-lg-4 mb-4">${certBlock(cert)}</div>`).join('')}
-            </div>
-        </div>
-    </section>
-    ` : ''}
-
-    <!-- Education Section -->
-    <section id="education" style="padding:100px 0;background:#f8fafc;">
-        <div class="container">
-            ${sectionTitle('Education')}
-            <div class="row">
-                ${(data.education||[]).map(edu=>`<div class="col-md-6 mb-4">${eduBlock(edu)}</div>`).join('')}
-            </div>
-        </div>
-    </section>
-
-    <!-- Internships Section -->
-    ${(data.internships && data.internships.length) ? `
-    <section id="internships" style="padding:100px 0;background:white;">
-        <div class="container">
-            ${sectionTitle('Internships & Early Experience')}
-            <div class="row">
-                ${data.internships.map(intern=>`<div class="col-md-6 mb-4">${internshipBlock(intern)}</div>`).join('')}
-            </div>
-        </div>
-    </section>
-    ` : ''}
-
     <!-- Contact Section -->
-    <section id="contact" style="padding:100px 0;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;">
+    <section id="contact" class="gradient-bg text-center" style="padding: 60px 0; color: white;">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-8 mx-auto text-center">
-                    <h2 style="font-size:3rem;font-weight:700;margin-bottom:2rem;">Let's Work Together</h2>
-                    <p style="font-size:1.3rem;margin-bottom:3rem;opacity:0.9;">Ready to bring your ideas to life? Let's discuss your next project.</p>
-                    <div style="display:flex;justify-content:center;gap:3rem;flex-wrap:wrap;margin-bottom:3rem;">
-                        <div class="card-3d" style="text-align:center;"><div style="font-size:2.5rem;margin-bottom:1rem;">📧</div><div style="font-weight:600;font-size:1.1rem;">${data.email}</div></div>
-                        <div class="card-3d" style="text-align:center;"><div style="font-size:2.5rem;margin-bottom:1rem;">📱</div><div style="font-weight:600;font-size:1.1rem;">${data.phone}</div></div>
-                        <div class="card-3d" style="text-align:center;"><div style="font-size:2.5rem;margin-bottom:1rem;">📍</div><div style="font-weight:600;font-size:1.1rem;">${data.location}</div></div>
-                    </div>
-                    <a href="mailto:${data.email}" class="btn btn-light btn-lg" style="font-weight:600;padding:15px 40px;border-radius:30px;font-size:1.1rem;">Start a Conversation</a>
-                </div>
+            <h3 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem;">Ready to Drive Results Together?</h3>
+            <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">Let's discuss how I can help grow your business.</p>
+            ${data.email ? `<a href="mailto:${data.email}" class="btn-marketing primary" style="font-size: 1.1rem; padding: 15px 40px;">
+                <i class="fas fa-envelope me-2"></i>Start the Conversation
+            </a>` : ''}
+            <div style="margin-top: 3rem;">
+                <p style="opacity: 0.8; margin: 0;">&copy; ${new Date().getFullYear()} ${data.name} - Marketing Portfolio</p>
+                <small style="opacity: 0.6;">Powered by <a href="${getFrontendUrl()}" target="_blank" style="color: rgba(255,255,255,0.8);">Portfolio Generator</a></small>
             </div>
         </div>
     </section>
@@ -639,11 +654,389 @@ function generateTemplate1HTML(data, meta) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+    \`;
+}
+
+      </div>
+        </div>
+    </nav>
+
+    <!-- Enhanced Hero Section with Profile Picture -->
+    <section style="
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        color: white;
+        padding-top: 80px;
+        position: relative;
+        overflow: hidden;
+    ">
+        <!-- 3D Background Elements -->
+        <div style="
+            position: absolute;
+            top: 20%;
+            left: 10%;
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            animation: float3d 8s ease-in-out infinite;
+            transform-style: preserve-3d;
+        "></div>
+        <div style="
+            position: absolute;
+            bottom: 20%;
+            right: 15%;
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+            animation: float3d 6s ease-in-out infinite reverse;
+        "></div>
+
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div style="animation: slideIn3d 1s ease-out;">
+                        <h1 style="
+                            font-size: 3.5rem;
+                            font-weight: 700;
+                            margin-bottom: 1rem;
+                            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+                        ">
+                            Hi, I'm ${data.name}
+                        </h1>
+                        <h2 style="
+                            font-size: 1.8rem;
+                            margin-bottom: 2rem;
+                            opacity: 0.9;
+                            font-weight: 400;
+                        ">
+                            ${data.title}
+                        </h2>
+                        <p style="
+                            font-size: 1.2rem;
+                            margin-bottom: 2rem;
+                            opacity: 0.8;
+                            line-height: 1.6;
+                        ">
+                            ${data.about || ''}
+                        </p>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                            <a href="#projects" class="btn btn-light btn-lg" style="
+                                font-weight: 600;
+                                padding: 12px 30px;
+                                border-radius: 25px;
+                                text-decoration: none;
+                            ">
+                                VIEW MY WORK
+                            </a>
+                            <a href="#contact" class="btn btn-outline-light btn-lg" style="
+                                font-weight: 600;
+                                padding: 12px 30px;
+                                border-radius: 25px;
+                                text-decoration: none;
+                            ">
+                                GET IN TOUCH
+                            </a>
+                        </div>
+                        <!-- Social Links -->
+                        <div style="display: flex; gap: 1rem;">
+                            ${data.linkedin ? `<a href="${data.linkedin}" target="_blank" rel="noopener noreferrer" style="color: white; font-size: 1.5rem; opacity: 0.8; text-decoration: none;">💼</a>` : ''}
+                            ${data.github ? `<a href="${data.github}" target="_blank" rel="noopener noreferrer" style="color: white; font-size: 1.5rem; opacity: 0.8; text-decoration: none;">🔗</a>` : ''}
+                            ${data.website ? `<a href="${data.website}" target="_blank" rel="noopener noreferrer" style="color: white; font-size: 1.5rem; opacity: 0.8; text-decoration: none;">🌐</a>` : ''}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 text-center">
+                    <div class="profile-3d" style="
+                        width: 350px;
+                        height: 350px;
+                        margin: 0 auto;
+                        position: relative;
+                    ">
+                        ${data.profileImage ? `
+                        <img src="${data.profileImage}" alt="${data.name}" style="
+                            width: 100%;
+                            height: 100%;
+                            border-radius: 50%;
+                            object-fit: cover;
+                            border: 8px solid rgba(255,255,255,0.2);
+                            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+                            animation: float3d 6s ease-in-out infinite;
+                            transform-style: preserve-3d;
+                        ">
+                        <!-- Status Indicator -->
+                        <div style="
+                            position: absolute;
+                            bottom: 20px;
+                            right: 20px;
+                            width: 40px;
+                            height: 40px;
+                            background: #10b981;
+                            border-radius: 50%;
+                            border: 4px solid white;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-size: 1.2rem;
+                            animation: float3d 4s ease-in-out infinite;
+                        ">
+                            ✓
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    ${data.skills && data.skills.length > 0 ? `
+    <section class="py-5">
+        <div class="container">
+            <h2 class="section-title text-center">Skills</h2>
+            <div class="row">
+                ${data.skills.map(skill => `
+                    <div class="col-md-4 mb-3">
+                        <div class="skill-item skill-bar-3d">
+                            <h5>${skill.name}</h5>
+                            <div class="progress">
+                                <div class="progress-bar" style="width: ${skill.level}%">${skill.level}%</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    </section>
+    ` : ''}
+
+    <!-- Experience Section -->
+    ${data.experience && data.experience.length > 0 ? `
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="section-title text-center">Experience</h2>
+            ${data.experience.map(exp => `
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card card-3d">
+                            <div class="card-body">
+                                <h5 class="card-title" style="color: #667eea; font-weight: 700;">${exp.position}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">${exp.company} • ${exp.duration}</h6>
+                                ${exp.location ? `<p class="text-muted"><i class="fas fa-map-marker-alt"></i> ${exp.location}</p>` : ''}
+                                ${exp.description ? `<p class="card-text">${exp.description}</p>` : ''}
+                                ${exp.achievements && exp.achievements.length > 0 ? `
+                                    <ul style="list-style-type: none; padding-left: 0;">
+                                        ${exp.achievements.map(achievement => `<li style="padding: 5px 0; color: #555;"><i class="fas fa-check-circle" style="color: #667eea; margin-right: 8px;"></i>${achievement}</li>`).join('')}
+                                    </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contact Section -->
+    <section id="contact" class="gradient-bg text-center" style="padding: 60px 0; color: white;">
+        <div class="container">
+            <h3 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem;">Ready to Drive Results Together?</h3>
+            <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">Let's discuss how I can help grow your business.</p>
+            ${data.email ? `<a href="mailto:${data.email}" class="btn-marketing primary" style="font-size: 1.1rem; padding: 15px 40px;">
+                <i class="fas fa-envelope me-2"></i>Start the Conversation
+            </a>` : ''}
+            <div style="margin-top: 3rem;">
+                <p style="opacity: 0.8; margin: 0;">&copy; ${new Date().getFullYear()} ${data.name} - Marketing Portfolio</p>
+                <small style="opacity: 0.6;">Powered by <a href="${getFrontendUrl()}" target="_blank" style="color: rgba(255,255,255,0.8);">Portfolio Generator</a></small>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+    \`;
+}
+
+                          ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    </section>
+    ` : ''}
+
+    <!-- Projects Section -->
+    ${data.projects && data.projects.length > 0 ? `
+    <section class="py-5">
+        <div class="container">
+            <h2 class="section-title text-center">Projects</h2>
+            <div class="row">
+                ${data.projects.map(project => `
+                    <div class="col-md-6 mb-4">
+                        <div class="card project-card h-100 fade-in">
+                            ${project.image ? `<img src="${project.image}" class="card-img-top" alt="${project.title}" style="height: 200px; object-fit: cover;">` : ''}
+                            <div class="card-body">
+                                <h5 class="card-title" style="color: #667eea; font-weight: 700;">${project.title}</h5>
+                                <p class="card-text">${project.description}</p>
+                                ${project.tech && project.tech.length > 0 ? `
+                                    <div class="mb-3">
+                                        ${project.tech.map(tech => `<span class="badge me-1" style="background: linear-gradient(90deg, #667eea, #764ba2); color: white; border-radius: 15px; padding: 5px 12px;">${tech}</span>`).join('')}
+                                    </div>
+                                ` : ''}
+                                <div>
+                                    ${project.demo ? `<a href="${project.demo}" target="_blank" class="btn btn-primary btn-sm me-2" style="background: linear-gradient(90deg, #667eea, #764ba2); border: none; border-radius: 20px;">🚀 Live Demo</a>` : ''}
+                                    ${project.github ? `<a href="${project.github}" target="_blank" class="btn btn-outline-secondary btn-sm" style="border-radius: 20px;"><i class="fab fa-github"></i> Code</a>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    </section>
+    ` : ''}
+
+    <!-- Education Section -->
+    ${data.education && data.education.length > 0 ? `
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="section-title text-center">Education</h2>
+            ${data.education.map(edu => `
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">${edu.degree} ${edu.field ? 'in ' + edu.field : ''}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">${edu.institution} • ${edu.duration}</h6>
+                                ${edu.location ? `<p class="text-muted"><i class="fas fa-map-marker-alt"></i> ${edu.location}</p>` : ''}
+                                ${edu.gpa ? `<p class="text-muted">GPA: ${edu.gpa}</p>` : ''}
+                                ${edu.description ? `<p class="card-text">${edu.description}</p>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    </section>
+    ` : ''}
+
+    <!-- Certifications Section -->
+    ${data.certifications && data.certifications.length > 0 ? `
+    <section class="py-5">
+        <div class="container">
+            <h2 class="section-title text-center">Certifications</h2>
+            <div class="row">
+                ${data.certifications.map(cert => `
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <div class="mb-3">
+                                    <i class="fas fa-certificate fa-3x text-warning"></i>
+                                </div>
+                                <h5 class="card-title">${cert.name}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">${cert.issuer}</h6>
+                                ${cert.date ? `<p class="text-muted"><i class="fas fa-calendar"></i> ${cert.date}</p>` : ''}
+                                ${cert.url ? `<a href="${cert.url}" target="_blank" class="btn btn-outline-primary btn-sm">View Certificate</a>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    </section>
+    ` : ''}
+
+    <!-- Internships Section -->
+    ${data.internships && data.internships.length > 0 ? `
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="section-title text-center">Internships & Early Experience</h2>
+            ${data.internships.map(internship => `
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-rocket fa-2x text-primary me-3"></i>
+                                    <div>
+                                        <h5 class="card-title mb-1">${internship.position}</h5>
+                                        <h6 class="card-subtitle text-muted">${internship.company} • ${internship.duration}</h6>
+                                    </div>
+                                </div>
+                                ${internship.location ? `<p class="text-muted"><i class="fas fa-map-marker-alt"></i> ${internship.location}</p>` : ''}
+                                ${internship.description ? `<p class="card-text">${internship.description}</p>` : ''}
+                                ${internship.achievements && internship.achievements.length > 0 ? `
+                                    <div>
+                                        <h6 class="fw-bold">Key Achievements:</h6>
+                                        <ul>
+                                            ${internship.achievements.map(achievement => `<li>${achievement}</li>`).join('')}
+                                        </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contact Section -->
+    <section id="contact" class="gradient-bg text-center" style="padding: 60px 0; color: white;">
+        <div class="container">
+            <h3 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem;">Ready to Drive Results Together?</h3>
+            <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">Let's discuss how I can help grow your business.</p>
+            ${data.email ? `<a href="mailto:${data.email}" class="btn-marketing primary" style="font-size: 1.1rem; padding: 15px 40px;">
+                <i class="fas fa-envelope me-2"></i>Start the Conversation
+            </a>` : ''}
+            <div style="margin-top: 3rem;">
+                <p style="opacity: 0.8; margin: 0;">&copy; ${new Date().getFullYear()} ${data.name} - Marketing Portfolio</p>
+                <small style="opacity: 0.6;">Powered by <a href="${getFrontendUrl()}" target="_blank" style="color: rgba(255,255,255,0.8);">Portfolio Generator</a></small>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+    \`;
+}
+
+                              </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    </section>
+    ` : ''}
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <h5>${data.name}</h5>
+            <p>${data.title}</p>
+            <div class="mb-3">
+                ${data.email ? `<a href="mailto:${data.email}" class="text-white me-3"><i class="fas fa-envelope"></i></a>` : ''}
+                ${data.linkedin ? `<a href="${data.linkedin}" target="_blank" class="text-white me-3"><i class="fab fa-linkedin"></i></a>` : ''}
+                ${data.github ? `<a href="${data.github}" target="_blank" class="text-white me-3"><i class="fab fa-github"></i></a>` : ''}
+                ${data.website ? `<a href="${data.website}" target="_blank" class="text-white"><i class="fas fa-globe"></i></a>` : ''}
+            </div>
+        </div>
+    </footer>
+
+    <!-- Powered By -->
+    <div class="powered-by">
+        <small>Powered by <a href="${getFrontendUrl()}" target="_blank">Portfolio Generator</a></small>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
     `;
 }
+
 // ...existing code...
 function generateTemplate2HTML(data, meta) {
-    // Helper for creative badges
+    // Helper for badges
     function creativeBadge(text, color = "#ff6b6b") {
         return `<span style="background:linear-gradient(45deg,${color},#4ecdc4);color:white;padding:7px 18px;border-radius:20px;font-size:0.9rem;font-weight:700;margin-right:8px;text-transform:uppercase;letter-spacing:1px;">${text}</span>`;
     }
@@ -685,29 +1078,26 @@ function generateTemplate2HTML(data, meta) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin:0; padding:0; background:#f8fafc; }
-        .creative-header { background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57); background-size: 400% 400%; animation: gradientShift 15s ease infinite; color: white; padding: 100px 0; position: relative; overflow: hidden; }
+        .creative-header { background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57); background-size: 400% 400%; animation: gradientShift 15s ease infinite; color: white; padding: 100px 0 60px 0; position: relative; overflow: hidden; }
         @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        @keyframes creativeFloat { 0%,100%{transform:translateY(0) rotate(0deg) scale(1);}25%{transform:translateY(-15px) rotate(2deg) scale(1.05);}50%{transform:translateY(-25px) rotate(-1deg) scale(1.1);}75%{transform:translateY(-10px) rotate(1deg) scale(1.05);} }
-        @keyframes morphShape { 0%,100%{border-radius:50% 30% 70% 40%;transform:rotate(0deg);}25%{border-radius:30% 70% 40% 50%;transform:rotate(90deg);}50%{border-radius:70% 40% 50% 30%;transform:rotate(180deg);}75%{border-radius:40% 50% 30% 70%;transform:rotate(270deg);} }
-        .profile-img { width:180px;height:180px;border-radius:0 !important;border:6px solid white;box-shadow:0 10px 30px rgba(0,0,0,0.3);animation:morphShape 15s ease-in-out infinite;object-fit:cover; }
-        .profile-img:hover { animation-play-state:paused;transform:scale(1.2) rotateY(15deg);box-shadow:0 25px 50px rgba(0,0,0,0.4);border-color:#feca57; }
+        @keyframes creativeFloat { 0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-18px) scale(1.07);} }
+        .profile-img-circle { width:180px;height:180px;border-radius:50%;border:6px solid white;box-shadow:0 10px 30px rgba(0,0,0,0.3);animation:creativeFloat 7s ease-in-out infinite;object-fit:cover; }
+        .profile-img-circle:hover { animation-play-state:paused;transform:scale(1.13);box-shadow:0 25px 50px rgba(0,0,0,0.4);border-color:#feca57; }
         .creative-card { border:none;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,0.1);transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);overflow:hidden;position:relative; }
-        .creative-card:hover { transform:rotateY(15deg) rotateX(10deg) translateZ(30px) scale(1.05);box-shadow:0 30px 60px rgba(0,0,0,0.2);}
+        .creative-card:hover { transform:scale(1.04) rotateY(8deg) rotateX(3deg);box-shadow:0 30px 60px rgba(0,0,0,0.2);}
         .skill-orb { background:linear-gradient(45deg,#ff6b6b,#4ecdc4);color:white;border:none;border-radius:50px;padding:10px 20px;margin:8px;display:inline-block;font-weight:600;animation:creativeFloat 6s ease-in-out infinite;box-shadow:0 8px 25px rgba(255,107,107,0.3);}
-        .skill-orb:hover { transform:translateZ(20px) rotateY(180deg) scale(1.2);animation-play-state:paused;box-shadow:0 15px 40px rgba(255,107,107,0.5);}
-        .project-showcase { border:none;border-radius:20px;overflow:hidden;box-shadow:0 10px 25px rgba(0,0,0,0.1);transition:all 0.5s ease;position:relative;}
-        .project-showcase:hover { transform:perspective(1000px) rotateX(10deg) rotateY(5deg) translateZ(20px) scale(1.02);box-shadow:0 25px 50px rgba(0,0,0,0.3);}
+        .skill-orb:hover { transform:scale(1.15);animation-play-state:paused;box-shadow:0 15px 40px rgba(255,107,107,0.5);}
         .section-title { color:#2c3e50;font-weight:800;margin-bottom:40px;position:relative; }
         .section-title::after { content:'';position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);width:80px;height:4px;background:linear-gradient(45deg,#ff6b6b,#4ecdc4,#45b7d1);border-radius:2px;animation:gradientShift 3s ease infinite;background-size:200% 100%;}
         .social-icons { display:flex;gap:1.5rem;margin-top:1.5rem; }
         .social-icon { color:#e74c3c;font-size:1.8rem;transition:transform 0.3s;text-decoration:none; }
         .social-icon:hover { transform:scale(1.2) rotate(10deg);color:#e74c3c;text-decoration:none; }
+        .resume-btn { background:linear-gradient(45deg,#ff6b6b,#4ecdc4);color:white;border:none;border-radius:25px;padding:12px 32px;font-weight:700;font-size:1.1rem;box-shadow:0 6px 18px rgba(255,107,107,0.15);transition:all 0.3s; }
+        .resume-btn:hover { background:linear-gradient(45deg,#4ecdc4,#ff6b6b);color:white;transform:scale(1.07);}
         @media (max-width: 768px) {
-            .creative-card:hover,.skill-orb:hover,.project-showcase:hover { transform:none !important; }
-            .skill-orb,.profile-img { animation:none !important; }
-            .creative-card:hover { transform:translateY(-5px) !important; }
-            .profile-img:hover { transform:scale(1.1) !important; }
-            .profile-img { width:120px;height:120px; }
+            .creative-card:hover,.skill-orb:hover { transform:none !important; }
+            .skill-orb,.profile-img-circle { animation:none !important; }
+            .profile-img-circle { width:120px;height:120px; }
         }
     </style>
 </head>
@@ -725,13 +1115,16 @@ function generateTemplate2HTML(data, meta) {
                         <div style="display:flex;gap:1rem;margin-bottom:2rem;flex-wrap:wrap;">
                             <a href="#projects" class="btn btn-light" style="font-weight:600;padding:12px 30px;border-radius:25px;">🎨 View Portfolio</a>
                             <a href="#contact" class="btn btn-outline-light" style="font-weight:600;padding:12px 30px;border-radius:25px;">💬 Let's Talk</a>
+                            <a href="${data.resumeLink || '#'}" class="resume-btn" download>
+                                📄 Download Resume
+                            </a>
                         </div>
                         ${socialIcons(data)}
                     </div>
                 </div>
                 <div class="col-lg-6 text-center">
                     <div style="position:relative;display:inline-block;">
-                        ${data.profileImage ? `<img src="${data.profileImage}" alt="${data.name}" class="profile-img">` : ''}
+                        ${data.profileImage ? `<img src="${data.profileImage}" alt="${data.name}" class="profile-img-circle">` : ''}
                         <div style="position:absolute;bottom:20px;right:20px;background:linear-gradient(45deg,#10b981,#34d399);width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:1.5rem;font-weight:bold;box-shadow:0 8px 20px rgba(16,185,129,0.3);">✓</div>
                     </div>
                 </div>
@@ -769,8 +1162,8 @@ function generateTemplate2HTML(data, meta) {
             <div class="row">
                 ${data.projects.map(project => `
                     <div class="col-lg-6 mb-5">
-                        <div class="project-showcase h-100">
-                            ${project.image ? `<img src="${project.image}" class="card-img-top" style="height:250px;object-fit:cover;" alt="${project.title}">` : ''}
+                        <div class="creative-card h-100">
+                            ${project.image ? `<img src="${project.image}" class="card-img-top" style="height:250px;object-fit:cover;border-radius:20px 20px 0 0;" alt="${project.title}">` : ''}
                             <div class="card-body p-4">
                                 <h5 class="card-title fw-bold" style="color:#2c3e50;font-size:1.5rem;">${project.title}</h5>
                                 <p class="card-text" style="color:#555;line-height:1.6;">${project.description}</p>
@@ -902,6 +1295,7 @@ function generateTemplate2HTML(data, meta) {
     `;
 }
 // ...existing code...
+
 function generateTemplate3HTML(data, meta) {
     return `
 <!DOCTYPE html>
@@ -4323,3 +4717,4 @@ app.listen(PORT, () => {
     console.log('ðŸ“Š Backend URL: http://localhost:' + PORT);
     console.log('ðŸŒ Environment: ' + (process.env.NODE_ENV || 'development'));
 });
+
