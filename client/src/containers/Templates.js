@@ -18,15 +18,15 @@ function Templates() {
   const { state } = useContext(UserContext);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     Aos.init({ duration: 1000 });
-    
+
     // Check authentication from localStorage and context
     const checkAuth = () => {
       const token = localStorage.getItem('token') || localStorage.getItem('jwt');
       const user = localStorage.getItem('user');
-      
+
       if (token && user) {
         setIsAuthenticated(true);
       } else if (state && state.user) {
@@ -36,10 +36,10 @@ function Templates() {
       }
       setLoading(false);
     };
-    
+
     checkAuth();
   }, [state]);
-  
+
   if (loading) {
     return (
       <div className="container mt-5">
@@ -49,7 +49,7 @@ function Templates() {
       </div>
     );
   }
-  
+
   // Show login message if not authenticated
   if (!isAuthenticated) {
     return (
@@ -85,7 +85,6 @@ function Templates() {
     history.push(`/preview/${templateId}`);
   };
 
-// ...existing code...
   const templates = [
     { id: 'template1', image: images.portfolio1, name: 'Modern Developer', component: Template1, useLivePreview: true },
     { id: 'template2', image: images.portfolio2, name: 'Creative Designer', component: Template2, useLivePreview: true },
@@ -94,7 +93,7 @@ function Templates() {
     { id: 'template5', image: images.portfolio2, name: 'Developer Terminal', component: Template5, useLivePreview: true },
     { id: 'template6', image: images.portfolio1, name: 'Marketing Pro', component: Template6, useLivePreview: true }
   ];
-// ...existing code...
+
   const renderTemplatePreview = (template) => {
     if (template.useLivePreview && template.component) {
       const TemplateComponent = template.component;
