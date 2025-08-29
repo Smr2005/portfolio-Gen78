@@ -18,15 +18,15 @@ function Templates() {
   const { state } = useContext(UserContext);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     Aos.init({ duration: 1000 });
-    
+
     // Check authentication from localStorage and context
     const checkAuth = () => {
       const token = localStorage.getItem('token') || localStorage.getItem('jwt');
       const user = localStorage.getItem('user');
-      
+
       if (token && user) {
         setIsAuthenticated(true);
       } else if (state && state.user) {
@@ -36,10 +36,10 @@ function Templates() {
       }
       setLoading(false);
     };
-    
+
     checkAuth();
   }, [state]);
-  
+
   if (loading) {
     return (
       <div className="container mt-5">
@@ -49,7 +49,7 @@ function Templates() {
       </div>
     );
   }
-  
+
   // Show login message if not authenticated
   if (!isAuthenticated) {
     return (
@@ -86,12 +86,12 @@ function Templates() {
   };
 
   const templates = [
-    { id: 'template1', image: images.portfolio1, name: 'Modern Developer', component: Template1 },
-    { id: 'template2', image: images.portfolio2, name: 'Creative Designer', component: Template2 },
-    { id: 'template3', image: images.portfolio3, name: 'Business Professional', component: Template3, useLivePreview: false },
-    { id: 'template4', image: images.portfolio4, name: 'Minimalist Clean', component: Template4 },
-    { id: 'template5', image: images.portfolio2, name: 'Developer Terminal', component: Template5 },
-    { id: 'template6', image: images.portfolio1, name: 'Marketing Pro', component: Template6 }
+    { id: 'template1', image: images.portfolio1, name: 'Modern Developer', component: Template1, useLivePreview: true },
+    { id: 'template2', image: images.portfolio2, name: 'Creative Designer', component: Template2, useLivePreview: true },
+    { id: 'template3', image: images.portfolio3, name: 'Business Professional', component: Template3, useLivePreview: true },
+    { id: 'template4', image: images.portfolio4, name: 'Minimalist Clean', component: Template4, useLivePreview: true },
+    { id: 'template5', image: images.portfolio2, name: 'Developer Terminal', component: Template5, useLivePreview: true },
+    { id: 'template6', image: images.portfolio1, name: 'Marketing Pro', component: Template6, useLivePreview: true }
   ];
 
   const renderTemplatePreview = (template) => {
