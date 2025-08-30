@@ -29,10 +29,34 @@ coverage/
 .env.development.local
 .env.test.local
 .env.production.local
+.env.production
+
+# Legacy/related project envs
 portfolio-Gen1/.env
 portfolio-Gen1/.env.*
 portfolio-Gen1/client/.env
 portfolio-Gen1/client/.env.*
+
+# Client envs
+client/.env
+client/.env.*
+client/.env.production
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
 # Runtime data
 pids
@@ -71,19 +95,6 @@ test_*.js
 
 # Uploads directory (user uploaded files)
 uploads/
-
-# OS / IDE
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-Thumbs.db
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
 
 # Hosting
 .vercel/
