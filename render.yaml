@@ -1,0 +1,46 @@
+# Render service configuration for portfolio backend
+# Fill the empty values for secrets in Render's dashboard (do NOT commit secrets into repo)
+services:
+  - type: web
+    name: portfolio-backend
+    env: node
+    branch: main
+    plan: free
+    autoDeploy: true
+    buildCommand: npm run render-build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+        sync: false
+      - key: PORT
+        value: ""
+        sync: false
+      - key: MONGO_URI
+        value: ""
+        sync: false
+      - key: BACKEND_URL
+        value: ""
+        sync: false
+      - key: FRONTEND_URL
+        value: ""
+        sync: false
+      - key: COOKIE_KEY
+        value: ""
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        value: ""
+        sync: false
+      - key: GOOGLE_SECRET_ID
+        value: ""
+        sync: false
+      - key: FACEBOOK_APP_ID
+        value: ""
+        sync: false
+      - key: FACEBOOK_APP_SECRET
+        value: ""
+        sync: false
+      - key: SENDGRID_API_KEY
+        value: ""
+        sync: false

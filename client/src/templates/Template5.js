@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Container, Row, Col, Card, Button, Badge, Modal, ProgressBar, Navbar, Nav } from "react-bootstrap";
 // Inline CSS for Template5 (exported so SSR renderer can inline it)
 export const TEMPLATE5_INLINE_CSS = `
       @keyframes blink {
@@ -132,7 +133,6 @@ export const TEMPLATE5_INLINE_CSS = `
         }
       }
   `;
-import { Container, Row, Col, Card, Button, Badge, Modal, ProgressBar, Navbar, Nav } from "react-bootstrap";
 
 function Template5({ isPreview = false, userData = null }) {
   const [showResumeModal, setShowResumeModal] = useState(false);
