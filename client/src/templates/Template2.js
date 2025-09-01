@@ -5,6 +5,13 @@ function Template2({ isPreview = false, userData = null }) {
   const [showResumeModal, setShowResumeModal] = useState(false);
   const [showCertModal, setShowCertModal] = useState(false);
   const [selectedCert, setSelectedCert] = useState(null);
+  const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
+
+  useEffect(() => {
+    const onResize = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   const defaultData = {
     name: "Sarah Wilson",
@@ -367,109 +374,22 @@ function Template2({ isPreview = false, userData = null }) {
   return (
     <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#fdf6e3', overflow: 'hidden' }}>
       {/* Creative Navigation */}
-      <nav style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        background: 'rgba(255,255,255,0.95)',
-        backdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(255,107,107,0.2)',
-        zIndex: 1000,
-        padding: '1rem 0'
-      }}>
+      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,107,107,0.2)', zIndex: 1000, padding: '1rem 0' }}>
         <Container>
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '1rem'
-          }}>
-            <div style={{ 
-              fontSize: window.innerWidth < 480 ? '1.2rem' : window.innerWidth < 768 ? '1.5rem' : '1.8rem', 
-              fontWeight: '700',
-              background: 'linear-gradient(45deg, #ff6b6b, #feca57)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent'
-            }}>
-              {data.name}
-            </div>
-            <div style={{ 
-              display: 'flex', 
-              gap: window.innerWidth < 768 ? '0.5rem' : '2rem', 
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              justifyContent: window.innerWidth < 768 ? 'center' : 'flex-end',
-              width: window.innerWidth < 768 ? '100%' : 'auto'
-            }}>
-              {window.innerWidth < 768 ? (
-                <>
-                  <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '0.5rem',
-                    width: '100%'
-                  }}>
-                    <div style={{
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      gap: '0.5rem',
-                      justifyContent: 'center'
-                    }}>
-                      <a href="#about" style={{ 
-                        color: '#2c3e50', 
-                        textDecoration: 'none', 
-                        fontWeight: '500',
-                        padding: '0.5rem',
-                        fontSize: '0.9rem'
-                      }}>About</a>
-                      <a href="#experience" style={{ 
-                        color: '#2c3e50', 
-                        textDecoration: 'none', 
-                        fontWeight: '500',
-                        padding: '0.5rem',
-                        fontSize: '0.9rem'
-                      }}>Experience</a>
-                      <a href="#portfolio" style={{ 
-                        color: '#2c3e50', 
-                        textDecoration: 'none', 
-                        fontWeight: '500',
-                        padding: '0.5rem',
-                        fontSize: '0.9rem'
-                      }}>Portfolio</a>
-                      <a href="#skills" style={{ 
-                        color: '#2c3e50', 
-                        textDecoration: 'none', 
-                        fontWeight: '500',
-                        padding: '0.5rem',
-                        fontSize: '0.9rem'
-                      }}>Skills</a>
-                      <a href="#contact" style={{ 
-                        color: '#2c3e50', 
-                        textDecoration: 'none', 
-                        fontWeight: '500',
-                        padding: '0.5rem',
-                        fontSize: '0.9rem'
-                      }}>Contact</a>
-                    </div>
-                    <Button 
-                      onClick={() => setShowResumeModal(true)}
-                      style={{
-                        background: 'linear-gradient(45deg, #ff6b6b, #feca57)',
-                        border: 'none',
-                        borderRadius: '25px',
-                        padding: window.innerWidth < 480 ? '6px 16px' : '8px 20px',
-                        fontWeight: '600',
-                        fontSize: window.innerWidth < 480 ? '0.8rem' : '0.9rem',
-                        alignSelf: 'center',
-                        minWidth: '120px'
-                      }}
-                    >
-                      Resume
-                    </Button>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+            <div style={{ fontSize: width < 480 ? '1.2rem' : width < 768 ? '1.5rem' : '1.8rem', fontWeight: 700, background: 'linear-gradient(45deg, #ff6b6b, #feca57)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{data.name}</div>
+            <div style={{ display: 'flex', gap: width < 768 ? '0.5rem' : '2rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: width < 768 ? 'center' : 'flex-end', width: width < 768 ? '100%' : 'auto' }}>
+              {width < 768 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', width: '100%' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center' }}>
+                    <a href="#about" style={{ color: '#2c3e50', textDecoration: 'none', fontWeight: '500', padding: '0.5rem', fontSize: '0.9rem' }}>About</a>
+                    <a href="#experience" style={{ color: '#2c3e50', textDecoration: 'none', fontWeight: '500', padding: '0.5rem', fontSize: '0.9rem' }}>Experience</a>
+                    <a href="#portfolio" style={{ color: '#2c3e50', textDecoration: 'none', fontWeight: '500', padding: '0.5rem', fontSize: '0.9rem' }}>Portfolio</a>
+                    <a href="#skills" style={{ color: '#2c3e50', textDecoration: 'none', fontWeight: '500', padding: '0.5rem', fontSize: '0.9rem' }}>Skills</a>
+                    <a href="#contact" style={{ color: '#2c3e50', textDecoration: 'none', fontWeight: '500', padding: '0.5rem', fontSize: '0.9rem' }}>Contact</a>
                   </div>
-                </>
+                  <Button onClick={() => setShowResumeModal(true)} style={{ background: 'linear-gradient(45deg, #ff6b6b, #feca57)', border: 'none', borderRadius: '25px', padding: width < 480 ? '6px 16px' : '8px 20px', fontWeight: '600', fontSize: width < 480 ? '0.8rem' : '0.9rem', alignSelf: 'center', minWidth: '120px' }}>Resume</Button>
+                </div>
               ) : (
                 <>
                   <a href="#about" style={{ color: '#2c3e50', textDecoration: 'none', fontWeight: '500' }}>About</a>
@@ -477,18 +397,7 @@ function Template2({ isPreview = false, userData = null }) {
                   <a href="#portfolio" style={{ color: '#2c3e50', textDecoration: 'none', fontWeight: '500' }}>Portfolio</a>
                   <a href="#skills" style={{ color: '#2c3e50', textDecoration: 'none', fontWeight: '500' }}>Skills</a>
                   <a href="#contact" style={{ color: '#2c3e50', textDecoration: 'none', fontWeight: '500' }}>Contact</a>
-                  <Button 
-                    onClick={() => setShowResumeModal(true)}
-                    style={{
-                      background: 'linear-gradient(45deg, #ff6b6b, #feca57)',
-                      border: 'none',
-                      borderRadius: '25px',
-                      padding: '8px 20px',
-                      fontWeight: '600'
-                    }}
-                  >
-                    Resume
-                  </Button>
+                  <Button onClick={() => setShowResumeModal(true)} style={{ background: 'linear-gradient(45deg, #ff6b6b, #feca57)', border: 'none', borderRadius: '25px', padding: '8px 20px', fontWeight: '600' }}>Resume</Button>
                 </>
               )}
             </div>
@@ -535,79 +444,79 @@ function Template2({ isPreview = false, userData = null }) {
 
         <Container className="h-100 d-flex align-items-center">
           <Row className="w-100 align-items-center">
-            <Col lg={6} className={window.innerWidth < 768 ? 'order-2' : ''}>
+            <Col lg={6} className={width < 768 ? 'order-2' : ''}>
               <div style={{
                 background: 'rgba(255,255,255,0.95)',
-                padding: window.innerWidth < 480 ? '1.5rem' : window.innerWidth < 768 ? '2.5rem' : '4rem',
-                borderRadius: window.innerWidth < 768 ? '20px' : '30px',
+                padding: width < 480 ? '1.5rem' : width < 768 ? '2.5rem' : '4rem',
+                borderRadius: width < 768 ? '20px' : '30px',
                 boxShadow: '0 30px 60px rgba(0,0,0,0.15)',
                 backdropFilter: 'blur(20px)',
-                animation: window.innerWidth < 768 ? 'none' : 'slideInCreative 1.2s ease-out',
-                margin: window.innerWidth < 768 ? '1rem' : '0'
+                animation: width < 768 ? 'none' : 'slideInCreative 1.2s ease-out',
+                margin: width < 768 ? '1rem' : '0'
               }}>
                 <div style={{
                   display: 'inline-block',
                   background: 'linear-gradient(45deg, #ff6b6b, #feca57)',
                   color: 'white',
-                  padding: window.innerWidth < 480 ? '6px 16px' : '8px 20px',
+                  padding: width < 480 ? '6px 16px' : '8px 20px',
                   borderRadius: '20px',
-                  fontSize: window.innerWidth < 480 ? '0.8rem' : '0.9rem',
+                  fontSize: width < 480 ? '0.8rem' : '0.9rem',
                   fontWeight: '600',
-                  marginBottom: window.innerWidth < 768 ? '1rem' : '1.5rem',
+                  marginBottom: width < 768 ? '1rem' : '1.5rem',
                   textTransform: 'uppercase',
                   letterSpacing: '1px'
                 }}>
                   Creative Professional
                 </div>
                 <h1 style={{ 
-                  fontSize: window.innerWidth < 480 ? '2rem' : window.innerWidth < 768 ? '2.5rem' : '4rem', 
+                  fontSize: width < 480 ? '2rem' : width < 768 ? '2.5rem' : '4rem', 
                   fontWeight: '800', 
                   color: '#2c3e50',
                   marginBottom: '1rem',
                   textShadow: '2px 2px 4px rgba(0,0,0,0.1)',
                   lineHeight: '1.1',
-                  textAlign: window.innerWidth < 768 ? 'center' : 'left'
+                  textAlign: width < 768 ? 'center' : 'left'
                 }}>
                   {data.name}
                 </h1>
                 <h2 style={{ 
-                  fontSize: window.innerWidth < 480 ? '1.2rem' : window.innerWidth < 768 ? '1.4rem' : '1.8rem', 
+                  fontSize: width < 480 ? '1.2rem' : width < 768 ? '1.4rem' : '1.8rem', 
                   color: '#e74c3c',
-                  marginBottom: window.innerWidth < 768 ? '1.5rem' : '2rem',
+                  marginBottom: width < 768 ? '1.5rem' : '2rem',
                   fontStyle: 'italic',
                   fontWeight: '400',
-                  textAlign: window.innerWidth < 768 ? 'center' : 'left'
+                  textAlign: width < 768 ? 'center' : 'left'
                 }}>
                   {data.title}
                 </h2>
                 <p style={{ 
-                  fontSize: window.innerWidth < 480 ? '0.9rem' : window.innerWidth < 768 ? '1rem' : '1.2rem', 
+                  fontSize: width < 480 ? '0.9rem' : width < 768 ? '1rem' : '1.2rem', 
                   color: '#34495e',
-                  lineHeight: window.innerWidth < 768 ? '1.6' : '1.8',
-                  marginBottom: window.innerWidth < 768 ? '2rem' : '2.5rem',
-                  textAlign: window.innerWidth < 768 ? 'center' : 'left'
+                  lineHeight: width < 768 ? '1.6' : '1.8',
+                  marginBottom: width < 768 ? '2rem' : '2.5rem',
+                  textAlign: width < 768 ? 'center' : 'left'
                 }}>
                   {data.about}
                 </p>
                 <div style={{ 
                   display: 'flex', 
-                  gap: window.innerWidth < 768 ? '0.5rem' : '1rem', 
-                  flexDirection: window.innerWidth < 768 ? 'column' : 'row',
+                  gap: width < 768 ? '0.5rem' : '1rem', 
+                  flexDirection: width < 768 ? 'column' : 'row',
                   flexWrap: 'wrap', 
-                  marginBottom: window.innerWidth < 768 ? '1.5rem' : '2rem',
+                  marginBottom: width < 768 ? '1.5rem' : '2rem',
                   alignItems: 'center'
                 }}>
                   <Button 
                     style={{
                       background: 'linear-gradient(45deg, #e74c3c, #f39c12)',
                       border: 'none',
-                      padding: window.innerWidth < 480 ? '12px 25px' : window.innerWidth < 768 ? '13px 30px' : '15px 35px',
-                      fontSize: window.innerWidth < 480 ? '0.9rem' : window.innerWidth < 768 ? '1rem' : '1.1rem',
+                      padding: width < 480 ? '12px 25px' : width < 768 ? '13px 30px' : '15px 35px',
+                      fontSize: width < 480 ? '0.9rem' : width < 768 ? '1rem' : '1.1rem',
                       borderRadius: '30px',
                       boxShadow: '0 8px 25px rgba(231,76,60,0.3)',
                       fontWeight: '600',
-                      width: window.innerWidth < 768 ? '100%' : 'auto',
-                      maxWidth: window.innerWidth < 768 ? '300px' : 'none'
+                      width: width < 768 ? '100%' : 'auto',
+                      maxWidth: width < 768 ? '300px' : 'none'
                     }}
                     href="#portfolio"
                   >
@@ -618,12 +527,12 @@ function Template2({ isPreview = false, userData = null }) {
                       background: 'transparent',
                       border: '2px solid #e74c3c',
                       color: '#e74c3c',
-                      padding: window.innerWidth < 480 ? '10px 23px' : window.innerWidth < 768 ? '11px 28px' : '13px 33px',
-                      fontSize: window.innerWidth < 480 ? '0.9rem' : window.innerWidth < 768 ? '1rem' : '1.1rem',
+                      padding: width < 480 ? '10px 23px' : width < 768 ? '11px 28px' : '13px 33px',
+                      fontSize: width < 480 ? '0.9rem' : width < 768 ? '1rem' : '1.1rem',
                       borderRadius: '30px',
                       fontWeight: '600',
-                      width: window.innerWidth < 768 ? '100%' : 'auto',
-                      maxWidth: window.innerWidth < 768 ? '300px' : 'none'
+                      width: width < 768 ? '100%' : 'auto',
+                      maxWidth: width < 768 ? '300px' : 'none'
                     }}
                     href="#contact"
                   >
@@ -668,11 +577,11 @@ function Template2({ isPreview = false, userData = null }) {
                 </div>
               </div>
             </Col>
-            <Col lg={6} className={`text-center ${window.innerWidth < 768 ? 'order-1 mb-4' : ''}`}>
+            <Col lg={6} className={`text-center ${width < 768 ? 'order-1 mb-4' : ''}`}>
               <div style={{
                 position: 'relative',
-                width: window.innerWidth < 480 ? '250px' : window.innerWidth < 768 ? '300px' : '400px',
-                height: window.innerWidth < 480 ? '250px' : window.innerWidth < 768 ? '300px' : '400px',
+                width: width < 480 ? '250px' : width < 768 ? '300px' : '400px',
+                height: width < 480 ? '250px' : width < 768 ? '300px' : '400px',
                 margin: '0 auto'
               }}>
                 <div style={{
@@ -680,42 +589,42 @@ function Template2({ isPreview = false, userData = null }) {
                   top: '50%',
                   left: '50%',
                   transform: 'translate(-50%, -50%)',
-                  width: window.innerWidth < 480 ? '220px' : window.innerWidth < 768 ? '270px' : '350px',
-                  height: window.innerWidth < 480 ? '220px' : window.innerWidth < 768 ? '270px' : '350px',
+                  width: width < 480 ? '220px' : width < 768 ? '270px' : '350px',
+                  height: width < 480 ? '220px' : width < 768 ? '270px' : '350px',
                   background: 'linear-gradient(45deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1))',
                   borderRadius: '50%',
-                  animation: window.innerWidth < 768 ? 'none' : 'creativeFloat 8s ease-in-out infinite'
+                  animation: width < 768 ? 'none' : 'creativeFloat 8s ease-in-out infinite'
                 }}></div>
                 <img 
                   src={data.profileImage}
                   alt={data.name}
                   style={{
                     position: 'relative',
-                    width: window.innerWidth < 480 ? '180px' : window.innerWidth < 768 ? '220px' : '300px',
-                    height: window.innerWidth < 480 ? '180px' : window.innerWidth < 768 ? '220px' : '300px',
+                    width: width < 480 ? '180px' : width < 768 ? '220px' : '300px',
+                    height: width < 480 ? '180px' : width < 768 ? '220px' : '300px',
                     borderRadius: '50%',
                     objectFit: 'cover',
-                    border: window.innerWidth < 768 ? '5px solid rgba(255,255,255,0.3)' : '8px solid rgba(255,255,255,0.3)',
+                    border: width < 768 ? '5px solid rgba(255,255,255,0.3)' : '8px solid rgba(255,255,255,0.3)',
                     boxShadow: '0 25px 50px rgba(0,0,0,0.2)',
                     zIndex: 2,
-                    animation: window.innerWidth < 768 ? 'none' : 'creativeFloat 6s ease-in-out infinite reverse'
+                    animation: width < 768 ? 'none' : 'creativeFloat 6s ease-in-out infinite reverse'
                   }}
                 />
                 <div style={{
                   position: 'absolute',
-                  bottom: window.innerWidth < 480 ? '20px' : '30px',
-                  right: window.innerWidth < 480 ? '20px' : '30px',
+                  bottom: width < 480 ? '20px' : '30px',
+                  right: width < 480 ? '20px' : '30px',
                   background: 'linear-gradient(45deg, #10b981, #34d399)',
-                  width: window.innerWidth < 480 ? '35px' : '50px',
-                  height: window.innerWidth < 480 ? '35px' : '50px',
+                  width: width < 480 ? '35px' : '50px',
+                  height: width < 480 ? '35px' : '50px',
                   borderRadius: '50%',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: 'white',
-                  fontSize: window.innerWidth < 480 ? '1rem' : '1.5rem',
-                  border: window.innerWidth < 768 ? '3px solid white' : '4px solid white',
-                  animation: window.innerWidth < 768 ? 'none' : 'creativeFloat 4s ease-in-out infinite',
+                  fontSize: width < 480 ? '1rem' : '1.5rem',
+                  border: width < 768 ? '3px solid white' : '4px solid white',
+                  animation: width < 768 ? 'none' : 'creativeFloat 4s ease-in-out infinite',
                   zIndex: 3
                 }}>
                   ✨

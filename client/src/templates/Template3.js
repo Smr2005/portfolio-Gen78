@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Container, Row, Col, Card, Button, ProgressBar, Modal, Badge, Table } from "react-bootstrap";
 
 function Template3({ isPreview = false, userData = null }) {
@@ -272,146 +272,99 @@ function Template3({ isPreview = false, userData = null }) {
     }));
   }
 
-  useEffect(() => {
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes professionalSlide {
-        0% { transform: translateX(-50px) rotateY(-15deg); opacity: 0; }
-        100% { transform: translateX(0) rotateY(0deg); opacity: 1; }
-      }
-      
-      @keyframes businessFloat {
-        0%, 100% { transform: translateY(0px) rotateX(0deg); }
-        50% { transform: translateY(-10px) rotateX(2deg); }
-      }
-      
-      @keyframes dataVisualization {
-        0% { transform: scaleY(0.3); }
-        50% { transform: scaleY(1); }
-        100% { transform: scaleY(0.8); }
-      }
-      
-      @keyframes professionalGlow {
-        0%, 100% { box-shadow: 0 5px 15px rgba(30,60,114,0.2); }
-        50% { box-shadow: 0 10px 30px rgba(30,60,114,0.4); }
-      }
-      
-      .business-card {
-        transform-style: preserve-3d;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        animation: professionalGlow 3s ease-in-out infinite;
-      }
-      
-      .business-card:hover {
-        transform: rotateY(8deg) rotateX(4deg) translateZ(15px) scale(1.02);
-        box-shadow: 0 25px 50px rgba(30,60,114,0.3);
-      }
-      
-      .metric-card {
-        transform-style: preserve-3d;
-        transition: all 0.3s ease;
-      }
-      
-      .metric-card:hover {
-        transform: translateZ(10px) rotateX(5deg);
-      }
-      
-      .skill-progress {
-        transform-style: preserve-3d;
-        transition: all 0.3s ease;
-      }
-      
-      .skill-progress:hover {
-        transform: translateZ(5px) scale(1.05);
-      }
-      
-      .project-showcase {
-        transform-style: preserve-3d;
-        transition: all 0.5s ease;
-      }
-      
+  // Inline CSS used by this template so SSR and client render the same styles
+  const TEMPLATE3_INLINE_CSS = `
+    @keyframes professionalSlide {
+      0% { transform: translateX(-50px) rotateY(-15deg); opacity: 0; }
+      100% { transform: translateX(0) rotateY(0deg); opacity: 1; }
+    }
+
+    @keyframes businessFloat {
+      0%, 100% { transform: translateY(0px) rotateX(0deg); }
+      50% { transform: translateY(-10px) rotateX(2deg); }
+    }
+
+    @keyframes dataVisualization {
+      0% { transform: scaleY(0.3); }
+      50% { transform: scaleY(1); }
+      100% { transform: scaleY(0.8); }
+    }
+
+    @keyframes professionalGlow {
+      0%, 100% { box-shadow: 0 5px 15px rgba(30,60,114,0.2); }
+      50% { box-shadow: 0 10px 30px rgba(30,60,114,0.4); }
+    }
+
+    .business-card {
+      transform-style: preserve-3d;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      animation: professionalGlow 3s ease-in-out infinite;
+    }
+
+    .business-card:hover {
+      transform: rotateY(8deg) rotateX(4deg) translateZ(15px) scale(1.02);
+      box-shadow: 0 25px 50px rgba(30,60,114,0.3);
+    }
+
+    .metric-card {
+      transform-style: preserve-3d;
+      transition: all 0.3s ease;
+    }
+
+    .metric-card:hover {
+      transform: translateZ(10px) rotateX(5deg);
+    }
+
+    .skill-progress {
+      transform-style: preserve-3d;
+      transition: all 0.3s ease;
+    }
+
+    .skill-progress:hover {
+      transform: translateZ(5px) scale(1.05);
+    }
+
+    .project-showcase {
+      transform-style: preserve-3d;
+      transition: all 0.5s ease;
+    }
+
+    .project-showcase:hover {
+      transform: perspective(1000px) rotateX(5deg) rotateY(3deg) translateZ(10px);
+    }
+
+    /* Mobile Responsive Styles */
+    @media (max-width: 768px) {
+      .business-card:hover,
+      .metric-card:hover,
+      .skill-progress:hover,
       .project-showcase:hover {
-        transform: perspective(1000px) rotateX(5deg) rotateY(3deg) translateZ(10px);
+        transform: none !important;
       }
-      
-      /* Mobile Responsive Styles */
-      @media (max-width: 768px) {
-        .business-card:hover,
-        .metric-card:hover,
-        .skill-progress:hover,
-        .project-showcase:hover {
-          transform: none !important;
-        }
-        
-        .business-card {
-          animation: none !important;
-        }
-        
-        h1 {
-          font-size: 2rem !important;
-        }
-        
-        h2 {
-          font-size: 1.5rem !important;
-        }
-        
-        h3 {
-          font-size: 1.25rem !important;
-        }
-        
-        .container {
-          padding-left: 15px !important;
-          padding-right: 15px !important;
-        }
-        
-        .btn {
-          width: 100% !important;
-          margin-bottom: 0.5rem !important;
-        }
-        
-        nav {
-          padding: 0.5rem 0 !important;
-        }
-        
-        section {
-          padding: 60px 0 !important;
-        }
+
+      .business-card {
+        animation: none !important;
       }
-      
-      @media (max-width: 480px) {
-        h1 {
-          font-size: 1.75rem !important;
-        }
-        
-        h2 {
-          font-size: 1.25rem !important;
-        }
-        
-        h3 {
-          font-size: 1.1rem !important;
-        }
-        
-        .container {
-          padding-left: 10px !important;
-          padding-right: 10px !important;
-        }
-        
-        .btn {
-          font-size: 0.9rem !important;
-          padding: 0.6rem 1rem !important;
-        }
-        
-        .card {
-          padding: 1rem !important;
-        }
-      }
-    `;
-    document.head.appendChild(style);
-    
-    return () => {
-      document.head.removeChild(style);
-    };
-  }, []);
+
+      h1 { font-size: 2rem !important; }
+      h2 { font-size: 1.5rem !important; }
+      h3 { font-size: 1.25rem !important; }
+
+      .container { padding-left: 15px !important; padding-right: 15px !important; }
+      .btn { width: 100% !important; margin-bottom: 0.5rem !important; }
+      nav { padding: 0.5rem 0 !important; }
+      section { padding: 60px 0 !important; }
+    }
+
+    @media (max-width: 480px) {
+      h1 { font-size: 1.75rem !important; }
+      h2 { font-size: 1.25rem !important; }
+      h3 { font-size: 1.1rem !important; }
+      .container { padding-left: 10px !important; padding-right: 10px !important; }
+      .btn { font-size: 0.9rem !important; padding: 0.6rem 1rem !important; }
+      .card { padding: 1rem !important; }
+    }
+  `;
 
   return (
     <div style={{ fontFamily: 'Inter, sans-serif', backgroundColor: '#f8f9fa', color: '#1e293b' }}>

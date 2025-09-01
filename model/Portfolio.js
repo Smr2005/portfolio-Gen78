@@ -135,6 +135,10 @@ const PortfolioSchema = new mongoose.Schema({
     default: 0
   },
   lastViewed: Date,
+  // Server-rendered HTML snapshot for published portfolios
+  publishedHtml: {
+    type: String
+  },
   
   // Timestamps
   createdAt: {

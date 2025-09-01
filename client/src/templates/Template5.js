@@ -1,4 +1,137 @@
 import React, { useState, useEffect } from "react";
+// Inline CSS for Template5 (exported so SSR renderer can inline it)
+export const TEMPLATE5_INLINE_CSS = `
+      @keyframes blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0; }
+      }
+      
+      @keyframes slideInTerminal {
+        0% { transform: translateY(20px); opacity: 0; }
+        100% { transform: translateY(0); opacity: 1; }
+      }
+      
+      @keyframes glow {
+        0%, 100% { box-shadow: 0 0 5px rgba(88, 166, 255, 0.3); }
+        50% { box-shadow: 0 0 20px rgba(88, 166, 255, 0.6); }
+      }
+      
+      .terminal-cursor::after {
+        content: '|';
+        animation: blink 1s infinite;
+        color: #58a6ff;
+      }
+      
+      .terminal-card {
+        animation: slideInTerminal 0.8s ease-out;
+      }
+      
+      .glow-on-hover:hover {
+        animation: glow 2s infinite;
+      }
+      
+      /* Mobile Responsive Styles */
+      @media (max-width: 768px) {
+        .terminal-card,
+        .glow-on-hover:hover {
+          animation: none !important;
+        }
+        
+        .terminal-cursor::after {
+          animation: none !important;
+        }
+        
+        h1 {
+          font-size: 2rem !important;
+        }
+        
+        h2 {
+          font-size: 1.5rem !important;
+        }
+        
+        h3 {
+          font-size: 1.25rem !important;
+        }
+        
+        .container {
+          padding-left: 15px !important;
+          padding-right: 15px !important;
+        }
+        
+        .btn {
+          width: 100% !important;
+          margin-bottom: 0.5rem !important;
+          min-height: 44px !important;
+        }
+        
+        .navbar {
+          padding: 0.5rem 1rem !important;
+        }
+        
+        .navbar-nav {
+          text-align: center !important;
+        }
+        
+        .navbar-nav .nav-link {
+          padding: 0.75rem 1rem !important;
+          border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+        }
+        
+        section {
+          padding: 60px 0 !important;
+        }
+        
+        .terminal-card {
+          margin: 1rem 0 !important;
+          padding: 1rem !important;
+        }
+        
+        .card-body {
+          padding: 1rem !important;
+        }
+        
+        .progress-bar {
+          height: 8px !important;
+        }
+      }
+      
+      @media (max-width: 480px) {
+        h1 {
+          font-size: 1.75rem !important;
+        }
+        
+        h2 {
+          font-size: 1.25rem !important;
+        }
+        
+        h3 {
+          font-size: 1.1rem !important;
+        }
+        
+        .container {
+          padding-left: 10px !important;
+          padding-right: 10px !important;
+        }
+        
+        .btn {
+          font-size: 0.9rem !important;
+          padding: 0.75rem 1rem !important;
+        }
+        
+        .card {
+          padding: 0.75rem !important;
+        }
+        
+        .terminal-card {
+          padding: 0.75rem !important;
+          font-size: 0.8rem !important;
+        }
+        
+        section {
+          padding: 40px 0 !important;
+        }
+      }
+  `;
 import { Container, Row, Col, Card, Button, Badge, Modal, ProgressBar, Navbar, Nav } from "react-bootstrap";
 
 function Template5({ isPreview = false, userData = null }) {
@@ -188,147 +321,19 @@ function Template5({ isPreview = false, userData = null }) {
     }, 100);
     return () => clearInterval(timer);
   }, []);
+  // Template CSS is provided by the module-level export TEMPLATE5_INLINE_CSS
 
   // Add terminal-style animations
   useEffect(() => {
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes blink {
-        0%, 50% { opacity: 1; }
-        51%, 100% { opacity: 0; }
-      }
-      
-      @keyframes slideInTerminal {
-        0% { transform: translateY(20px); opacity: 0; }
-        100% { transform: translateY(0); opacity: 1; }
-      }
-      
-      @keyframes glow {
-        0%, 100% { box-shadow: 0 0 5px rgba(88, 166, 255, 0.3); }
-        50% { box-shadow: 0 0 20px rgba(88, 166, 255, 0.6); }
-      }
-      
-      .terminal-cursor::after {
-        content: '|';
-        animation: blink 1s infinite;
-        color: #58a6ff;
-      }
-      
-      .terminal-card {
-        animation: slideInTerminal 0.8s ease-out;
-      }
-      
-      .glow-on-hover:hover {
-        animation: glow 2s infinite;
-      }
-      
-      /* Mobile Responsive Styles */
-      @media (max-width: 768px) {
-        .terminal-card,
-        .glow-on-hover:hover {
-          animation: none !important;
-        }
-        
-        .terminal-cursor::after {
-          animation: none !important;
-        }
-        
-        h1 {
-          font-size: 2rem !important;
-        }
-        
-        h2 {
-          font-size: 1.5rem !important;
-        }
-        
-        h3 {
-          font-size: 1.25rem !important;
-        }
-        
-        .container {
-          padding-left: 15px !important;
-          padding-right: 15px !important;
-        }
-        
-        .btn {
-          width: 100% !important;
-          margin-bottom: 0.5rem !important;
-          min-height: 44px !important;
-        }
-        
-        .navbar {
-          padding: 0.5rem 1rem !important;
-        }
-        
-        .navbar-nav {
-          text-align: center !important;
-        }
-        
-        .navbar-nav .nav-link {
-          padding: 0.75rem 1rem !important;
-          border-bottom: 1px solid rgba(255,255,255,0.1) !important;
-        }
-        
-        section {
-          padding: 60px 0 !important;
-        }
-        
-        .terminal-card {
-          margin: 1rem 0 !important;
-          padding: 1rem !important;
-        }
-        
-        .card-body {
-          padding: 1rem !important;
-        }
-        
-        .progress-bar {
-          height: 8px !important;
-        }
-      }
-      
-      @media (max-width: 480px) {
-        h1 {
-          font-size: 1.75rem !important;
-        }
-        
-        h2 {
-          font-size: 1.25rem !important;
-        }
-        
-        h3 {
-          font-size: 1.1rem !important;
-        }
-        
-        .container {
-          padding-left: 10px !important;
-          padding-right: 10px !important;
-        }
-        
-        .btn {
-          font-size: 0.9rem !important;
-          padding: 0.75rem 1rem !important;
-        }
-        
-        .card {
-          padding: 0.75rem !important;
-        }
-        
-        .terminal-card {
-          padding: 0.75rem !important;
-          font-size: 0.8rem !important;
-        }
-        
-        section {
-          padding: 40px 0 !important;
-        }
-      }
-    `;
-    document.head.appendChild(style);
-    
-    return () => {
-      document.head.removeChild(style);
-    };
+    if (typeof document !== 'undefined') {
+      const style = document.createElement('style');
+      style.textContent = TEMPLATE5_INLINE_CSS;
+      document.head.appendChild(style);
+
+      return () => {
+        if (document.head.contains(style)) document.head.removeChild(style);
+      };
+    }
   }, []);
 
   const handleCertClick = (cert) => {

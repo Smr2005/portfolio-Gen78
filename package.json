@@ -11,7 +11,9 @@
     "render-build": "npm install && cd client && npm install --legacy-peer-deps && npm run build:legacy && echo 'Checking build output...' && ls -la client/ && ls -la client/build/ || echo 'Build directory not found'",
     "heroku-postbuild": "npm run build",
     "postinstall": "echo 'Dependencies installed successfully'",
-    "audit-fix": "npm audit fix && cd client && npm audit fix"
+    "audit-fix": "npm audit fix && cd client && npm audit fix",
+    "test-renderer": "node test/template1-renderer.test.js",
+    "test-renderer-2": "node test/template2-renderer.test.js"
   },
   "keywords": [],
   "author": "",
@@ -40,5 +42,12 @@
     "passport": "^0.7.0",
     "passport-facebook": "^3.0.0",
     "passport-google-oauth20": "^2.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.22.5",
+    "@babel/preset-env": "^7.22.5",
+    "@babel/preset-react": "^7.22.5",
+    "@babel/register": "^7.22.5",
+    "puppeteer": "^24.17.1"
   }
 }

@@ -4,6 +4,40 @@ const Portfolio = require("../model/Portfolio");
 const User = require("../model/User");
 const { verifyAccessToken } = require("../webToken/jwt");
 const nodemailer = require("nodemailer");
+const { renderTemplate1 } = require("../server/renderers/template1Renderer");
+const { renderTemplate2 } = require("../server/renderers/template2Renderer");
+let renderTemplate2SSR = null;
+try {
+  // optional SSR renderer that uses the real React component (may require @babel/register and client deps)
+  renderTemplate2SSR = require("../server/renderers/template2Renderer-ssr").renderTemplate2SSR;
+} catch (e) {
+  // SSR renderer not available or failed to load; we'll fall back to string renderer
+  renderTemplate2SSR = null;
+}
+let renderTemplate3SSR = null;
+try {
+  renderTemplate3SSR = require("../server/renderers/template3Renderer-ssr").renderTemplate3SSR;
+} catch (e) {
+  renderTemplate3SSR = null;
+}
+let renderTemplate4SSR = null;
+try {
+  renderTemplate4SSR = require("../server/renderers/template4Renderer-ssr").renderTemplate4SSR;
+} catch (e) {
+  renderTemplate4SSR = null;
+}
+let renderTemplate5SSR = null;
+try {
+  renderTemplate5SSR = require("../server/renderers/template5Renderer-ssr");
+} catch (e) {
+  renderTemplate5SSR = null;
+}
+let renderTemplate6SSR = null;
+try {
+  renderTemplate6SSR = require("../server/renderers/template6Renderer-ssr");
+} catch (e) {
+  renderTemplate6SSR = null;
+}
 
 // Helper function to generate correct base URL
 function getBaseUrl(req) {
@@ -458,6 +492,153 @@ router.post("/publish", verifyAccessToken, async (req, res) => {
     
     portfolio.isPublished = true;
     portfolio.publishedAt = new Date();
+    // Render static HTML for published portfolio according to template
+    try {
+      // Attempt to find client bundle main file (for hydration) from the built client asset-manifest
+      let clientBundleUrl = null;
+      try {
+        const manifest = require('../client/build/asset-manifest.json');
+        clientBundleUrl = manifest.files && manifest.files['main.js'] ? manifest.files['main.js'] : null;
+        // Make absolute so published pages load correctly regardless of host
+        if (clientBundleUrl && !clientBundleUrl.startsWith('http')) {
+          const frontend = getFrontendUrl(req);
+          clientBundleUrl = `${frontend}${clientBundleUrl}`;
+        }
+      } catch (e) {
+        // manifest not available (dev environment or not built) — leave clientBundleUrl null
+        clientBundleUrl = null;
+      }
+
+      if (portfolio.templateId === 'template1') {
+        portfolio.publishedHtml = renderTemplate1(portfolio.data, { cssPath: '/templates/template1.css', hydrate: !!clientBundleUrl, clientBundleUrl: clientBundleUrl });
+  } else if (portfolio.templateId === 'template2') {
+        // Prefer the SSR renderer (exact React markup) when available. Fallback to string renderer if SSR is unavailable or fails.
+        const renderOptions = {
+          cssPath: '/templates/template2.css',
+          hydrate: !!clientBundleUrl,
+          clientBundleUrl: clientBundleUrl || '/templates/template2.hydrate.js'
+        };
+        if (renderTemplate2SSR) {
+          try {
+            portfolio.publishedHtml = renderTemplate2SSR(portfolio.data, renderOptions);
+          } catch (ssrErr) {
+            console.error('SSR render failed for Template2, falling back to string renderer:', ssrErr);
+            portfolio.publishedHtml = renderTemplate2(portfolio.data, renderOptions);
+          }
+        } else {
+          // SSR not available, use the original server-side string renderer
+          portfolio.publishedHtml = renderTemplate2(portfolio.data, renderOptions);
+        }
+      } else {
+        // fallback: keep publishedHtml undefined for other templates
+        portfolio.publishedHtml = undefined;
+      }
+      // Support template3: prefer SSR renderer then fallback to string generator
+      if (portfolio.templateId === 'template3') {
+        const renderOptions = {
+          cssPath: '/templates/template3.css',
+          hydrate: !!clientBundleUrl,
+          clientBundleUrl: clientBundleUrl || '/templates/template3.hydrate.js'
+        };
+        try {
+          if (renderTemplate3SSR) {
+            try {
+              portfolio.publishedHtml = renderTemplate3SSR(portfolio.data, renderOptions);
+            } catch (ssrErr) {
+              console.error('SSR render failed for Template3, falling back to string generator:', ssrErr);
+              // fallback to existing generator function in index_clean.js
+              const { generateTemplate3HTML } = require('../index_clean');
+              portfolio.publishedHtml = generateTemplate3HTML(portfolio.data, { cssPath: renderOptions.cssPath });
+            }
+          } else {
+            const { generateTemplate3HTML } = require('../index_clean');
+            portfolio.publishedHtml = generateTemplate3HTML(portfolio.data, { cssPath: renderOptions.cssPath });
+          }
+        } catch (genErr) {
+          console.error('Failed to generate Template3 published HTML:', genErr);
+          portfolio.publishedHtml = undefined;
+        }
+      }
+      // Support template4: prefer SSR renderer then fallback to string generator
+      if (portfolio.templateId === 'template4') {
+        const renderOptions = {
+          cssPath: '/templates/template4.css',
+          hydrate: !!clientBundleUrl,
+          clientBundleUrl: clientBundleUrl || '/templates/template4.hydrate.js'
+        };
+        try {
+          if (renderTemplate4SSR) {
+            try {
+              portfolio.publishedHtml = renderTemplate4SSR(portfolio.data, renderOptions);
+            } catch (ssrErr) {
+              console.error('SSR render failed for Template4, falling back to string generator:', ssrErr);
+              const { generateTemplate4HTML } = require('../index_clean');
+              portfolio.publishedHtml = generateTemplate4HTML(portfolio.data, { cssPath: renderOptions.cssPath });
+            }
+          } else {
+            const { generateTemplate4HTML } = require('../index_clean');
+            portfolio.publishedHtml = generateTemplate4HTML(portfolio.data, { cssPath: renderOptions.cssPath });
+          }
+        } catch (genErr) {
+          console.error('Failed to generate Template4 published HTML:', genErr);
+          portfolio.publishedHtml = undefined;
+        }
+      }
+      // Support template5: prefer SSR renderer then fallback to string generator
+      if (portfolio.templateId === 'template5') {
+        const renderOptions = {
+          cssPath: '/templates/template5.css',
+          hydrate: !!clientBundleUrl,
+          clientBundleUrl: clientBundleUrl || '/templates/template5.hydrate.js'
+        };
+        try {
+          if (renderTemplate5SSR) {
+            try {
+              // renderTemplate5SSR is a function exported directly
+              portfolio.publishedHtml = renderTemplate5SSR(portfolio.data, { meta: portfolio.meta }, renderOptions.clientBundleUrl);
+            } catch (ssrErr) {
+              console.error('SSR render failed for Template5, falling back to string generator:', ssrErr);
+              const { generateTemplate5HTML } = require('../index_clean');
+              portfolio.publishedHtml = generateTemplate5HTML(portfolio.data, { cssPath: renderOptions.cssPath });
+            }
+          } else {
+            const { generateTemplate5HTML } = require('../index_clean');
+            portfolio.publishedHtml = generateTemplate5HTML(portfolio.data, { cssPath: renderOptions.cssPath });
+          }
+        } catch (genErr) {
+          console.error('Failed to generate Template5 published HTML:', genErr);
+          portfolio.publishedHtml = undefined;
+        }
+      }
+      // Support template6: prefer SSR renderer then fallback to string generator
+      if (portfolio.templateId === 'template6') {
+        const renderOptions = {
+          cssPath: '/templates/template6.css',
+          hydrate: !!clientBundleUrl,
+          clientBundleUrl: clientBundleUrl || '/templates/template6.hydrate.js'
+        };
+        try {
+          if (renderTemplate6SSR) {
+            try {
+              portfolio.publishedHtml = renderTemplate6SSR.renderTemplate6SSR(portfolio.data, { meta: portfolio.meta }, renderOptions.clientBundleUrl);
+            } catch (ssrErr) {
+              console.error('SSR render failed for Template6, falling back to string generator:', ssrErr);
+              const { generateTemplate6HTML } = require('../index_clean');
+              portfolio.publishedHtml = generateTemplate6HTML(portfolio.data, { cssPath: renderOptions.cssPath });
+            }
+          } else {
+            const { generateTemplate6HTML } = require('../index_clean');
+            portfolio.publishedHtml = generateTemplate6HTML(portfolio.data, { cssPath: renderOptions.cssPath });
+          }
+        } catch (genErr) {
+          console.error('Failed to generate Template6 published HTML:', genErr);
+          portfolio.publishedHtml = undefined;
+        }
+      }
+    } catch (renderErr) {
+      console.error('Failed to render published HTML:', renderErr);
+      portfolio.publishedHtml = undefined;
+    }
     await portfolio.save();
     
     const baseUrl = getBaseUrl(req);
@@ -567,9 +748,16 @@ router.get("/view/:slug", async (req, res) => {
     portfolio.views += 1;
     portfolio.lastViewed = new Date();
     await portfolio.save();
-    
+
     console.log("Portfolio viewed:", slug, "Views:", portfolio.views);
-    
+
+    // If we have pre-rendered HTML, send it as HTML
+    if (portfolio.publishedHtml) {
+      res.set('Content-Type', 'text/html');
+      return res.send(portfolio.publishedHtml);
+    }
+
+    // Otherwise, return JSON (fallback for non-rendered templates)
     res.json({
       portfolio: {
         slug: portfolio.slug,

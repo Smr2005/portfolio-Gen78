@@ -108,6 +108,10 @@ app.use("/api/portfolio", portfolioRoute);
 //Route Middleware For File Upload routes
 app.use("/api/upload", uploadRoute);
 
+// Debug renderer (dev only)
+const debugRenderer = require("./routes/debugRenderer");
+app.use("/api/debug-render", debugRenderer);
+
 //Route Middleware For Admin routes
 const adminRoute = require("./routes/admin");
 app.use("/api/admin", adminRoute);
@@ -185,6 +189,11 @@ app.get("/api/test-data-storage", (req, res) => {
         ]
     });
 });
+
+// Serve public assets (templates CSS, client bundles for hydration, etc.)
+const publicPath = path.join(__dirname, 'public');
+console.log('Serving public assets from:', publicPath, 'exists=', require('fs').existsSync(publicPath));
+app.use(express.static(publicPath));
 
 // Serve static files from React build in production
 if (process.env.NODE_ENV === 'production' || process.env.PORT) {
